@@ -2,6 +2,12 @@ import plotly.graph_objects as go
 import h_transport_materials as htm
 import numpy as np
 
+all_diffusivities = htm.diffusivities
+
+all_authors_diffusivities = np.unique(
+    [D.author.capitalize() for D in all_diffusivities]
+).tolist()
+
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
     D_0, E_D = group.mean()
@@ -28,12 +34,11 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
 
 def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
     fig = go.Figure()
-    diffusivities = htm.diffusivities
     if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
         diffusivities = []
     else:
         diffusivities = (
-            diffusivities.filter(material=materials)
+            all_diffusivities.filter(material=materials)
             .filter(author=[author.lower() for author in authors])
             .filter(isotope=[isotope.lower() for isotope in isotopes])
             .filter(year=np.arange(years[0], years[1], step=1).tolist())

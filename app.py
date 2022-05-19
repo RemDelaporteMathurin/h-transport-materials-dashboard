@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
-from graph import make_diffusivities
+from graph import make_diffusivities, all_authors_diffusivities
 import dash
 from dash import dcc
 from dash import html
@@ -10,6 +10,9 @@ import dash_bootstrap_components as dbc
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
 
 server = app.server
+
+all_materials = ["tungsten", "copper", "cucrzr"]
+all_isotopes = ["H", "D", "T"]
 
 layout = dbc.Container(
     [
@@ -46,9 +49,10 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="material_all_radio_diffusivities",
                                         ),
                                         dcc.Dropdown(
-                                            ["tungsten", "copper", "cucrzr"],
+                                            all_materials,
                                             ["tungsten"],
                                             multi=True,
                                             id="material_filter_diffusivities",
@@ -62,9 +66,10 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="isotope_all_radio_diffusivities",
                                         ),
                                         dcc.Dropdown(
-                                            ["H", "D", "T"],
+                                            all_isotopes,
                                             ["H"],
                                             multi=True,
                                             id="isotope_filter_diffusivities",
@@ -78,9 +83,10 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="author_all_radio_diffusivities",
                                         ),
                                         dcc.Dropdown(
-                                            ["Frauenfelder", "Heinola", "Fernandez"],
+                                            all_authors_diffusivities,
                                             ["Frauenfelder"],
                                             multi=True,
                                             id="author_filter_diffusivities",
@@ -245,6 +251,39 @@ layout = dbc.Container(
     fluid=True,
 )
 app.layout = layout
+
+
+@app.callback(
+    dash.Output("material_filter_diffusivities", "value"),
+    dash.Input("material_all_radio_diffusivities", "value"),
+)
+def add_all_material(material_all_radio):
+    if material_all_radio == "All":
+        return all_materials
+    else:
+        return []
+
+
+@app.callback(
+    dash.Output("isotope_filter_diffusivities", "value"),
+    dash.Input("isotope_all_radio_diffusivities", "value"),
+)
+def add_all_isotopes(isotope_all_radio):
+    if isotope_all_radio == "All":
+        return all_isotopes
+    else:
+        return []
+
+
+@app.callback(
+    dash.Output("author_filter_diffusivities", "value"),
+    dash.Input("author_all_radio_diffusivities", "value"),
+)
+def add_all_authors(author_all_radio_diffusivities):
+    if author_all_radio_diffusivities == "All":
+        return all_authors_diffusivities
+    else:
+        return []
 
 
 # callback filter material diffusivity
