@@ -33,7 +33,6 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
 
 
 def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
-    fig = go.Figure()
     if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
         diffusivities = []
     else:
@@ -43,7 +42,11 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
             .filter(isotope=[isotope.lower() for isotope in isotopes])
             .filter(year=np.arange(years[0], years[1], step=1).tolist())
         )
+    return diffusivities
 
+
+def make_graph(diffusivities):
+    fig = go.Figure()
     for D in diffusivities:
         label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
         range = D.range
