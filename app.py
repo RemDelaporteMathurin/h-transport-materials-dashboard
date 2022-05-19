@@ -1,7 +1,12 @@
 import plotly.graph_objects as go
 from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
-from graph import make_diffusivities, all_authors_diffusivities
+from graph import (
+    make_diffusivities,
+    all_authors_diffusivities,
+    make_graph,
+    add_mean_value,
+)
 import dash
 from dash import dcc
 from dash import html
@@ -113,17 +118,17 @@ layout = dbc.Container(
                                             [
                                                 dbc.Button(
                                                     "Compute mean curve",
-                                                    id="mean_button",
+                                                    id="mean_button_diffusivity",
                                                     color="primary",
                                                     style={"margin": "5px"},
-                                                    n_clicks_timestamp="0",
+                                                    n_clicks="0",
                                                 ),
                                                 dbc.Button(
                                                     "Extract data",
-                                                    id="extract_button",
+                                                    id="extract_button_diffusivity",
                                                     color="primary",
                                                     style={"margin": "5px"},
-                                                    n_clicks_timestamp="0",
+                                                    n_clicks="0",
                                                 ),
                                             ]
                                         ),
@@ -132,8 +137,15 @@ layout = dbc.Container(
                                 dbc.Col(
                                     [
                                         dcc.Graph(
-                                            id="graph1",
-                                            figure=make_diffusivities(),
+                                            id="graph_diffusivity",
+                                            figure=make_graph(
+                                                make_diffusivities(
+                                                    materials=all_materials,
+                                                    authors=all_authors_diffusivities,
+                                                    isotopes=all_isotopes,
+                                                    years=[1950, 2021],
+                                                )
+                                            ),
                                             style={"width": "150vh", "height": "70vh"},
                                         ),
                                     ]
@@ -235,7 +247,7 @@ layout = dbc.Container(
                                 dbc.Col(
                                     [
                                         dcc.Graph(
-                                            id="graph2",
+                                            id="graph_solubilities",
                                             figure=make_diffusivities(),
                                             style={"width": "150vh", "height": "70vh"},
                                         ),
@@ -288,24 +300,32 @@ def add_all_authors(author_all_radio_diffusivities):
 
 # callback filter material diffusivity
 @app.callback(
-    dash.Output("graph1", "figure"),
+    dash.Output("graph_diffusivity", "figure"),
     dash.Input("material_filter_diffusivities", "value"),
     dash.Input("isotope_filter_diffusivities", "value"),
     dash.Input("author_filter_diffusivities", "value"),
     dash.Input("year_filter_diffusivities", "value"),
+    dash.Input("mean_button_diffusivity", "n_clicks"),
 )
 def update_graph(
     material_filter_diffusivities,
     isotope_filter_diffusivities,
     author_filter_diffusivities,
     year_filter_diffusivities,
+    mean_button_diffusivity,
 ):
-    return make_diffusivities(
+    diffusitivites = make_diffusivities(
         materials=material_filter_diffusivities,
         authors=author_filter_diffusivities,
         isotopes=isotope_filter_diffusivities,
         years=year_filter_diffusivities,
     )
+    figure = make_graph(diffusitivites)
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "mean_button_diffusivity.n_clicks":
+        add_mean_value(diffusitivites, figure)
+
+    return figure
 
 
 if __name__ == "__main__":
