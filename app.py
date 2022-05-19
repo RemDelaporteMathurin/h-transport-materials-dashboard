@@ -248,7 +248,14 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph_solubilities",
-                                            figure=make_diffusivities(),
+                                            figure=make_graph(
+                                                make_diffusivities(
+                                                    materials=all_materials,
+                                                    authors=all_authors_diffusivities,
+                                                    isotopes=all_isotopes,
+                                                    years=[1950, 2021],
+                                                )
+                                            ),
                                             style={"width": "150vh", "height": "70vh"},
                                         ),
                                     ]
