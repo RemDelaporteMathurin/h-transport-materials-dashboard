@@ -28,7 +28,16 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
 
 def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
     fig = go.Figure()
-    diffusivities = htm.diffusivities.filter(material="tungsten")
+    diffusivities = htm.diffusivities
+    if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
+        diffusivities = []
+    else:
+        diffusivities = (
+            diffusivities.filter(material=materials)
+            .filter(author=[author.lower() for author in authors])
+            .filter(isotope=[isotope.lower() for isotope in isotopes])
+            .filter(year=np.arange(years[0], years[1], step=1).tolist())
+        )
 
     for D in diffusivities:
         label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
@@ -52,7 +61,7 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
             )
         )
 
-    add_mean_value(diffusivities, fig)
+    # add_mean_value(diffusivities, fig)
 
     fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" m<sup>2</sup>/s")
     fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
