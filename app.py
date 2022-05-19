@@ -1,4 +1,3 @@
-import plotly.graph_objects as go
 from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
 from graph import (
