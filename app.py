@@ -1,7 +1,7 @@
 import plotly.graph_objects as go
 from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
-
+from graph import make_diffusivities
 import dash
 from dash import dcc
 from dash import html
@@ -124,7 +124,7 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph1",
-                                            figure=go.Figure(),
+                                            figure=make_diffusivities(),
                                             style={"width": "150vh", "height": "70vh"},
                                         ),
                                     ]
@@ -227,7 +227,7 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph2",
-                                            figure=go.Figure(),
+                                            figure=make_diffusivities(),
                                             style={"width": "150vh", "height": "70vh"},
                                         ),
                                     ]
