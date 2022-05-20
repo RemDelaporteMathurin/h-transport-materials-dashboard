@@ -71,20 +71,15 @@ layout = dbc.Container(
                                         ),
                                         html.Br(),
                                         html.Label("Filter by isotope:"),
-                                        dcc.RadioItems(
-                                            ["All", "Custom"],
-                                            "All",
+                                        dcc.Checklist(
+                                            all_isotopes,
+                                            all_isotopes,
+                                            inline=True,
+                                            id="isotope_filter_diffusivities",
                                             inputStyle={
                                                 "margin-left": "20px",
-                                                "margin-right": "2px",
+                                                "margin-right": "4px",
                                             },
-                                            id="isotope_all_radio_diffusivities",
-                                        ),
-                                        dcc.Dropdown(
-                                            all_isotopes,
-                                            ["H"],
-                                            multi=True,
-                                            id="isotope_filter_diffusivities",
                                         ),
                                         html.Br(),
                                         html.Label("Filter by author:"),
@@ -208,20 +203,15 @@ layout = dbc.Container(
                                         ),
                                         html.Br(),
                                         html.Label("Filter by isotope:"),
-                                        dcc.RadioItems(
-                                            ["All", "Custom"],
-                                            "All",
+                                        dcc.Checklist(
+                                            all_isotopes,
+                                            all_isotopes,
+                                            inline=True,
+                                            id="isotope_filter_solubilities",
                                             inputStyle={
                                                 "margin-left": "20px",
-                                                "margin-right": "2px",
+                                                "margin-right": "4px",
                                             },
-                                            id="isotope_all_radio_solubilities",
-                                        ),
-                                        dcc.Dropdown(
-                                            all_isotopes,
-                                            all_isotopes,
-                                            multi=True,
-                                            id="isotope_filter_solubilities",
                                         ),
                                         html.Br(),
                                         html.Label("Filter by author:"),
@@ -339,17 +329,6 @@ def add_all_material(material_all_radio):
 
 
 @app.callback(
-    dash.Output("isotope_filter_diffusivities", "value"),
-    dash.Input("isotope_all_radio_diffusivities", "value"),
-)
-def add_all_isotopes(isotope_all_radio):
-    if isotope_all_radio == "All":
-        return all_isotopes
-    else:
-        return []
-
-
-@app.callback(
     dash.Output("author_filter_diffusivities", "value"),
     dash.Input("author_all_radio_diffusivities", "value"),
 )
@@ -397,17 +376,6 @@ def update_graph(
 def add_all_material(material_all_radio):
     if material_all_radio == "All":
         return all_materials
-    else:
-        return []
-
-
-@app.callback(
-    dash.Output("isotope_filter_solubilities", "value"),
-    dash.Input("isotope_all_radio_solubilities", "value"),
-)
-def add_all_isotopes(isotope_all_radio):
-    if isotope_all_radio == "All":
-        return all_isotopes
     else:
         return []
 
