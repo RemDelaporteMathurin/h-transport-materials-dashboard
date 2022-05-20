@@ -175,6 +175,7 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="material_all_radio_solubilities",
                                         ),
                                         dcc.Dropdown(
                                             all_materials,
@@ -191,6 +192,7 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="isotope_all_radio_solubilities",
                                         ),
                                         dcc.Dropdown(
                                             all_isotopes,
@@ -207,6 +209,7 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="author_all_radio_solubilities",
                                         ),
                                         dcc.Dropdown(
                                             all_authors_solubilities,
@@ -341,6 +344,39 @@ def update_graph(
         add_mean_value(diffusitivites, figure)
 
     return figure
+
+
+@app.callback(
+    dash.Output("material_filter_solubilities", "value"),
+    dash.Input("material_all_radio_solubilities", "value"),
+)
+def add_all_material(material_all_radio):
+    if material_all_radio == "All":
+        return all_materials
+    else:
+        return []
+
+
+@app.callback(
+    dash.Output("isotope_filter_solubilities", "value"),
+    dash.Input("isotope_all_radio_solubilities", "value"),
+)
+def add_all_isotopes(isotope_all_radio):
+    if isotope_all_radio == "All":
+        return all_isotopes
+    else:
+        return []
+
+
+@app.callback(
+    dash.Output("author_filter_solubilities", "value"),
+    dash.Input("author_all_radio_solubilities", "value"),
+)
+def add_all_authors(author_all_radio_solubilities):
+    if author_all_radio_solubilities == "All":
+        return all_authors_solubilities
+    else:
+        return []
 
 
 # callback filters solubility
