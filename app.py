@@ -547,5 +547,37 @@ def func(
         )
 
 
+@app.callback(
+    dash.Output("download-python_diffusivity", "data"),
+    dash.Input("python_button_diffusivity", "n_clicks"),
+    dash.Input("material_filter_diffusivities", "value"),
+    dash.Input("isotope_filter_diffusivities", "value"),
+    dash.Input("author_filter_diffusivities", "value"),
+    dash.Input("year_filter_diffusivities", "value"),
+    prevent_initial_call=True,
+)
+def func(
+    n_clicks,
+    material_filter_diffusivities,
+    isotope_filter_diffusivities,
+    author_filter_diffusivities,
+    year_filter_diffusivities,
+):
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "python_button_diffusivity.n_clicks":
+
+        return dict(
+            content=generate_python_code(
+                materials=material_filter_diffusivities,
+                isotopes=isotope_filter_diffusivities,
+                authors=author_filter_diffusivities,
+                yearmin=year_filter_diffusivities[0],
+                yearmax=year_filter_diffusivities[1],
+                group="diffusivities",
+            ),
+            filename="script.py",
+        )
+
+
 if __name__ == "__main__":
     app.run_server(debug=True)
