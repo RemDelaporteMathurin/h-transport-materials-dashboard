@@ -12,7 +12,7 @@ from graph import (
     min_year_solubilities,
     max_year_solubilities,
 )
-from export import create_data_as_dict
+from export import create_data_as_dict, generate_python_code
 
 import dash
 from dash import dcc
@@ -511,6 +511,39 @@ def func(
         return dict(
             content=create_data_as_dict(solubilities),
             filename="data.json",
+        )
+
+
+# callbacks for python buttons
+@app.callback(
+    dash.Output("download-python_solubility", "data"),
+    dash.Input("python_button_solubility", "n_clicks"),
+    dash.Input("material_filter_solubilities", "value"),
+    dash.Input("isotope_filter_solubilities", "value"),
+    dash.Input("author_filter_solubilities", "value"),
+    dash.Input("year_filter_solubilities", "value"),
+    prevent_initial_call=True,
+)
+def func(
+    n_clicks,
+    material_filter_solubilities,
+    isotope_filter_solubilities,
+    author_filter_solubilities,
+    year_filter_solubilities,
+):
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "python_button_solubility.n_clicks":
+
+        return dict(
+            content=generate_python_code(
+                materials=material_filter_solubilities,
+                isotopes=isotope_filter_solubilities,
+                authors=author_filter_solubilities,
+                yearmin=year_filter_solubilities[0],
+                yearmax=year_filter_solubilities[1],
+                group="solubilities",
+            ),
+            filename="script.py",
         )
 
 
