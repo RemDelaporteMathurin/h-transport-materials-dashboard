@@ -1,5 +1,5 @@
-h-transport-materials=0.0.4
-numpy >= 1.9
+h-transport-materials==0.0.4
+numpy>=1.9
 dash
 dash_bootstrap_components
 plotly
