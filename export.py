@@ -32,10 +32,7 @@ filtered_{{group}} = (
 )
 
 for property in filtered_{{group}}:
-    label = "{} {} ({})".format(
-        property.isotope, property.author.capitalize(), property.year
-    )
-    htm.plotting.plot(property, label=label)
+    htm.plotting.plot(property, auto_label=True)
 
 plt.legend()
 plt.xlabel("1/T (K$^{-1}$)")
