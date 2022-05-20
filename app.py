@@ -12,7 +12,7 @@ from graph import (
     min_year_solubilities,
     max_year_solubilities,
 )
-from export import create_data_as_dict
+from export import create_data_as_dict, generate_python_code
 
 import dash
 from dash import dcc
@@ -144,6 +144,20 @@ layout = dbc.Container(
                                                         ),
                                                     ]
                                                 ),
+                                                html.Div(
+                                                    [
+                                                        dbc.Button(
+                                                            "Python",
+                                                            id="python_button_diffusivity",
+                                                            color="primary",
+                                                            style={"margin": "5px"},
+                                                            n_clicks_timestamp="0",
+                                                        ),
+                                                        dcc.Download(
+                                                            id="download-python_diffusivity"
+                                                        ),
+                                                    ]
+                                                ),
                                             ]
                                         ),
                                     ]
@@ -264,6 +278,20 @@ layout = dbc.Container(
                                                         ),
                                                         dcc.Download(
                                                             id="download-text_solubility"
+                                                        ),
+                                                    ]
+                                                ),
+                                                html.Div(
+                                                    [
+                                                        dbc.Button(
+                                                            "Python",
+                                                            id="python_button_solubility",
+                                                            color="primary",
+                                                            style={"margin": "5px"},
+                                                            n_clicks_timestamp="0",
+                                                        ),
+                                                        dcc.Download(
+                                                            id="download-python_solubility"
                                                         ),
                                                     ]
                                                 ),
@@ -483,6 +511,71 @@ def func(
         return dict(
             content=create_data_as_dict(solubilities),
             filename="data.json",
+        )
+
+
+# callbacks for python buttons
+@app.callback(
+    dash.Output("download-python_solubility", "data"),
+    dash.Input("python_button_solubility", "n_clicks"),
+    dash.Input("material_filter_solubilities", "value"),
+    dash.Input("isotope_filter_solubilities", "value"),
+    dash.Input("author_filter_solubilities", "value"),
+    dash.Input("year_filter_solubilities", "value"),
+    prevent_initial_call=True,
+)
+def func(
+    n_clicks,
+    material_filter_solubilities,
+    isotope_filter_solubilities,
+    author_filter_solubilities,
+    year_filter_solubilities,
+):
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "python_button_solubility.n_clicks":
+
+        return dict(
+            content=generate_python_code(
+                materials=material_filter_solubilities,
+                isotopes=isotope_filter_solubilities,
+                authors=author_filter_solubilities,
+                yearmin=year_filter_solubilities[0],
+                yearmax=year_filter_solubilities[1],
+                group="solubilities",
+            ),
+            filename="script.py",
+        )
+
+
+@app.callback(
+    dash.Output("download-python_diffusivity", "data"),
+    dash.Input("python_button_diffusivity", "n_clicks"),
+    dash.Input("material_filter_diffusivities", "value"),
+    dash.Input("isotope_filter_diffusivities", "value"),
+    dash.Input("author_filter_diffusivities", "value"),
+    dash.Input("year_filter_diffusivities", "value"),
+    prevent_initial_call=True,
+)
+def func(
+    n_clicks,
+    material_filter_diffusivities,
+    isotope_filter_diffusivities,
+    author_filter_diffusivities,
+    year_filter_diffusivities,
+):
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "python_button_diffusivity.n_clicks":
+
+        return dict(
+            content=generate_python_code(
+                materials=material_filter_diffusivities,
+                isotopes=isotope_filter_diffusivities,
+                authors=author_filter_diffusivities,
+                yearmin=year_filter_diffusivities[0],
+                yearmax=year_filter_diffusivities[1],
+                group="diffusivities",
+            ),
+            filename="script.py",
         )
 
 
