@@ -144,6 +144,20 @@ layout = dbc.Container(
                                                         ),
                                                     ]
                                                 ),
+                                                html.Div(
+                                                    [
+                                                        dbc.Button(
+                                                            "Python",
+                                                            id="python_button_diffusivity",
+                                                            color="primary",
+                                                            style={"margin": "5px"},
+                                                            n_clicks_timestamp="0",
+                                                        ),
+                                                        dcc.Download(
+                                                            id="download-python_diffusivity"
+                                                        ),
+                                                    ]
+                                                ),
                                             ]
                                         ),
                                     ]
@@ -264,6 +278,20 @@ layout = dbc.Container(
                                                         ),
                                                         dcc.Download(
                                                             id="download-text_solubility"
+                                                        ),
+                                                    ]
+                                                ),
+                                                html.Div(
+                                                    [
+                                                        dbc.Button(
+                                                            "Python",
+                                                            id="python_button_solubility",
+                                                            color="primary",
+                                                            style={"margin": "5px"},
+                                                            n_clicks_timestamp="0",
+                                                        ),
+                                                        dcc.Download(
+                                                            id="download-python_solubility"
                                                         ),
                                                     ]
                                                 ),
