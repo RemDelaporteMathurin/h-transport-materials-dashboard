@@ -2,9 +2,15 @@ from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
 from graph import (
     make_diffusivities,
+    make_solubilities,
     all_authors_diffusivities,
+    all_authors_solubilities,
     make_graph,
+    make_graph_solubilities,
     add_mean_value,
+    add_mean_value_solubilities,
+    min_year_solubilities,
+    max_year_solubilities,
 )
 import dash
 from dash import dcc
@@ -169,11 +175,13 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="material_all_radio_solubilities",
                                         ),
                                         dcc.Dropdown(
-                                            ["tungsten", "copper", "cucrzr"],
-                                            ["tungsten"],
+                                            all_materials,
+                                            all_materials,
                                             multi=True,
+                                            id="material_filter_solubilities",
                                         ),
                                         html.Br(),
                                         html.Label("Filter by isotope:"),
@@ -184,11 +192,13 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="isotope_all_radio_solubilities",
                                         ),
                                         dcc.Dropdown(
-                                            ["H", "D", "T"],
-                                            ["H"],
+                                            all_isotopes,
+                                            all_isotopes,
                                             multi=True,
+                                            id="isotope_filter_solubilities",
                                         ),
                                         html.Br(),
                                         html.Label("Filter by author:"),
@@ -199,16 +209,18 @@ layout = dbc.Container(
                                                 "margin-left": "20px",
                                                 "margin-right": "2px",
                                             },
+                                            id="author_all_radio_solubilities",
                                         ),
                                         dcc.Dropdown(
-                                            ["Frauenfelder", "Heinola", "Fernandez"],
-                                            ["Frauenfelder"],
+                                            all_authors_solubilities,
+                                            all_authors_solubilities,
                                             multi=True,
+                                            id="author_filter_solubilities",
                                         ),
                                         html.Br(),
                                         html.Label("Filter by year:"),
                                         dcc.RangeSlider(
-                                            id="year2",
+                                            id="year_filter_solubilities",
                                             min=1950,
                                             max=2021,
                                             step=1,
@@ -227,14 +239,14 @@ layout = dbc.Container(
                                             [
                                                 dbc.Button(
                                                     "Compute mean curve",
-                                                    id="mean_button2",
+                                                    id="mean_button_solubility",
                                                     color="primary",
                                                     style={"margin": "5px"},
                                                     n_clicks_timestamp="0",
                                                 ),
                                                 dbc.Button(
                                                     "Extract data",
-                                                    id="extract_button2",
+                                                    id="extract_button_solubility",
                                                     color="primary",
                                                     style={"margin": "5px"},
                                                     n_clicks_timestamp="0",
@@ -247,8 +259,8 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph_solubilities",
-                                            figure=make_graph(
-                                                make_diffusivities(
+                                            figure=make_graph_solubilities(
+                                                make_solubilities(
                                                     materials=all_materials,
                                                     authors=all_authors_diffusivities,
                                                     isotopes=all_isotopes,
@@ -330,6 +342,69 @@ def update_graph(
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
     if changed_id == "mean_button_diffusivity.n_clicks":
         add_mean_value(diffusitivites, figure)
+
+    return figure
+
+
+@app.callback(
+    dash.Output("material_filter_solubilities", "value"),
+    dash.Input("material_all_radio_solubilities", "value"),
+)
+def add_all_material(material_all_radio):
+    if material_all_radio == "All":
+        return all_materials
+    else:
+        return []
+
+
+@app.callback(
+    dash.Output("isotope_filter_solubilities", "value"),
+    dash.Input("isotope_all_radio_solubilities", "value"),
+)
+def add_all_isotopes(isotope_all_radio):
+    if isotope_all_radio == "All":
+        return all_isotopes
+    else:
+        return []
+
+
+@app.callback(
+    dash.Output("author_filter_solubilities", "value"),
+    dash.Input("author_all_radio_solubilities", "value"),
+)
+def add_all_authors(author_all_radio_solubilities):
+    if author_all_radio_solubilities == "All":
+        return all_authors_solubilities
+    else:
+        return []
+
+
+# callback filters solubility
+@app.callback(
+    dash.Output("graph_solubilities", "figure"),
+    dash.Input("material_filter_solubilities", "value"),
+    dash.Input("isotope_filter_solubilities", "value"),
+    dash.Input("author_filter_solubilities", "value"),
+    dash.Input("year_filter_solubilities", "value"),
+    dash.Input("mean_button_solubility", "n_clicks"),
+)
+def update_solubility_graph(
+    material_filter_solubilities,
+    isotope_filter_solubilities,
+    author_filter_solubilities,
+    year_filter_solubilities,
+    mean_button_solubility,
+):
+    solubilities = make_solubilities(
+        materials=material_filter_solubilities,
+        authors=author_filter_solubilities,
+        isotopes=isotope_filter_solubilities,
+        years=year_filter_solubilities,
+    )
+    figure = make_graph_solubilities(solubilities)
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "mean_button_solubility.n_clicks":
+        add_mean_value_solubilities(solubilities, figure)
 
     return figure
 
