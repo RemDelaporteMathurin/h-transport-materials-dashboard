@@ -453,7 +453,6 @@ layout = dbc.Container(
             ],
             id="modal_add_diffusivity",
             is_open=False,
-            size="lg",
         ),
     ],
     fluid=True,
