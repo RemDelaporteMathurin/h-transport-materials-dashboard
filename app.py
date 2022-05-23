@@ -375,6 +375,86 @@ layout = dbc.Container(
                 ),
             ],
         ),
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a diffusivity"))),
+                dbc.ModalBody(
+                    [
+                        html.Div(
+                            [
+                                "D_0: ",
+                                dcc.Input(
+                                    id="new_diffusivity_pre_exp",
+                                    type="number",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "E_D: ",
+                                dcc.Input(
+                                    id="new_diffusivity_act_energy",
+                                    type="number",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Author: ",
+                                dcc.Input(
+                                    id="new_diffusivity_author",
+                                    type="text",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Year: ",
+                                dcc.Input(
+                                    id="new_diffusivity_year",
+                                    type="number",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Isotope: ",
+                                dcc.Input(
+                                    id="new_diffusivity_isotope",
+                                    type="text",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Material: ",
+                                dcc.Input(
+                                    id="new_diffusivity_material",
+                                    type="text",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Submit",
+                        id="submit_new_diffusivity",
+                        color="primary",
+                        n_clicks="0",
+                    ),
+                ),
+            ],
+            id="modal_add_diffusivity",
+            is_open=False,
+            size="lg",
+        ),
     ],
     fluid=True,
 )
@@ -623,24 +703,58 @@ def toggle_modal(n1, is_open):
 
 
 @app.callback(
-    dash.Output("material_filter_diffusivities", "options"),
-    dash.Output("author_filter_diffusivities", "options"),
+    dash.Output("modal_add_diffusivity", "is_open"),
     dash.Input("add_property_diffusivity", "n_clicks"),
+    dash.Input("submit_new_diffusivity", "n_clicks"),
+    dash.State("modal_add_diffusivity", "is_open"),
     prevent_initial_call=True,
 )
-def add_diffusivity(n_clicks):
-    new_property = htm.ArrheniusProperty(
-        pre_exp=1,
-        act_energy=0.2,
-        author="new_author",
-        year=1950,
-        isotope="h",
-        material="new_mat",
-    )
-    all_diffusivities.properties.append(new_property)
-    all_authors = np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
-    all_materials = np.unique([D.material.lower() for D in all_diffusivities]).tolist()
-    return all_materials, all_authors
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    dash.Output("material_filter_diffusivities", "options"),
+    dash.Output("author_filter_diffusivities", "options"),
+    dash.Input("submit_new_diffusivity", "n_clicks"),
+    dash.State("new_diffusivity_pre_exp", "value"),
+    dash.State("new_diffusivity_act_energy", "value"),
+    dash.State("new_diffusivity_author", "value"),
+    dash.State("new_diffusivity_year", "value"),
+    dash.State("new_diffusivity_isotope", "value"),
+    dash.State("new_diffusivity_material", "value"),
+    prevent_initial_call=True,
+)
+def add_diffusivity(
+    n_clicks,
+    new_diffusivity_pre_exp,
+    new_diffusivity_act_energy,
+    new_diffusivity_author,
+    new_diffusivity_year,
+    new_diffusivity_isotope,
+    new_diffusivity_material,
+):
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "submit_new_diffusivity.n_clicks":
+        new_property = htm.ArrheniusProperty(
+            pre_exp=new_diffusivity_pre_exp,
+            act_energy=new_diffusivity_act_energy,
+            author=new_diffusivity_author.lower(),
+            year=new_diffusivity_year,
+            isotope=new_diffusivity_isotope,
+            material=new_diffusivity_material,
+        )
+        all_diffusivities.properties.append(new_property)
+        all_authors = np.unique(
+            [D.author.capitalize() for D in all_diffusivities]
+        ).tolist()
+        all_materials = np.unique(
+            [D.material.lower() for D in all_diffusivities]
+        ).tolist()
+
+        return all_materials, all_authors
 
 
 if __name__ == "__main__":
