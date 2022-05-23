@@ -13,6 +13,7 @@ from graph import (
     max_year_solubilities,
 )
 from export import create_data_as_dict, generate_python_code
+from infos import text_infos
 
 import dash
 from dash import dcc
@@ -35,7 +36,59 @@ layout = dbc.Container(
                         html.H2("H-transport properties dashboard"),
                         html.H5("Rémi Delaporte-Mathurin"),
                     ],
-                    width=True,
+                    width=9,
+                ),
+                dbc.Col(
+                    html.Div(
+                        [
+                            html.A(
+                                [
+                                    "Infos",
+                                    html.Img(
+                                        src="https://dash.gallery/dash-world-cell-towers/assets/question-circle-solid.svg",
+                                        height=20,
+                                        style={"margin-left": "5px"},
+                                    ),
+                                ],
+                                style={
+                                    "margin-right": "45px",
+                                    "cursor": "pointer",
+                                },
+                                id="open-sm",
+                            ),
+                            dbc.Modal(
+                                [
+                                    dbc.ModalHeader(
+                                        dbc.ModalTitle(
+                                            html.H2(
+                                                "Welcome to the H-transport materials dashboard!"
+                                            )
+                                        )
+                                    ),
+                                    dbc.ModalBody(text_infos),
+                                    dbc.ModalFooter(
+                                        "Contact: rdelaportemathurin@gmail.com"
+                                    ),
+                                ],
+                                id="modal",
+                                is_open=False,
+                                size="lg",
+                            ),
+                            html.A(
+                                [
+                                    "View it on GitHub",
+                                    html.Img(
+                                        src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+                                        height=40,
+                                    ),
+                                ],
+                                href="https://github.com/RemDelaporteMathurin/h-transport-materials-dashboard",
+                                target="_blank",  # opens in a new tab
+                            ),
+                        ]
+                    ),
+                    align="end",
+                    width=3,
                 ),
             ],
             align="end",
@@ -545,6 +598,17 @@ def func(
             ),
             filename="script.py",
         )
+
+
+@app.callback(
+    dash.Output("modal", "is_open"),
+    dash.Input("open-sm", "n_clicks"),
+    dash.State("modal", "is_open"),
+)
+def toggle_modal(n1, is_open):
+    if n1:
+        return not is_open
+    return is_open
 
 
 if __name__ == "__main__":
