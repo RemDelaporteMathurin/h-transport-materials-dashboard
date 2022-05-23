@@ -1,6 +1,8 @@
 from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
 from graph import (
+    all_diffusivities,
+    all_solubilities,
     make_diffusivities,
     make_solubilities,
     all_authors_diffusivities,
@@ -12,6 +14,9 @@ from graph import (
     min_year_solubilities,
     max_year_solubilities,
 )
+
+import h_transport_materials as htm
+
 from export import create_data_as_dict, generate_python_code
 from infos import text_infos
 
@@ -615,6 +620,27 @@ def toggle_modal(n1, is_open):
     if n1:
         return not is_open
     return is_open
+
+
+@app.callback(
+    dash.Output("material_filter_diffusivities", "options"),
+    dash.Output("author_filter_diffusivities", "options"),
+    dash.Input("add_property_diffusivity", "n_clicks"),
+    prevent_initial_call=True,
+)
+def add_diffusivity(n_clicks):
+    new_property = htm.ArrheniusProperty(
+        pre_exp=1,
+        act_energy=0.2,
+        author="new_author",
+        year=1950,
+        isotope="h",
+        material="new_mat",
+    )
+    all_diffusivities.properties.append(new_property)
+    all_authors = np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
+    all_materials = np.unique([D.material.lower() for D in all_diffusivities]).tolist()
+    return all_materials, all_authors
 
 
 if __name__ == "__main__":
