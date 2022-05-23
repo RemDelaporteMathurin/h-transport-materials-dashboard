@@ -472,6 +472,103 @@ layout = dbc.Container(
             id="modal_add_diffusivity",
             is_open=False,
         ),
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a solubility"))),
+                dbc.ModalBody(
+                    [
+                        html.Div(
+                            [
+                                "S_0: ",
+                                dcc.Input(
+                                    id="new_solubility_pre_exp",
+                                    type="number",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "E_D (eV): ",
+                                dcc.Input(
+                                    id="new_solubility_act_energy",
+                                    type="number",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Author: ",
+                                dcc.Input(
+                                    id="new_solubility_author",
+                                    type="text",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Year: ",
+                                dcc.Input(
+                                    id="new_solubility_year",
+                                    type="number",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Isotope: ",
+                                dcc.Input(
+                                    id="new_solubility_isotope",
+                                    type="text",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Material: ",
+                                dcc.Input(
+                                    id="new_solubility_material",
+                                    type="text",
+                                    # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Temperature range: ",
+                                dcc.Input(
+                                    id="new_solubility_range_low",
+                                    type="number",
+                                    placeholder="300 K",
+                                    style={"width": 70},
+                                ),
+                                dcc.Input(
+                                    id="new_solubility_range_high",
+                                    type="number",
+                                    placeholder="1200 K",
+                                    style={"width": 75},
+                                    required=False,
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Submit",
+                        id="submit_new_solubility",
+                        color="primary",
+                        n_clicks="0",
+                    ),
+                ),
+            ],
+            id="modal_add_solubility",
+            is_open=False,
+        ),
     ],
     fluid=True,
 )
@@ -733,6 +830,19 @@ def toggle_modal(n1, n2, is_open):
 
 
 @app.callback(
+    dash.Output("modal_add_solubility", "is_open"),
+    dash.Input("add_property_solubility", "n_clicks"),
+    dash.Input("submit_new_solubility", "n_clicks"),
+    dash.State("modal_add_solubility", "is_open"),
+    prevent_initial_call=True,
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+@app.callback(
     dash.Output("material_filter_diffusivities", "options"),
     dash.Output("author_filter_diffusivities", "options"),
     dash.Input("submit_new_diffusivity", "n_clicks"),
@@ -771,6 +881,49 @@ def add_diffusivity(
     all_diffusivities.properties.append(new_property)
     all_authors = np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
     all_materials = np.unique([D.material.lower() for D in all_diffusivities]).tolist()
+
+    return all_materials, all_authors
+
+
+@app.callback(
+    dash.Output("material_filter_solubilities", "options"),
+    dash.Output("author_filter_solubilities", "options"),
+    dash.Input("submit_new_solubility", "n_clicks"),
+    dash.State("new_solubility_pre_exp", "value"),
+    dash.State("new_solubility_act_energy", "value"),
+    dash.State("new_solubility_author", "value"),
+    dash.State("new_solubility_year", "value"),
+    dash.State("new_solubility_isotope", "value"),
+    dash.State("new_solubility_material", "value"),
+    dash.State("new_solubility_range_low", "value"),
+    dash.State("new_solubility_range_high", "value"),
+    prevent_initial_call=True,
+)
+def add_solubility(
+    n_clicks,
+    new_solubility_pre_exp,
+    new_solubility_act_energy,
+    new_solubility_author,
+    new_solubility_year,
+    new_solubility_isotope,
+    new_solubility_material,
+    new_solubility_range_low,
+    new_solubility_range_high,
+):
+    if (new_solubility_range_low, new_solubility_range_high) == (None, None):
+        (new_solubility_range_low, new_solubility_range_high) = (300, 1200)
+    new_property = htm.ArrheniusProperty(
+        pre_exp=new_solubility_pre_exp,
+        act_energy=new_solubility_act_energy,
+        author=new_solubility_author.lower(),
+        year=new_solubility_year,
+        isotope=new_solubility_isotope,
+        material=new_solubility_material,
+        range=(new_solubility_range_low, new_solubility_range_high),
+    )
+    all_solubilities.properties.append(new_property)
+    all_authors = np.unique([D.author.capitalize() for D in all_solubilities]).tolist()
+    all_materials = np.unique([D.material.lower() for D in all_solubilities]).tolist()
 
     return all_materials, all_authors
 
