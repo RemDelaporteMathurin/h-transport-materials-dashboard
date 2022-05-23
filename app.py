@@ -382,7 +382,7 @@ layout = dbc.Container(
                     [
                         html.Div(
                             [
-                                "D_0: ",
+                                "D_0 (m2/s): ",
                                 dcc.Input(
                                     id="new_diffusivity_pre_exp",
                                     type="number",
@@ -392,7 +392,7 @@ layout = dbc.Container(
                         ),
                         html.Div(
                             [
-                                "E_D: ",
+                                "E_D (eV): ",
                                 dcc.Input(
                                     id="new_diffusivity_act_energy",
                                     type="number",
@@ -437,6 +437,24 @@ layout = dbc.Container(
                                     id="new_diffusivity_material",
                                     type="text",
                                     # placeholder="input type {}".format(_),
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                "Temperature range: ",
+                                dcc.Input(
+                                    id="new_diffusivity_range_low",
+                                    type="number",
+                                    placeholder="300 K",
+                                    style={"width": 70},
+                                ),
+                                dcc.Input(
+                                    id="new_diffusivity_range_high",
+                                    type="number",
+                                    placeholder="1200 K",
+                                    style={"width": 75},
+                                    required=False,
                                 ),
                             ]
                         ),
@@ -724,6 +742,8 @@ def toggle_modal(n1, n2, is_open):
     dash.State("new_diffusivity_year", "value"),
     dash.State("new_diffusivity_isotope", "value"),
     dash.State("new_diffusivity_material", "value"),
+    dash.State("new_diffusivity_range_low", "value"),
+    dash.State("new_diffusivity_range_high", "value"),
     prevent_initial_call=True,
 )
 def add_diffusivity(
@@ -734,26 +754,25 @@ def add_diffusivity(
     new_diffusivity_year,
     new_diffusivity_isotope,
     new_diffusivity_material,
+    new_diffusivity_range_low,
+    new_diffusivity_range_high,
 ):
-    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
-    if changed_id == "submit_new_diffusivity.n_clicks":
-        new_property = htm.ArrheniusProperty(
-            pre_exp=new_diffusivity_pre_exp,
-            act_energy=new_diffusivity_act_energy,
-            author=new_diffusivity_author.lower(),
-            year=new_diffusivity_year,
-            isotope=new_diffusivity_isotope,
-            material=new_diffusivity_material,
-        )
-        all_diffusivities.properties.append(new_property)
-        all_authors = np.unique(
-            [D.author.capitalize() for D in all_diffusivities]
-        ).tolist()
-        all_materials = np.unique(
-            [D.material.lower() for D in all_diffusivities]
-        ).tolist()
+    if (new_diffusivity_range_low, new_diffusivity_range_high) == (None, None):
+        (new_diffusivity_range_low, new_diffusivity_range_high) = (300, 1200)
+    new_property = htm.ArrheniusProperty(
+        pre_exp=new_diffusivity_pre_exp,
+        act_energy=new_diffusivity_act_energy,
+        author=new_diffusivity_author.lower(),
+        year=new_diffusivity_year,
+        isotope=new_diffusivity_isotope,
+        material=new_diffusivity_material,
+        range=(new_diffusivity_range_low, new_diffusivity_range_high),
+    )
+    all_diffusivities.properties.append(new_property)
+    all_authors = np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
+    all_materials = np.unique([D.material.lower() for D in all_diffusivities]).tolist()
 
-        return all_materials, all_authors
+    return all_materials, all_authors
 
 
 if __name__ == "__main__":
