@@ -178,33 +178,36 @@ layout = dbc.Container(
                                                     style={"margin": "5px"},
                                                     n_clicks="0",
                                                 ),
-                                                html.Div(
+                                                dbc.Button(
+                                                    "Add property",
+                                                    id="add_property_diffusivity",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks="0",
+                                                ),
+                                                dbc.Button(
                                                     [
-                                                        dbc.Button(
-                                                            "Extract data",
-                                                            id="extract_button_diffusivity",
-                                                            color="primary",
-                                                            style={"margin": "5px"},
-                                                            n_clicks="0",
-                                                        ),
+                                                        "Extract data",
                                                         dcc.Download(
                                                             id="download-text_diffusivity"
                                                         ),
-                                                    ]
+                                                    ],
+                                                    id="extract_button_diffusivity",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks="0",
                                                 ),
-                                                html.Div(
+                                                dbc.Button(
                                                     [
-                                                        dbc.Button(
-                                                            "Python",
-                                                            id="python_button_diffusivity",
-                                                            color="primary",
-                                                            style={"margin": "5px"},
-                                                            n_clicks_timestamp="0",
-                                                        ),
+                                                        "Python",
                                                         dcc.Download(
                                                             id="download-python_diffusivity"
                                                         ),
-                                                    ]
+                                                    ],
+                                                    id="python_button_diffusivity",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks_timestamp="0",
                                                 ),
                                             ]
                                         ),
@@ -310,33 +313,36 @@ layout = dbc.Container(
                                                     style={"margin": "5px"},
                                                     n_clicks_timestamp="0",
                                                 ),
-                                                html.Div(
+                                                dbc.Button(
+                                                    "Add property",
+                                                    id="add_property_solubility",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks="0",
+                                                ),
+                                                dbc.Button(
                                                     [
-                                                        dbc.Button(
-                                                            "Extract data",
-                                                            id="extract_button_solubility",
-                                                            color="primary",
-                                                            style={"margin": "5px"},
-                                                            n_clicks_timestamp="0",
-                                                        ),
+                                                        "Extract data",
                                                         dcc.Download(
                                                             id="download-text_solubility"
                                                         ),
-                                                    ]
+                                                    ],
+                                                    id="extract_button_solubility",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks_timestamp="0",
                                                 ),
-                                                html.Div(
+                                                dbc.Button(
                                                     [
-                                                        dbc.Button(
-                                                            "Python",
-                                                            id="python_button_solubility",
-                                                            color="primary",
-                                                            style={"margin": "5px"},
-                                                            n_clicks_timestamp="0",
-                                                        ),
+                                                        "Python",
                                                         dcc.Download(
                                                             id="download-python_solubility"
                                                         ),
-                                                    ]
+                                                    ],
+                                                    id="python_button_solubility",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks_timestamp="0",
                                                 ),
                                             ]
                                         ),
