@@ -21,14 +21,14 @@ text_infos = [
     ),
     html.Br(),
     html.Div(
-        [html.B("Extract data"), ": downloads the displayed properties to a JSON file."]
-    ),
-    html.Br(),
-    html.Div(
         [
             html.B("Compute mean curve"),
             ": calculates the mean curve of the displayed properties.",
         ]
+    ),
+    html.Br(),
+    html.Div(
+        [html.B("Extract data"), ": downloads the displayed properties to a JSON file."]
     ),
     html.Br(),
     html.Div(
