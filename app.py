@@ -143,7 +143,7 @@ layout = dbc.Container(
                                         html.Label("Filter by author:"),
                                         dcc.Dropdown(
                                             all_authors_diffusivities,
-                                            ["Frauenfelder"],
+                                            all_authors_diffusivities,
                                             multi=True,
                                             id="author_filter_diffusivities",
                                         ),
