@@ -11,7 +11,7 @@ text_infos = [
         [
             "Finding material properties for ",
             html.B("hydrogen transport"),
-            " is often tedious as many different values can be found in litterature. ",
+            " is often tedious as many different values can be found in literature. ",
             "The goal of this tool is to help scientists visualise material properties and compare them.",
         ]
     ),
