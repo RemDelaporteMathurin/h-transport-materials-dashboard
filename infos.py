@@ -28,6 +28,13 @@ text_infos = [
     ),
     html.Br(),
     html.Div(
+        [
+            html.B("Add property"),
+            ": adds a custom diffusivity or solubility to the dataset.",
+        ]
+    ),
+    html.Br(),
+    html.Div(
         [html.B("Extract data"), ": downloads the displayed properties to a JSON file."]
     ),
     html.Br(),
