@@ -463,12 +463,15 @@ layout = dbc.Container(
                     ]
                 ),
                 dbc.ModalFooter(
-                    dbc.Button(
-                        "Submit",
-                        id="submit_new_diffusivity",
-                        color="primary",
-                        n_clicks="0",
-                    ),
+                    [
+                        html.Div("", id="error_message_new_diffusivity"),
+                        dbc.Button(
+                            "Submit",
+                            id="submit_new_diffusivity",
+                            color="primary",
+                            n_clicks="0",
+                        ),
+                    ]
                 ),
             ],
             id="modal_add_diffusivity",
@@ -562,12 +565,15 @@ layout = dbc.Container(
                     ]
                 ),
                 dbc.ModalFooter(
-                    dbc.Button(
-                        "Submit",
-                        id="submit_new_solubility",
-                        color="primary",
-                        n_clicks="0",
-                    ),
+                    [
+                        html.Div("", id="error_message_new_solubility"),
+                        dbc.Button(
+                            "Submit",
+                            id="submit_new_solubility",
+                            color="primary",
+                            n_clicks="0",
+                        ),
+                    ]
                 ),
             ],
             id="modal_add_solubility",
