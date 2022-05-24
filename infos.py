@@ -17,7 +17,7 @@ text_infos = [
     ),
     html.Br(),
     html.Div(
-        "On the left-hand side of the screen, properties can be filtered by material, author, isotope or by year of publication"
+        "On the left-hand side of the screen, properties can be filtered by material, author, isotope or by year of publication."
     ),
     html.Br(),
     html.Div(
