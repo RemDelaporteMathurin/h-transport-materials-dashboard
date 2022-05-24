@@ -114,20 +114,18 @@ layout = dbc.Container(
                                 dbc.Col(
                                     [
                                         html.Label("Filter by material:"),
-                                        dcc.RadioItems(
-                                            ["All", "Custom"],
-                                            "All",
-                                            inputStyle={
-                                                "margin-left": "20px",
-                                                "margin-right": "2px",
-                                            },
-                                            id="material_all_radio_diffusivities",
-                                        ),
                                         dcc.Dropdown(
                                             all_materials,
                                             ["tungsten"],
                                             multi=True,
                                             id="material_filter_diffusivities",
+                                        ),
+                                        html.Div(
+                                            dbc.Button(
+                                                "All",
+                                                id="add_all_materials_diffusivity",
+                                                style={"font-size": "12px"},
+                                            )
                                         ),
                                         html.Br(),
                                         html.Label("Filter by isotope:"),
@@ -143,20 +141,18 @@ layout = dbc.Container(
                                         ),
                                         html.Br(),
                                         html.Label("Filter by author:"),
-                                        dcc.RadioItems(
-                                            ["All", "Custom"],
-                                            "All",
-                                            inputStyle={
-                                                "margin-left": "20px",
-                                                "margin-right": "2px",
-                                            },
-                                            id="author_all_radio_diffusivities",
-                                        ),
                                         dcc.Dropdown(
                                             all_authors_diffusivities,
-                                            ["Frauenfelder"],
+                                            all_authors_diffusivities,
                                             multi=True,
                                             id="author_filter_diffusivities",
+                                        ),
+                                        html.Div(
+                                            dbc.Button(
+                                                "All",
+                                                id="add_all_authors_diffusivity",
+                                                style={"font-size": "12px"},
+                                            )
                                         ),
                                         html.Br(),
                                         html.Label("Filter by year:"),
@@ -249,20 +245,18 @@ layout = dbc.Container(
                                 dbc.Col(
                                     [
                                         html.Label("Filter by material:"),
-                                        dcc.RadioItems(
-                                            ["All", "Custom"],
-                                            "All",
-                                            inputStyle={
-                                                "margin-left": "20px",
-                                                "margin-right": "2px",
-                                            },
-                                            id="material_all_radio_solubilities",
-                                        ),
                                         dcc.Dropdown(
                                             all_materials,
                                             all_materials,
                                             multi=True,
                                             id="material_filter_solubilities",
+                                        ),
+                                        html.Div(
+                                            dbc.Button(
+                                                "All",
+                                                id="add_all_materials_solubility",
+                                                style={"font-size": "12px"},
+                                            )
                                         ),
                                         html.Br(),
                                         html.Label("Filter by isotope:"),
@@ -278,20 +272,18 @@ layout = dbc.Container(
                                         ),
                                         html.Br(),
                                         html.Label("Filter by author:"),
-                                        dcc.RadioItems(
-                                            ["All", "Custom"],
-                                            "All",
-                                            inputStyle={
-                                                "margin-left": "20px",
-                                                "margin-right": "2px",
-                                            },
-                                            id="author_all_radio_solubilities",
-                                        ),
                                         dcc.Dropdown(
                                             all_authors_solubilities,
                                             all_authors_solubilities,
                                             multi=True,
                                             id="author_filter_solubilities",
+                                        ),
+                                        html.Div(
+                                            dbc.Button(
+                                                "All",
+                                                id="add_all_authors_solubility",
+                                                style={"font-size": "12px"},
+                                            )
                                         ),
                                         html.Br(),
                                         html.Label("Filter by year:"),
@@ -424,24 +416,24 @@ app.layout = layout
 
 @app.callback(
     dash.Output("material_filter_diffusivities", "value"),
-    dash.Input("material_all_radio_diffusivities", "value"),
+    dash.Input("add_all_materials_diffusivity", "n_clicks"),
 )
-def add_all_material(material_all_radio):
-    if material_all_radio == "All":
+def add_all_material(n_clicks):
+    if n_clicks:
         return all_materials
     else:
-        return []
+        return dash.no_update
 
 
 @app.callback(
     dash.Output("author_filter_diffusivities", "value"),
-    dash.Input("author_all_radio_diffusivities", "value"),
+    dash.Input("add_all_authors_diffusivity", "n_clicks"),
 )
-def add_all_authors(author_all_radio_diffusivities):
-    if author_all_radio_diffusivities == "All":
+def add_all_authors(n_clicks):
+    if n_clicks:
         return all_authors_diffusivities
     else:
-        return []
+        return dash.no_update
 
 
 # callback filter material diffusivity
@@ -476,24 +468,24 @@ def update_graph(
 
 @app.callback(
     dash.Output("material_filter_solubilities", "value"),
-    dash.Input("material_all_radio_solubilities", "value"),
+    dash.Input("add_all_materials_solubility", "n_clicks"),
 )
-def add_all_material(material_all_radio):
-    if material_all_radio == "All":
+def add_all_material(n_clicks):
+    if n_clicks:
         return all_materials
     else:
-        return []
+        return dash.no_update
 
 
 @app.callback(
     dash.Output("author_filter_solubilities", "value"),
-    dash.Input("author_all_radio_solubilities", "value"),
+    dash.Input("add_all_authors_solubility", "n_clicks"),
 )
-def add_all_authors(author_all_radio_solubilities):
-    if author_all_radio_solubilities == "All":
+def add_all_authors(n_clicks):
+    if n_clicks:
         return all_authors_solubilities
     else:
-        return []
+        return dash.no_update
 
 
 # callback filters solubility
