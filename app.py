@@ -24,6 +24,7 @@ import dash
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
+from dash.exceptions import PreventUpdate
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
 
@@ -831,9 +832,34 @@ def toggle_modal(n1, is_open):
     dash.Input("add_property_diffusivity", "n_clicks"),
     dash.Input("submit_new_diffusivity", "n_clicks"),
     dash.State("modal_add_diffusivity", "is_open"),
+    dash.State("new_diffusivity_pre_exp", "value"),
+    dash.State("new_diffusivity_act_energy", "value"),
+    dash.State("new_diffusivity_author", "value"),
+    dash.State("new_diffusivity_year", "value"),
+    dash.State("new_diffusivity_isotope", "value"),
+    dash.State("new_diffusivity_material", "value"),
     prevent_initial_call=True,
 )
-def toggle_modal(n1, n2, is_open):
+def toggle_modal(
+    n1,
+    n2,
+    is_open,
+    new_diffusivity_pre_exp,
+    new_diffusivity_act_energy,
+    new_diffusivity_author,
+    new_diffusivity_year,
+    new_diffusivity_isotope,
+    new_diffusivity_material,
+):
+    if is_open and None in [
+        new_diffusivity_pre_exp,
+        new_diffusivity_act_energy,
+        new_diffusivity_author,
+        new_diffusivity_year,
+        new_diffusivity_isotope,
+        new_diffusivity_material,
+    ]:
+        return is_open
     if n1 or n2:
         return not is_open
     return is_open
@@ -843,10 +869,35 @@ def toggle_modal(n1, n2, is_open):
     dash.Output("modal_add_solubility", "is_open"),
     dash.Input("add_property_solubility", "n_clicks"),
     dash.Input("submit_new_solubility", "n_clicks"),
+    dash.State("new_solubility_pre_exp", "value"),
+    dash.State("new_solubility_act_energy", "value"),
+    dash.State("new_solubility_author", "value"),
+    dash.State("new_solubility_year", "value"),
+    dash.State("new_solubility_isotope", "value"),
+    dash.State("new_solubility_material", "value"),
     dash.State("modal_add_solubility", "is_open"),
     prevent_initial_call=True,
 )
-def toggle_modal(n1, n2, is_open):
+def toggle_modal(
+    n1,
+    n2,
+    is_open,
+    new_solubility_pre_exp,
+    new_solubility_act_energy,
+    new_solubility_author,
+    new_solubility_year,
+    new_solubility_isotope,
+    new_solubility_material,
+):
+    if is_open and None in [
+        new_solubility_pre_exp,
+        new_solubility_act_energy,
+        new_solubility_author,
+        new_solubility_year,
+        new_solubility_isotope,
+        new_solubility_material,
+    ]:
+        return is_open
     if n1 or n2:
         return not is_open
     return is_open
