@@ -380,6 +380,8 @@ layout = dbc.Container(
                 dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a diffusivity"))),
                 dbc.ModalBody(
                     [
+                        html.Div(html.B("D = D_0 exp(-E_D/k_B/T)")),
+                        html.Br(),
                         html.Div(
                             [
                                 "D_0 (m2/s): ",
@@ -477,6 +479,8 @@ layout = dbc.Container(
                 dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a solubility"))),
                 dbc.ModalBody(
                     [
+                        html.Div(html.B("S = S_0 exp(-E_S/k_B/T)")),
+                        html.Br(),
                         html.Div(
                             [
                                 "S_0: ",
