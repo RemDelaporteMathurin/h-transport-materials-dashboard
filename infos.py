@@ -11,17 +11,13 @@ text_infos = [
         [
             "Finding material properties for ",
             html.B("hydrogen transport"),
-            " is often tedious as many different values can be found in litterature. ",
+            " is often tedious as many different values can be found in literature. ",
             "The goal of this tool is to help scientists visualise material properties and compare them.",
         ]
     ),
     html.Br(),
     html.Div(
-        "On the left-hand side of the screen, properties can be filtered by material, author, isotope or by year of publication"
-    ),
-    html.Br(),
-    html.Div(
-        [html.B("Extract data"), ": downloads the displayed properties to a JSON file."]
+        "On the left-hand side of the screen, properties can be filtered by material, author, isotope or by year of publication."
     ),
     html.Br(),
     html.Div(
@@ -29,6 +25,17 @@ text_infos = [
             html.B("Compute mean curve"),
             ": calculates the mean curve of the displayed properties.",
         ]
+    ),
+    html.Br(),
+    html.Div(
+        [
+            html.B("Add property"),
+            ": adds a custom diffusivity or solubility to the dataset.",
+        ]
+    ),
+    html.Br(),
+    html.Div(
+        [html.B("Extract data"), ": downloads the displayed properties to a JSON file."]
     ),
     html.Br(),
     html.Div(

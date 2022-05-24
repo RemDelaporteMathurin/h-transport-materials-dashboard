@@ -1,6 +1,8 @@
 from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
 from graph import (
+    all_diffusivities,
+    all_solubilities,
     make_diffusivities,
     make_solubilities,
     all_authors_diffusivities,
@@ -12,8 +14,13 @@ from graph import (
     min_year_solubilities,
     max_year_solubilities,
 )
+
+import h_transport_materials as htm
+
 from export import create_data_as_dict, generate_python_code
 from infos import text_infos
+from new_diffusivity_form import form_new_diffusivity
+from new_solubility_form import form_new_solubility
 
 import dash
 from dash import dcc
@@ -178,33 +185,36 @@ layout = dbc.Container(
                                                     style={"margin": "5px"},
                                                     n_clicks="0",
                                                 ),
-                                                html.Div(
+                                                dbc.Button(
+                                                    "Add property",
+                                                    id="add_property_diffusivity",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks="0",
+                                                ),
+                                                dbc.Button(
                                                     [
-                                                        dbc.Button(
-                                                            "Extract data",
-                                                            id="extract_button_diffusivity",
-                                                            color="primary",
-                                                            style={"margin": "5px"},
-                                                            n_clicks="0",
-                                                        ),
+                                                        "Extract data",
                                                         dcc.Download(
                                                             id="download-text_diffusivity"
                                                         ),
-                                                    ]
+                                                    ],
+                                                    id="extract_button_diffusivity",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks="0",
                                                 ),
-                                                html.Div(
+                                                dbc.Button(
                                                     [
-                                                        dbc.Button(
-                                                            "Python",
-                                                            id="python_button_diffusivity",
-                                                            color="primary",
-                                                            style={"margin": "5px"},
-                                                            n_clicks_timestamp="0",
-                                                        ),
+                                                        "Python",
                                                         dcc.Download(
                                                             id="download-python_diffusivity"
                                                         ),
-                                                    ]
+                                                    ],
+                                                    id="python_button_diffusivity",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks_timestamp="0",
                                                 ),
                                             ]
                                         ),
@@ -310,33 +320,36 @@ layout = dbc.Container(
                                                     style={"margin": "5px"},
                                                     n_clicks_timestamp="0",
                                                 ),
-                                                html.Div(
+                                                dbc.Button(
+                                                    "Add property",
+                                                    id="add_property_solubility",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks="0",
+                                                ),
+                                                dbc.Button(
                                                     [
-                                                        dbc.Button(
-                                                            "Extract data",
-                                                            id="extract_button_solubility",
-                                                            color="primary",
-                                                            style={"margin": "5px"},
-                                                            n_clicks_timestamp="0",
-                                                        ),
+                                                        "Extract data",
                                                         dcc.Download(
                                                             id="download-text_solubility"
                                                         ),
-                                                    ]
+                                                    ],
+                                                    id="extract_button_solubility",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks_timestamp="0",
                                                 ),
-                                                html.Div(
+                                                dbc.Button(
                                                     [
-                                                        dbc.Button(
-                                                            "Python",
-                                                            id="python_button_solubility",
-                                                            color="primary",
-                                                            style={"margin": "5px"},
-                                                            n_clicks_timestamp="0",
-                                                        ),
+                                                        "Python",
                                                         dcc.Download(
                                                             id="download-python_solubility"
                                                         ),
-                                                    ]
+                                                    ],
+                                                    id="python_button_solubility",
+                                                    color="primary",
+                                                    style={"margin": "5px"},
+                                                    n_clicks_timestamp="0",
                                                 ),
                                             ]
                                         ),
@@ -363,6 +376,45 @@ layout = dbc.Container(
                     ],
                 ),
             ],
+        ),
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a diffusivity"))),
+                dbc.ModalBody(form_new_diffusivity),
+                dbc.ModalFooter(
+                    [
+                        html.Div("", id="error_message_new_diffusivity"),
+                        dbc.Button(
+                            "Submit",
+                            id="submit_new_diffusivity",
+                            color="primary",
+                            n_clicks="0",
+                        ),
+                    ]
+                ),
+            ],
+            id="modal_add_diffusivity",
+            is_open=False,
+            # size="lg",
+        ),
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a solubility"))),
+                dbc.ModalBody(form_new_solubility),
+                dbc.ModalFooter(
+                    [
+                        html.Div("", id="error_message_new_solubility"),
+                        dbc.Button(
+                            "Submit",
+                            id="submit_new_solubility",
+                            color="primary",
+                            n_clicks="0",
+                        ),
+                    ]
+                ),
+            ],
+            id="modal_add_solubility",
+            is_open=False,
         ),
     ],
     fluid=True,
@@ -609,6 +661,188 @@ def toggle_modal(n1, is_open):
     if n1:
         return not is_open
     return is_open
+
+
+@app.callback(
+    dash.Output("modal_add_diffusivity", "is_open"),
+    dash.Input("add_property_diffusivity", "n_clicks"),
+    dash.Input("submit_new_diffusivity", "n_clicks"),
+    dash.State("modal_add_diffusivity", "is_open"),
+    dash.State("new_diffusivity_pre_exp", "value"),
+    dash.State("new_diffusivity_act_energy", "value"),
+    dash.State("new_diffusivity_author", "value"),
+    dash.State("new_diffusivity_year", "value"),
+    dash.State("new_diffusivity_isotope", "value"),
+    dash.State("new_diffusivity_material", "value"),
+    prevent_initial_call=True,
+)
+def toggle_modal(
+    n1,
+    n2,
+    is_open,
+    new_diffusivity_pre_exp,
+    new_diffusivity_act_energy,
+    new_diffusivity_author,
+    new_diffusivity_year,
+    new_diffusivity_isotope,
+    new_diffusivity_material,
+):
+    if is_open and None in [
+        new_diffusivity_pre_exp,
+        new_diffusivity_act_energy,
+        new_diffusivity_author,
+        new_diffusivity_year,
+        new_diffusivity_isotope,
+        new_diffusivity_material,
+    ]:
+        return is_open
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    dash.Output("modal_add_solubility", "is_open"),
+    dash.Input("add_property_solubility", "n_clicks"),
+    dash.Input("submit_new_solubility", "n_clicks"),
+    dash.State("new_solubility_pre_exp", "value"),
+    dash.State("new_solubility_act_energy", "value"),
+    dash.State("new_solubility_author", "value"),
+    dash.State("new_solubility_year", "value"),
+    dash.State("new_solubility_isotope", "value"),
+    dash.State("new_solubility_material", "value"),
+    dash.State("modal_add_solubility", "is_open"),
+    prevent_initial_call=True,
+)
+def toggle_modal(
+    n1,
+    n2,
+    is_open,
+    new_solubility_pre_exp,
+    new_solubility_act_energy,
+    new_solubility_author,
+    new_solubility_year,
+    new_solubility_isotope,
+    new_solubility_material,
+):
+    if is_open and None in [
+        new_solubility_pre_exp,
+        new_solubility_act_energy,
+        new_solubility_author,
+        new_solubility_year,
+        new_solubility_isotope,
+        new_solubility_material,
+    ]:
+        return is_open
+    if n1 or n2:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    dash.Output("material_filter_diffusivities", "options"),
+    dash.Output("author_filter_diffusivities", "options"),
+    dash.Output("error_message_new_diffusivity", "children"),
+    dash.Input("submit_new_diffusivity", "n_clicks"),
+    dash.State("new_diffusivity_pre_exp", "value"),
+    dash.State("new_diffusivity_act_energy", "value"),
+    dash.State("new_diffusivity_author", "value"),
+    dash.State("new_diffusivity_year", "value"),
+    dash.State("new_diffusivity_isotope", "value"),
+    dash.State("new_diffusivity_material", "value"),
+    dash.State("new_diffusivity_range_low", "value"),
+    dash.State("new_diffusivity_range_high", "value"),
+    prevent_initial_call=True,
+)
+def add_diffusivity(
+    n_clicks,
+    new_diffusivity_pre_exp,
+    new_diffusivity_act_energy,
+    new_diffusivity_author,
+    new_diffusivity_year,
+    new_diffusivity_isotope,
+    new_diffusivity_material,
+    new_diffusivity_range_low,
+    new_diffusivity_range_high,
+):
+    if None in [
+        new_diffusivity_pre_exp,
+        new_diffusivity_act_energy,
+        new_diffusivity_author,
+        new_diffusivity_year,
+        new_diffusivity_isotope,
+        new_diffusivity_material,
+    ]:
+        return dash.no_update, dash.no_update, "Error!"
+    if (new_diffusivity_range_low, new_diffusivity_range_high) == (None, None):
+        (new_diffusivity_range_low, new_diffusivity_range_high) = (300, 1200)
+    new_property = htm.ArrheniusProperty(
+        pre_exp=new_diffusivity_pre_exp,
+        act_energy=new_diffusivity_act_energy,
+        author=new_diffusivity_author.lower(),
+        year=new_diffusivity_year,
+        isotope=new_diffusivity_isotope,
+        material=new_diffusivity_material,
+        range=(new_diffusivity_range_low, new_diffusivity_range_high),
+    )
+    all_diffusivities.properties.append(new_property)
+    all_authors = np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
+    all_materials = np.unique([D.material.lower() for D in all_diffusivities]).tolist()
+
+    return all_materials, all_authors, ""
+
+
+@app.callback(
+    dash.Output("material_filter_solubilities", "options"),
+    dash.Output("author_filter_solubilities", "options"),
+    dash.Output("error_message_new_solubility", "children"),
+    dash.Input("submit_new_solubility", "n_clicks"),
+    dash.State("new_solubility_pre_exp", "value"),
+    dash.State("new_solubility_act_energy", "value"),
+    dash.State("new_solubility_author", "value"),
+    dash.State("new_solubility_year", "value"),
+    dash.State("new_solubility_isotope", "value"),
+    dash.State("new_solubility_material", "value"),
+    dash.State("new_solubility_range_low", "value"),
+    dash.State("new_solubility_range_high", "value"),
+    prevent_initial_call=True,
+)
+def add_solubility(
+    n_clicks,
+    new_solubility_pre_exp,
+    new_solubility_act_energy,
+    new_solubility_author,
+    new_solubility_year,
+    new_solubility_isotope,
+    new_solubility_material,
+    new_solubility_range_low,
+    new_solubility_range_high,
+):
+    if None in [
+        new_solubility_pre_exp,
+        new_solubility_act_energy,
+        new_solubility_author,
+        new_solubility_year,
+        new_solubility_isotope,
+        new_solubility_material,
+    ]:
+        return dash.no_update, dash.no_update, "Error!"
+    if (new_solubility_range_low, new_solubility_range_high) == (None, None):
+        (new_solubility_range_low, new_solubility_range_high) = (300, 1200)
+    new_property = htm.ArrheniusProperty(
+        pre_exp=new_solubility_pre_exp,
+        act_energy=new_solubility_act_energy,
+        author=new_solubility_author.lower(),
+        year=new_solubility_year,
+        isotope=new_solubility_isotope,
+        material=new_solubility_material,
+        range=(new_solubility_range_low, new_solubility_range_high),
+    )
+    all_solubilities.properties.append(new_property)
+    all_authors = np.unique([D.author.capitalize() for D in all_solubilities]).tolist()
+    all_materials = np.unique([D.material.lower() for D in all_solubilities]).tolist()
+
+    return all_materials, all_authors, ""
 
 
 if __name__ == "__main__":
