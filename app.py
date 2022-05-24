@@ -489,7 +489,7 @@ layout = dbc.Container(
                         ),
                         html.Div(
                             [
-                                "E_D (eV): ",
+                                "E_S (eV): ",
                                 dcc.Input(
                                     id="new_solubility_act_energy",
                                     type="number",
