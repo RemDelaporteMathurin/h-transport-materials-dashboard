@@ -7,6 +7,7 @@ from graph import (
     make_solubilities,
     all_authors_diffusivities,
     all_authors_solubilities,
+    all_materials,
     make_graph,
     make_graph_solubilities,
     add_mean_value,
@@ -31,7 +32,6 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
 
 server = app.server
 
-all_materials = ["tungsten", "copper", "cucrzr"]
 all_isotopes = ["H", "D", "T"]
 
 layout = dbc.Container(

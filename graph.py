@@ -12,6 +12,8 @@ all_authors_solubilities = np.unique(
     [S.author.capitalize() for S in all_solubilities]
 ).tolist()
 
+all_materials = np.unique([D.material for D in all_diffusivities]).tolist()
+
 all_years_solubilities = [S.year for S in all_solubilities]
 min_year_solubilities = min(all_years_solubilities)
 max_year_solubilities = max(all_years_solubilities)
