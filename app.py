@@ -19,12 +19,13 @@ import h_transport_materials as htm
 
 from export import create_data_as_dict, generate_python_code
 from infos import text_infos
+from new_diffusivity_form import form_new_diffusivity
+from new_solubility_form import form_new_solubility
 
 import dash
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
-from dash.exceptions import PreventUpdate
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
 
@@ -379,90 +380,7 @@ layout = dbc.Container(
         dbc.Modal(
             [
                 dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a diffusivity"))),
-                dbc.ModalBody(
-                    [
-                        html.Div(html.B("D = D_0 exp(-E_D/k_B/T)")),
-                        html.Br(),
-                        html.Div(
-                            [
-                                "D_0 (m2/s): ",
-                                dcc.Input(
-                                    id="new_diffusivity_pre_exp",
-                                    type="number",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "E_D (eV): ",
-                                dcc.Input(
-                                    id="new_diffusivity_act_energy",
-                                    type="number",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Author: ",
-                                dcc.Input(
-                                    id="new_diffusivity_author",
-                                    type="text",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Year: ",
-                                dcc.Input(
-                                    id="new_diffusivity_year",
-                                    type="number",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Isotope: ",
-                                dcc.Input(
-                                    id="new_diffusivity_isotope",
-                                    type="text",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Material: ",
-                                dcc.Input(
-                                    id="new_diffusivity_material",
-                                    type="text",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Temperature range: ",
-                                dcc.Input(
-                                    id="new_diffusivity_range_low",
-                                    type="number",
-                                    placeholder="300 K",
-                                    style={"width": 70},
-                                ),
-                                dcc.Input(
-                                    id="new_diffusivity_range_high",
-                                    type="number",
-                                    placeholder="1200 K",
-                                    style={"width": 75},
-                                    required=False,
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                dbc.ModalBody(form_new_diffusivity),
                 dbc.ModalFooter(
                     [
                         html.Div("", id="error_message_new_diffusivity"),
@@ -477,94 +395,12 @@ layout = dbc.Container(
             ],
             id="modal_add_diffusivity",
             is_open=False,
+            # size="lg",
         ),
         dbc.Modal(
             [
                 dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a solubility"))),
-                dbc.ModalBody(
-                    [
-                        html.Div(html.B("S = S_0 exp(-E_S/k_B/T)")),
-                        html.Br(),
-                        html.Div(
-                            [
-                                "S_0: ",
-                                dcc.Input(
-                                    id="new_solubility_pre_exp",
-                                    type="number",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "E_S (eV): ",
-                                dcc.Input(
-                                    id="new_solubility_act_energy",
-                                    type="number",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Author: ",
-                                dcc.Input(
-                                    id="new_solubility_author",
-                                    type="text",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Year: ",
-                                dcc.Input(
-                                    id="new_solubility_year",
-                                    type="number",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Isotope: ",
-                                dcc.Input(
-                                    id="new_solubility_isotope",
-                                    type="text",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Material: ",
-                                dcc.Input(
-                                    id="new_solubility_material",
-                                    type="text",
-                                    # placeholder="input type {}".format(_),
-                                ),
-                            ]
-                        ),
-                        html.Div(
-                            [
-                                "Temperature range: ",
-                                dcc.Input(
-                                    id="new_solubility_range_low",
-                                    type="number",
-                                    placeholder="300 K",
-                                    style={"width": 70},
-                                ),
-                                dcc.Input(
-                                    id="new_solubility_range_high",
-                                    type="number",
-                                    placeholder="1200 K",
-                                    style={"width": 75},
-                                    required=False,
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
+                dbc.ModalBody(form_new_solubility),
                 dbc.ModalFooter(
                     [
                         html.Div("", id="error_message_new_solubility"),
