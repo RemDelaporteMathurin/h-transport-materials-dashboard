@@ -855,6 +855,7 @@ def toggle_modal(n1, n2, is_open):
 @app.callback(
     dash.Output("material_filter_diffusivities", "options"),
     dash.Output("author_filter_diffusivities", "options"),
+    dash.Output("error_message_new_diffusivity", "children"),
     dash.Input("submit_new_diffusivity", "n_clicks"),
     dash.State("new_diffusivity_pre_exp", "value"),
     dash.State("new_diffusivity_act_energy", "value"),
@@ -877,6 +878,15 @@ def add_diffusivity(
     new_diffusivity_range_low,
     new_diffusivity_range_high,
 ):
+    if None in [
+        new_diffusivity_pre_exp,
+        new_diffusivity_act_energy,
+        new_diffusivity_author,
+        new_diffusivity_year,
+        new_diffusivity_isotope,
+        new_diffusivity_material,
+    ]:
+        return dash.no_update, dash.no_update, "Error!"
     if (new_diffusivity_range_low, new_diffusivity_range_high) == (None, None):
         (new_diffusivity_range_low, new_diffusivity_range_high) = (300, 1200)
     new_property = htm.ArrheniusProperty(
@@ -892,12 +902,13 @@ def add_diffusivity(
     all_authors = np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
     all_materials = np.unique([D.material.lower() for D in all_diffusivities]).tolist()
 
-    return all_materials, all_authors
+    return all_materials, all_authors, ""
 
 
 @app.callback(
     dash.Output("material_filter_solubilities", "options"),
     dash.Output("author_filter_solubilities", "options"),
+    dash.Output("error_message_new_solubility", "children"),
     dash.Input("submit_new_solubility", "n_clicks"),
     dash.State("new_solubility_pre_exp", "value"),
     dash.State("new_solubility_act_energy", "value"),
@@ -920,6 +931,15 @@ def add_solubility(
     new_solubility_range_low,
     new_solubility_range_high,
 ):
+    if None in [
+        new_solubility_pre_exp,
+        new_solubility_act_energy,
+        new_solubility_author,
+        new_solubility_year,
+        new_solubility_isotope,
+        new_solubility_material,
+    ]:
+        return dash.no_update, dash.no_update, "Error!"
     if (new_solubility_range_low, new_solubility_range_high) == (None, None):
         (new_solubility_range_low, new_solubility_range_high) = (300, 1200)
     new_property = htm.ArrheniusProperty(
@@ -935,7 +955,7 @@ def add_solubility(
     all_authors = np.unique([D.author.capitalize() for D in all_solubilities]).tolist()
     all_materials = np.unique([D.material.lower() for D in all_solubilities]).tolist()
 
-    return all_materials, all_authors
+    return all_materials, all_authors, ""
 
 
 if __name__ == "__main__":
