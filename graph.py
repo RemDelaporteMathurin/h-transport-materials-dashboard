@@ -105,14 +105,14 @@ def make_graph(diffusivities):
             )
         )
         if D.data_T is not None:
-            fig.add_traces(
+            fig.add_trace(
                 go.Scatter(
                     x=1 / D.data_T,
                     y=D.data_y,
                     name=label,
                     mode="markers",
                     marker=dict(color=fig.data[-1].line.color)
-                        )
+                )
             )
 
     fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" m<sup>2</sup>/s")
@@ -161,14 +161,14 @@ def make_graph_solubilities(solubilities):
             )
         )
         if S.data_T is not None:
-            fig.add_traces(
+            fig.add_trace(
                 go.Scatter(
                     x=1 / S.data_T,
                     y=S.data_y,
                     name=label,
                     mode="markers",
                     marker=dict(color=fig.data[-1].line.color)
-                        )
+                )
             )
 
     # add_mean_value(diffusivities, fig)
