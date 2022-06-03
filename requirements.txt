@@ -2,6 +2,6 @@ h-transport-materials==0.2.1
 numpy>=1.9
 dash
 dash_bootstrap_components
-plotly
+plotly==5.8.0
 jinja2==3.1.1
 gunicorn
