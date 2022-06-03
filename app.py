@@ -31,7 +31,12 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
 
 server = app.server
 
-all_materials = ["tungsten", "copper", "cucrzr"]
+all_materials = np.unique(
+    [
+        prop.material
+        for prop in all_diffusivities.properties + all_solubilities.properties
+        ]
+    ).tolist()
 all_isotopes = ["H", "D", "T"]
 
 layout = dbc.Container(
