@@ -1,4 +1,3 @@
-from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
 from graph import (
     all_diffusivities,
