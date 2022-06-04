@@ -146,8 +146,20 @@ layout = dbc.Container(
                                         html.Br(),
                                         html.Label("Filter by author:"),
                                         dcc.Dropdown(
-                                            all_authors_diffusivities,
-                                            all_authors_diffusivities,
+                                            np.unique(
+                                                [
+                                                    D.author.capitalize()
+                                                    for D in all_diffusivities
+                                                    if D.material == "tungsten"
+                                                ]
+                                            ).tolist(),
+                                            np.unique(
+                                                [
+                                                    D.author.capitalize()
+                                                    for D in all_diffusivities
+                                                    if D.material == "tungsten"
+                                                ]
+                                            ).tolist(),
                                             multi=True,
                                             id="author_filter_diffusivities",
                                         ),
@@ -740,6 +752,7 @@ def toggle_modal(
     dash.Output("author_filter_diffusivities", "options"),
     dash.Output("error_message_new_diffusivity", "children"),
     dash.Input("submit_new_diffusivity", "n_clicks"),
+    dash.Input("material_filter_diffusivities", "value"),
     dash.State("new_diffusivity_pre_exp", "value"),
     dash.State("new_diffusivity_act_energy", "value"),
     dash.State("new_diffusivity_author", "value"),
@@ -752,6 +765,7 @@ def toggle_modal(
 )
 def add_diffusivity(
     n_clicks,
+    material_filter_diffusivities,
     new_diffusivity_pre_exp,
     new_diffusivity_act_energy,
     new_diffusivity_author,
@@ -761,28 +775,37 @@ def add_diffusivity(
     new_diffusivity_range_low,
     new_diffusivity_range_high,
 ):
-    if None in [
-        new_diffusivity_pre_exp,
-        new_diffusivity_act_energy,
-        new_diffusivity_author,
-        new_diffusivity_year,
-        new_diffusivity_isotope,
-        new_diffusivity_material,
-    ]:
-        return dash.no_update, dash.no_update, "Error!"
-    if (new_diffusivity_range_low, new_diffusivity_range_high) == (None, None):
-        (new_diffusivity_range_low, new_diffusivity_range_high) = (300, 1200)
-    new_property = htm.ArrheniusProperty(
-        pre_exp=new_diffusivity_pre_exp,
-        act_energy=new_diffusivity_act_energy,
-        author=new_diffusivity_author.lower(),
-        year=new_diffusivity_year,
-        isotope=new_diffusivity_isotope,
-        material=new_diffusivity_material,
-        range=(new_diffusivity_range_low, new_diffusivity_range_high),
-    )
-    all_diffusivities.properties.append(new_property)
-    all_authors = np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "submit_new_diffusivity.n_clicks":
+        if None in [
+            new_diffusivity_pre_exp,
+            new_diffusivity_act_energy,
+            new_diffusivity_author,
+            new_diffusivity_year,
+            new_diffusivity_isotope,
+            new_diffusivity_material,
+        ]:
+            return dash.no_update, dash.no_update, "Error!"
+        if (new_diffusivity_range_low, new_diffusivity_range_high) == (None, None):
+            (new_diffusivity_range_low, new_diffusivity_range_high) = (300, 1200)
+        new_property = htm.ArrheniusProperty(
+            pre_exp=new_diffusivity_pre_exp,
+            act_energy=new_diffusivity_act_energy,
+            author=new_diffusivity_author.lower(),
+            year=new_diffusivity_year,
+            isotope=new_diffusivity_isotope,
+            material=new_diffusivity_material,
+            range=(new_diffusivity_range_low, new_diffusivity_range_high),
+        )
+        all_diffusivities.properties.append(new_property)
+
+    all_authors = np.unique(
+        [
+            D.author.capitalize()
+            for D in all_diffusivities
+            if D.material in material_filter_diffusivities
+        ]
+    ).tolist()
     all_materials = np.unique([D.material.lower() for D in all_diffusivities]).tolist()
 
     return all_materials, all_authors, ""
@@ -793,6 +816,7 @@ def add_diffusivity(
     dash.Output("author_filter_solubilities", "options"),
     dash.Output("error_message_new_solubility", "children"),
     dash.Input("submit_new_solubility", "n_clicks"),
+    dash.Input("material_filter_solubilities", "value"),
     dash.State("new_solubility_pre_exp", "value"),
     dash.State("new_solubility_act_energy", "value"),
     dash.State("new_solubility_author", "value"),
@@ -805,6 +829,7 @@ def add_diffusivity(
 )
 def add_solubility(
     n_clicks,
+    material_filter_solubilities,
     new_solubility_pre_exp,
     new_solubility_act_energy,
     new_solubility_author,
@@ -814,28 +839,36 @@ def add_solubility(
     new_solubility_range_low,
     new_solubility_range_high,
 ):
-    if None in [
-        new_solubility_pre_exp,
-        new_solubility_act_energy,
-        new_solubility_author,
-        new_solubility_year,
-        new_solubility_isotope,
-        new_solubility_material,
-    ]:
-        return dash.no_update, dash.no_update, "Error!"
-    if (new_solubility_range_low, new_solubility_range_high) == (None, None):
-        (new_solubility_range_low, new_solubility_range_high) = (300, 1200)
-    new_property = htm.ArrheniusProperty(
-        pre_exp=new_solubility_pre_exp,
-        act_energy=new_solubility_act_energy,
-        author=new_solubility_author.lower(),
-        year=new_solubility_year,
-        isotope=new_solubility_isotope,
-        material=new_solubility_material,
-        range=(new_solubility_range_low, new_solubility_range_high),
-    )
-    all_solubilities.properties.append(new_property)
-    all_authors = np.unique([D.author.capitalize() for D in all_solubilities]).tolist()
+    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+    if changed_id == "submit_new_diffusivity.n_clicks":
+        if None in [
+            new_solubility_pre_exp,
+            new_solubility_act_energy,
+            new_solubility_author,
+            new_solubility_year,
+            new_solubility_isotope,
+            new_solubility_material,
+        ]:
+            return dash.no_update, dash.no_update, "Error!"
+        if (new_solubility_range_low, new_solubility_range_high) == (None, None):
+            (new_solubility_range_low, new_solubility_range_high) = (300, 1200)
+        new_property = htm.ArrheniusProperty(
+            pre_exp=new_solubility_pre_exp,
+            act_energy=new_solubility_act_energy,
+            author=new_solubility_author.lower(),
+            year=new_solubility_year,
+            isotope=new_solubility_isotope,
+            material=new_solubility_material,
+            range=(new_solubility_range_low, new_solubility_range_high),
+        )
+        all_solubilities.properties.append(new_property)
+    all_authors = np.unique(
+        [
+            D.author.capitalize()
+            for D in all_solubilities
+            if D.material in material_filter_solubilities
+        ]
+    ).tolist()
     all_materials = np.unique([D.material.lower() for D in all_solubilities]).tolist()
 
     return all_materials, all_authors, ""
