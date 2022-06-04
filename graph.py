@@ -154,16 +154,16 @@ def make_graph_solubilities(solubilities):
                 + "<extra></extra>",
             )
         )
-        # if S.data_T is not None:
-        #     fig.add_trace(
-        #         go.Scatter(
-        #             x=1 / S.data_T,
-        #             y=S.data_y,
-        #             name=label,
-        #             mode="markers",
-        #             marker=dict(color=fig.data[-1].line.color),
-        #         )
-        #     )
+        if S.data_T is not None:
+            fig.add_trace(
+                go.Scatter(
+                    x=1 / S.data_T,
+                    y=S.data_y,
+                    name=label,
+                    mode="markers",
+                    marker=dict(color=fig.data[-1].line.color),
+                )
+            )
 
     fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" ")
     fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
