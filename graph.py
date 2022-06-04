@@ -99,16 +99,16 @@ def make_graph(diffusivities):
                 + "<extra></extra>",
             )
         )
-        # if D.data_T is not None:
-        #     fig.add_trace(
-        #         go.Scatter(
-        #             x=1 / D.data_T,
-        #             y=D.data_y,
-        #             name=label,
-        #             mode="markers",
-        #             marker=dict(color=fig.data[-1].line.color),
-        #         )
-        #     )
+        if D.data_T is not None:
+            fig.add_trace(
+                go.Scatter(
+                    x=1 / D.data_T,
+                    y=D.data_y,
+                    name=label,
+                    mode="markers",
+                    marker=dict(color=fig.data[-1].line.color),
+                )
+            )
 
     fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" m<sup>2</sup>/s")
     fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
