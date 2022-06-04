@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import h_transport_materials as htm
 import numpy as np
+import plotly.express as px
 
 all_diffusivities = htm.diffusivities
 all_solubilities = htm.solubilities
@@ -15,6 +16,9 @@ all_authors_solubilities = np.unique(
 all_years_solubilities = [S.year for S in all_solubilities]
 min_year_solubilities = min(all_years_solubilities)
 max_year_solubilities = max(all_years_solubilities)
+
+
+colours = px.colors.qualitative.Plotly
 
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
