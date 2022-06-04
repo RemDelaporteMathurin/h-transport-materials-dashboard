@@ -86,7 +86,10 @@ def make_graph(diffusivities):
         label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
         range = D.range
         if D.range is None:
-            range = (300, 1200)
+            if D.data_T is not None:
+                range = (D.data_T.min(), D.data_T.max())
+            else:
+                range = (300, 1200)
         T = np.linspace(range[0], range[1], num=500)
         fig.add_trace(
             go.Scatter(
@@ -142,7 +145,10 @@ def make_graph_solubilities(solubilities):
         label = "{} {} ({})".format(S.isotope, S.author.capitalize(), S.year)
         range = S.range
         if S.range is None:
-            range = (300, 1200)
+            if S.data_T is not None:
+                range = (S.data_T.min(), S.data_T.max())
+            else:
+                range = (300, 1200)
         T = np.linspace(range[0], range[1], num=500)
         fig.add_trace(
             go.Scatter(
