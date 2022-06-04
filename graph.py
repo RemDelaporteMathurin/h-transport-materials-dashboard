@@ -18,7 +18,7 @@ min_year_solubilities = min(all_years_solubilities)
 max_year_solubilities = max(all_years_solubilities)
 
 
-colours = px.colors.qualitative.Plotly
+# colours = px.colors.qualitative.Plotly
 
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
