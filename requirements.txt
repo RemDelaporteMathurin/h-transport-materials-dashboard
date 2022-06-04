@@ -1,7 +1,8 @@
 h-transport-materials==0.2.1
 numpy>=1.9
-dash
-dash_bootstrap_components
-plotly
+dash==2.4.1
+dash-bootstrap-components==1.1.0
+plotly==5.8.0
 jinja2==3.1.1
 gunicorn
+pandas==1.4.2

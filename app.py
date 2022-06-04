@@ -1,4 +1,3 @@
-from plotly.colors import DEFAULT_PLOTLY_COLORS
 import numpy as np
 from graph import (
     all_diffusivities,
@@ -35,8 +34,8 @@ all_materials = np.unique(
     [
         prop.material
         for prop in all_diffusivities.properties + all_solubilities.properties
-        ]
-    ).tolist()
+    ]
+).tolist()
 all_isotopes = ["H", "D", "T"]
 
 layout = dbc.Container(
@@ -227,7 +226,7 @@ layout = dbc.Container(
                                             id="graph_diffusivity",
                                             figure=make_graph(
                                                 make_diffusivities(
-                                                    materials=all_materials,
+                                                    materials=["tungsten"],
                                                     authors=all_authors_diffusivities,
                                                     isotopes=all_isotopes,
                                                     years=[1950, 2021],

@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import h_transport_materials as htm
 import numpy as np
+import plotly.express as px
 
 all_diffusivities = htm.diffusivities
 all_solubilities = htm.solubilities
@@ -15,6 +16,9 @@ all_authors_solubilities = np.unique(
 all_years_solubilities = [S.year for S in all_solubilities]
 min_year_solubilities = min(all_years_solubilities)
 max_year_solubilities = max(all_years_solubilities)
+
+
+colours = px.colors.qualitative.Plotly
 
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
@@ -78,7 +82,7 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
 
 def make_graph(diffusivities):
     fig = go.Figure()
-    for D in diffusivities:
+    for i, D in enumerate(diffusivities):
         label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
         range = D.range
         if D.range is None:
@@ -90,6 +94,7 @@ def make_graph(diffusivities):
                 y=D.value(T),
                 name=label,
                 mode="lines",
+                line=dict(color=colours[i % 10]),
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
@@ -99,8 +104,16 @@ def make_graph(diffusivities):
                 + "<extra></extra>",
             )
         )
-
-    # add_mean_value(diffusivities, fig)
+        if D.data_T is not None:
+            fig.add_trace(
+                go.Scatter(
+                    x=1 / D.data_T,
+                    y=D.data_y,
+                    name=label,
+                    mode="markers",
+                    marker=dict(color=fig.data[-1].line.color),
+                )
+            )
 
     fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" m<sup>2</sup>/s")
     fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
@@ -125,7 +138,7 @@ def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
 
 def make_graph_solubilities(solubilities):
     fig = go.Figure()
-    for S in solubilities:
+    for i, S in enumerate(solubilities):
         label = "{} {} ({})".format(S.isotope, S.author.capitalize(), S.year)
         range = S.range
         if S.range is None:
@@ -137,6 +150,7 @@ def make_graph_solubilities(solubilities):
                 y=S.value(T),
                 name=label,
                 mode="lines",
+                line=dict(color=colours[i % 10]),
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
@@ -146,8 +160,16 @@ def make_graph_solubilities(solubilities):
                 + "<extra></extra>",
             )
         )
-
-    # add_mean_value(diffusivities, fig)
+        if S.data_T is not None:
+            fig.add_trace(
+                go.Scatter(
+                    x=1 / S.data_T,
+                    y=S.data_y,
+                    name=label,
+                    mode="markers",
+                    marker=dict(color=fig.data[-1].line.color),
+                )
+            )
 
     fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" ")
     fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
