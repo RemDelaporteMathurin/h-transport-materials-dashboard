@@ -18,7 +18,7 @@ min_year_solubilities = min(all_years_solubilities)
 max_year_solubilities = max(all_years_solubilities)
 
 
-# colours = px.colors.qualitative.Plotly
+colours = px.colors.qualitative.Plotly
 
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
@@ -82,7 +82,7 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
 
 def make_graph(diffusivities):
     fig = go.Figure()
-    for D in diffusivities:
+    for i, D in enumerate(diffusivities):
         label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
         range = D.range
         if D.range is None:
@@ -94,6 +94,7 @@ def make_graph(diffusivities):
                 y=D.value(T),
                 name=label,
                 mode="lines",
+                line=dict(color=colours[i % 10]),
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
@@ -137,7 +138,7 @@ def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
 
 def make_graph_solubilities(solubilities):
     fig = go.Figure()
-    for S in solubilities:
+    for i, S in enumerate(solubilities):
         label = "{} {} ({})".format(S.isotope, S.author.capitalize(), S.year)
         range = S.range
         if S.range is None:
@@ -149,6 +150,7 @@ def make_graph_solubilities(solubilities):
                 y=S.value(T),
                 name=label,
                 mode="lines",
+                line=dict(color=colours[i % 10]),
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
