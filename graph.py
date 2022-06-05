@@ -182,3 +182,26 @@ def make_graph_solubilities(solubilities):
     fig.update_yaxes(title_text="Solubility")
     # fig.write_html("out.html")
     return fig
+
+def make_figure_prop_per_year(group, step, selected_years=[1950, 2022]):
+    years = [prop.year for prop in group]
+    year_min, year_max = 1950, 2022
+
+    years = np.arange(year_min, year_max, step=step)
+    if years[-1] != 2022:
+        years = np.append(years, [2022])
+
+    nb_props_per_year = []
+    for year1, year2 in zip(years[:-1], years[1:]):
+        count = 0
+        for prop in group:
+            if year1 <= prop.year < year2:
+                count += 1
+        
+        nb_props_per_year.append(count)
+
+    average_years = years[:-1]-(years[:-1] - years[1:])/2
+    selected = [i for i, year in enumerate(average_years) if selected_years[0] <= year <= selected_years[1]]
+    fig = go.Figure([go.Bar(x=average_years, y=nb_props_per_year, selectedpoints=selected)])
+    fig.update_yaxes(title_text="Nb of properties")
+    return fig
