@@ -400,6 +400,24 @@ layout = dbc.Container(
                                 ),
                             ]
                         ),
+                        dbc.Row(
+                            dbc.Col(
+                                    [
+                                        dcc.Graph(
+                                            id="graph_prop_per_year_solubility",
+                                            figure=make_figure_prop_per_year(
+                                                    make_diffusivities(
+                                                        materials=all_materials,
+                                                        authors=all_authors_diffusivities,
+                                                        isotopes=all_isotopes,
+                                                        years=[1950, 2022],
+                                                        ),
+                                                    step=5),
+                                            style={"width": "100vh", "height": "50vh"},
+                                        ),
+                                    ]
+                                ),
+                        )
                     ],
                 ),
             ],
@@ -534,6 +552,7 @@ def add_all_authors(n_clicks):
 # callback filters solubility
 @app.callback(
     dash.Output("graph_solubilities", "figure"),
+    dash.Output("graph_prop_per_year_solubility", "figure"),
     dash.Input("material_filter_solubilities", "value"),
     dash.Input("isotope_filter_solubilities", "value"),
     dash.Input("author_filter_solubilities", "value"),
@@ -553,12 +572,18 @@ def update_solubility_graph(
         isotopes=isotope_filter_solubilities,
         years=year_filter_solubilities,
     )
+    all_solubilities = make_solubilities(
+        materials=material_filter_solubilities,
+        authors=author_filter_solubilities,
+        isotopes=isotope_filter_solubilities,
+        years=[1950, 2022],
+    )
     figure = make_graph_solubilities(solubilities)
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
     if changed_id == "mean_button_solubility.n_clicks":
         add_mean_value_solubilities(solubilities, figure)
 
-    return figure
+    return figure, make_figure_prop_per_year(all_solubilities, step=5, selected_years=year_filter_solubilities)
 
 
 # extract data buttons
