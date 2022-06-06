@@ -272,7 +272,10 @@ layout = dbc.Container(
                                     ]
                                 ),
                                 dbc.Col(
-                                        [citations_graph_diffusivity]
+                                        [
+                                            dcc.RadioItems(['Total', 'Per year'], 'Total', id="radio_citations_diffusivity", inline=True, inputStyle={"margin-left": "20px"}),
+                                            citations_graph_diffusivity
+                                            ]
                                     )
                                 ]
                             )
@@ -425,7 +428,10 @@ layout = dbc.Container(
                                     ]
                                 ),
                             dbc.Col(
-                                    [citations_graph_solubility]
+                                    [
+                                        dcc.RadioItems(['Total', 'Per year'], 'Total', id="radio_citations_solubility", inline=True, inputStyle={"margin-left": "20px"}),
+                                        citations_graph_solubility
+                                        ]
                                 )]
                         )
                     ],
@@ -480,6 +486,7 @@ app.layout = layout
 @app.callback(
     dash.Output("graph_nb_citations_diffusivity", "figure"),
     dash.Input("graph_diffusivity", "figure"),
+    dash.Input("radio_citations_diffusivity", "value"),
     dash.State("material_filter_diffusivities", "value"),
     dash.State("isotope_filter_diffusivities", "value"),
     dash.State("author_filter_diffusivities", "value"),
@@ -487,6 +494,7 @@ app.layout = layout
 )
 def make_figure(
         figure,
+        radio_citations_diffusivity,
         material_filter_diffusivities,
         isotope_filter_diffusivities,
         author_filter_diffusivities,
@@ -497,11 +505,16 @@ def make_figure(
         isotopes=isotope_filter_diffusivities,
         years=year_filter_diffusivities,
     )
-    return make_citations_graph(diffusitivites)
+    if radio_citations_diffusivity == "Per year":
+        per_year = True
+    else:
+        per_year = False
+    return make_citations_graph(diffusitivites, per_year)
 
 @app.callback(
     dash.Output("graph_nb_citations_solubility", "figure"),
     dash.Input("graph_solubilities", "figure"),
+    dash.Input("radio_citations_solubility", "value"),
     dash.State("material_filter_solubilities", "value"),
     dash.State("isotope_filter_solubilities", "value"),
     dash.State("author_filter_solubilities", "value"),
@@ -509,6 +522,7 @@ def make_figure(
 )
 def make_figure(
         figure,
+        radio_citations_solubility,
         material_filter_solubilities,
         isotope_filter_solubilities,
         author_filter_solubilities,
@@ -519,7 +533,11 @@ def make_figure(
         isotopes=isotope_filter_solubilities,
         years=year_filter_solubilities,
     )
-    return make_citations_graph(solubilities)
+    if radio_citations_solubility == "Per year":
+        per_year = True
+    else:
+        per_year = False
+    return make_citations_graph(solubilities, per_year)
 
 
 @app.callback(
