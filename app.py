@@ -15,6 +15,8 @@ from graph import (
     make_figure_prop_per_year
 )
 
+from citations import citations_graph_diffusivity, citations_graph_solubility, make_citations_graph
+
 import h_transport_materials as htm
 
 from export import create_data_as_dict, generate_python_code
@@ -252,7 +254,8 @@ layout = dbc.Container(
                             ]
                         ),
                         dbc.Row(
-                            dbc.Col(
+                            [
+                                dbc.Col(
                                     [
                                         dcc.Graph(
                                             id="graph_prop_per_year_diffusivity",
@@ -267,7 +270,14 @@ layout = dbc.Container(
                                             style={"width": "100vh", "height": "50vh"},
                                         ),
                                     ]
-                                )
+                                ),
+                                dbc.Col(
+                                        [
+                                            dcc.RadioItems(['Total', 'Per year'], 'Total', id="radio_citations_diffusivity", inline=True, inputStyle={"margin-left": "20px"}),
+                                            citations_graph_diffusivity
+                                            ]
+                                    )
+                                ]
                             )
                     ],
                 ),
@@ -401,7 +411,7 @@ layout = dbc.Container(
                             ]
                         ),
                         dbc.Row(
-                            dbc.Col(
+                            [dbc.Col(
                                     [
                                         dcc.Graph(
                                             id="graph_prop_per_year_solubility",
@@ -417,6 +427,12 @@ layout = dbc.Container(
                                         ),
                                     ]
                                 ),
+                            dbc.Col(
+                                    [
+                                        dcc.RadioItems(['Total', 'Per year'], 'Total', id="radio_citations_solubility", inline=True, inputStyle={"margin-left": "20px"}),
+                                        citations_graph_solubility
+                                        ]
+                                )]
                         )
                     ],
                 ),
@@ -465,6 +481,63 @@ layout = dbc.Container(
     fluid=True,
 )
 app.layout = layout
+
+
+@app.callback(
+    dash.Output("graph_nb_citations_diffusivity", "figure"),
+    dash.Input("graph_diffusivity", "figure"),
+    dash.Input("radio_citations_diffusivity", "value"),
+    dash.State("material_filter_diffusivities", "value"),
+    dash.State("isotope_filter_diffusivities", "value"),
+    dash.State("author_filter_diffusivities", "value"),
+    dash.State("year_filter_diffusivities", "value"),
+)
+def make_figure(
+        figure,
+        radio_citations_diffusivity,
+        material_filter_diffusivities,
+        isotope_filter_diffusivities,
+        author_filter_diffusivities,
+        year_filter_diffusivities):
+    diffusitivites = make_diffusivities(
+        materials=material_filter_diffusivities,
+        authors=author_filter_diffusivities,
+        isotopes=isotope_filter_diffusivities,
+        years=year_filter_diffusivities,
+    )
+    if radio_citations_diffusivity == "Per year":
+        per_year = True
+    else:
+        per_year = False
+    return make_citations_graph(diffusitivites, per_year)
+
+@app.callback(
+    dash.Output("graph_nb_citations_solubility", "figure"),
+    dash.Input("graph_solubilities", "figure"),
+    dash.Input("radio_citations_solubility", "value"),
+    dash.State("material_filter_solubilities", "value"),
+    dash.State("isotope_filter_solubilities", "value"),
+    dash.State("author_filter_solubilities", "value"),
+    dash.State("year_filter_solubilities", "value"),
+)
+def make_figure(
+        figure,
+        radio_citations_solubility,
+        material_filter_solubilities,
+        isotope_filter_solubilities,
+        author_filter_solubilities,
+        year_filter_solubilities):
+    solubilities = make_solubilities(
+        materials=material_filter_solubilities,
+        authors=author_filter_solubilities,
+        isotopes=isotope_filter_solubilities,
+        years=year_filter_solubilities,
+    )
+    if radio_citations_solubility == "Per year":
+        per_year = True
+    else:
+        per_year = False
+    return make_citations_graph(solubilities, per_year)
 
 
 @app.callback(

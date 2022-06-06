@@ -7,13 +7,17 @@ def create_data_as_dict(group: htm.PropertiesGroup):
     data = {}
     for property in group:
         name = "{}_{}_{}".format(property.isotope, property.author, property.year)
+        if property.bibsource:
+            source = property.bibdata.to_string('bibtex')
+        else:
+            source = property.source
         data_prop = {
             "pre_exp": property.pre_exp,
             "act_energy": property.act_energy,
             "year": property.year,
             "author": property.author,
             "isotope": property.isotope,
-            "source": property.source,
+            "source": source,
         }
         data[name] = data_prop
     return json.dumps(data, indent=2)
