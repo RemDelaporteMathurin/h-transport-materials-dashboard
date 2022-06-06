@@ -615,7 +615,12 @@ def update_graph(
         isotopes=isotope_filter_diffusivities,
         years=[1950, 2022],
     )
-    figure = make_graph_diffusivities(diffusitivites)
+    figure = make_graph_diffusivities(
+        diffusitivites,
+        author_label=len(author_filter_diffusivities) > 1,
+        isotope_label=len(isotope_filter_diffusivities) > 1,
+        material_label=len(material_filter_diffusivities) > 1,
+    )
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
     if changed_id == "mean_button_diffusivity.n_clicks":
         add_mean_value(diffusitivites, figure)
@@ -676,7 +681,14 @@ def update_solubility_graph(
         isotopes=isotope_filter_solubilities,
         years=[1950, 2022],
     )
-    figure = make_graph_solubilities(solubilities)
+    print(len(material_filter_solubilities) > 1)
+    print("coucou")
+    figure = make_graph_solubilities(
+        solubilities,
+        author_label=len(author_filter_solubilities) > 1,
+        isotope_label=len(isotope_filter_solubilities) > 1,
+        material_label=len(material_filter_solubilities) > 1,
+    )
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
     if changed_id == "mean_button_solubility.n_clicks":
         add_mean_value_solubilities(solubilities, figure)

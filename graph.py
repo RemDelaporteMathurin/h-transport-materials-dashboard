@@ -163,7 +163,15 @@ def make_graph_solubilities(
 ):
     fig = go.Figure()
     for i, S in enumerate(solubilities):
-        label = "{} {} ({})".format(S.isotope, S.author.capitalize(), S.year)
+        label = ""
+        if isotope_label:
+            label += "{} ".format(S.isotope)
+        if author_label:
+            label += "{} ".format(S.author.capitalize())
+        if material_label:
+            label += "{} ".format(S.material)
+        if year_label:
+            label += "({})".format(S.year)
         range = S.range
         if S.range is None:
             if S.data_T is not None:
