@@ -6,16 +6,20 @@ from graph import (
     make_solubilities,
     all_authors_diffusivities,
     all_authors_solubilities,
-    make_graph,
+    make_graph_diffusivities,
     make_graph_solubilities,
     add_mean_value,
     add_mean_value_solubilities,
     min_year_solubilities,
     max_year_solubilities,
-    make_figure_prop_per_year
+    make_figure_prop_per_year,
 )
 
-from citations import citations_graph_diffusivity, citations_graph_solubility, make_citations_graph
+from citations import (
+    citations_graph_diffusivity,
+    citations_graph_solubility,
+    make_citations_graph,
+)
 
 import h_transport_materials as htm
 
@@ -239,7 +243,7 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph_diffusivity",
-                                            figure=make_graph(
+                                            figure=make_graph_diffusivities(
                                                 make_diffusivities(
                                                     materials=["tungsten"],
                                                     authors=all_authors_diffusivities,
@@ -260,25 +264,32 @@ layout = dbc.Container(
                                         dcc.Graph(
                                             id="graph_prop_per_year_diffusivity",
                                             figure=make_figure_prop_per_year(
-                                                    make_diffusivities(
-                                                        materials=["tungsten"],
-                                                        authors=all_authors_diffusivities,
-                                                        isotopes=all_isotopes,
-                                                        years=[1950, 2022],
-                                                        ),
-                                                    step=5),
+                                                make_diffusivities(
+                                                    materials=["tungsten"],
+                                                    authors=all_authors_diffusivities,
+                                                    isotopes=all_isotopes,
+                                                    years=[1950, 2022],
+                                                ),
+                                                step=5,
+                                            ),
                                             style={"width": "100vh", "height": "50vh"},
                                         ),
                                     ]
                                 ),
                                 dbc.Col(
-                                        [
-                                            dcc.RadioItems(['Total', 'Per year'], 'Total', id="radio_citations_diffusivity", inline=True, inputStyle={"margin-left": "20px"}),
-                                            citations_graph_diffusivity
-                                            ]
-                                    )
-                                ]
-                            )
+                                    [
+                                        dcc.RadioItems(
+                                            ["Total", "Per year"],
+                                            "Total",
+                                            id="radio_citations_diffusivity",
+                                            inline=True,
+                                            inputStyle={"margin-left": "20px"},
+                                        ),
+                                        citations_graph_diffusivity,
+                                    ]
+                                ),
+                            ]
+                        ),
                     ],
                 ),
                 dcc.Tab(
@@ -411,29 +422,38 @@ layout = dbc.Container(
                             ]
                         ),
                         dbc.Row(
-                            [dbc.Col(
+                            [
+                                dbc.Col(
                                     [
                                         dcc.Graph(
                                             id="graph_prop_per_year_solubility",
                                             figure=make_figure_prop_per_year(
-                                                    make_diffusivities(
-                                                        materials=all_materials,
-                                                        authors=all_authors_diffusivities,
-                                                        isotopes=all_isotopes,
-                                                        years=[1950, 2022],
-                                                        ),
-                                                    step=5),
+                                                make_diffusivities(
+                                                    materials=all_materials,
+                                                    authors=all_authors_diffusivities,
+                                                    isotopes=all_isotopes,
+                                                    years=[1950, 2022],
+                                                ),
+                                                step=5,
+                                            ),
                                             style={"width": "100vh", "height": "50vh"},
                                         ),
                                     ]
                                 ),
-                            dbc.Col(
+                                dbc.Col(
                                     [
-                                        dcc.RadioItems(['Total', 'Per year'], 'Total', id="radio_citations_solubility", inline=True, inputStyle={"margin-left": "20px"}),
-                                        citations_graph_solubility
-                                        ]
-                                )]
-                        )
+                                        dcc.RadioItems(
+                                            ["Total", "Per year"],
+                                            "Total",
+                                            id="radio_citations_solubility",
+                                            inline=True,
+                                            inputStyle={"margin-left": "20px"},
+                                        ),
+                                        citations_graph_solubility,
+                                    ]
+                                ),
+                            ]
+                        ),
                     ],
                 ),
             ],
@@ -493,12 +513,13 @@ app.layout = layout
     dash.State("year_filter_diffusivities", "value"),
 )
 def make_figure(
-        figure,
-        radio_citations_diffusivity,
-        material_filter_diffusivities,
-        isotope_filter_diffusivities,
-        author_filter_diffusivities,
-        year_filter_diffusivities):
+    figure,
+    radio_citations_diffusivity,
+    material_filter_diffusivities,
+    isotope_filter_diffusivities,
+    author_filter_diffusivities,
+    year_filter_diffusivities,
+):
     diffusitivites = make_diffusivities(
         materials=material_filter_diffusivities,
         authors=author_filter_diffusivities,
@@ -511,6 +532,7 @@ def make_figure(
         per_year = False
     return make_citations_graph(diffusitivites, per_year)
 
+
 @app.callback(
     dash.Output("graph_nb_citations_solubility", "figure"),
     dash.Input("graph_solubilities", "figure"),
@@ -521,12 +543,13 @@ def make_figure(
     dash.State("year_filter_solubilities", "value"),
 )
 def make_figure(
-        figure,
-        radio_citations_solubility,
-        material_filter_solubilities,
-        isotope_filter_solubilities,
-        author_filter_solubilities,
-        year_filter_solubilities):
+    figure,
+    radio_citations_solubility,
+    material_filter_solubilities,
+    isotope_filter_solubilities,
+    author_filter_solubilities,
+    year_filter_solubilities,
+):
     solubilities = make_solubilities(
         materials=material_filter_solubilities,
         authors=author_filter_solubilities,
@@ -592,12 +615,14 @@ def update_graph(
         isotopes=isotope_filter_diffusivities,
         years=[1950, 2022],
     )
-    figure = make_graph(diffusitivites)
+    figure = make_graph_diffusivities(diffusitivites)
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
     if changed_id == "mean_button_diffusivity.n_clicks":
         add_mean_value(diffusitivites, figure)
 
-    return figure, make_figure_prop_per_year(all_diffusivities, step=5, selected_years=year_filter_diffusivities)
+    return figure, make_figure_prop_per_year(
+        all_diffusivities, step=5, selected_years=year_filter_diffusivities
+    )
 
 
 @app.callback(
@@ -656,7 +681,9 @@ def update_solubility_graph(
     if changed_id == "mean_button_solubility.n_clicks":
         add_mean_value_solubilities(solubilities, figure)
 
-    return figure, make_figure_prop_per_year(all_solubilities, step=5, selected_years=year_filter_solubilities)
+    return figure, make_figure_prop_per_year(
+        all_solubilities, step=5, selected_years=year_filter_solubilities
+    )
 
 
 # extract data buttons

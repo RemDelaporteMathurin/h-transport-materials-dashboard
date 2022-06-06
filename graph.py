@@ -80,10 +80,25 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
     return diffusivities
 
 
-def make_graph(diffusivities):
+def make_graph_diffusivities(
+    diffusivities,
+    year_label=True,
+    author_label=True,
+    isotope_label=True,
+    material_label=True,
+):
     fig = go.Figure()
     for i, D in enumerate(diffusivities):
-        label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
+        label = ""
+        if isotope_label:
+            label += "{} ".format(D.isotope)
+        if author_label:
+            label += "{} ".format(D.author.capitalize())
+        if material_label:
+            label += "{} ".format(D.material)
+        if year_label:
+            label += "({})".format(D.year)
+        # label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
         range = D.range
         if D.range is None:
             if D.data_T is not None:
@@ -139,7 +154,13 @@ def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
     return solubilities
 
 
-def make_graph_solubilities(solubilities):
+def make_graph_solubilities(
+    solubilities,
+    year_label=True,
+    author_label=True,
+    isotope_label=True,
+    material_label=True,
+):
     fig = go.Figure()
     for i, S in enumerate(solubilities):
         label = "{} {} ({})".format(S.isotope, S.author.capitalize(), S.year)
@@ -183,6 +204,7 @@ def make_graph_solubilities(solubilities):
     # fig.write_html("out.html")
     return fig
 
+
 def make_figure_prop_per_year(group, step, selected_years=[1950, 2022]):
     years = [prop.year for prop in group]
     year_min, year_max = 1950, 2022
@@ -197,11 +219,17 @@ def make_figure_prop_per_year(group, step, selected_years=[1950, 2022]):
         for prop in group:
             if year1 <= prop.year < year2:
                 count += 1
-        
+
         nb_props_per_year.append(count)
 
-    average_years = years[:-1]-(years[:-1] - years[1:])/2
-    selected = [i for i, year in enumerate(average_years) if selected_years[0] <= year <= selected_years[1]]
-    fig = go.Figure([go.Bar(x=average_years, y=nb_props_per_year, selectedpoints=selected)])
+    average_years = years[:-1] - (years[:-1] - years[1:]) / 2
+    selected = [
+        i
+        for i, year in enumerate(average_years)
+        if selected_years[0] <= year <= selected_years[1]
+    ]
+    fig = go.Figure(
+        [go.Bar(x=average_years, y=nb_props_per_year, selectedpoints=selected)]
+    )
     fig.update_yaxes(title_text="Nb of properties")
     return fig
