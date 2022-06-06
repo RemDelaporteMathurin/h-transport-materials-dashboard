@@ -3,7 +3,7 @@ from dash import dcc
 
 import h_transport_materials as htm
 
-def make_citations_graph(group: htm.PropertiesGroup):
+def make_citations_graph(group: htm.PropertiesGroup, per_year: bool=True):
     references = []
     nb_citations = []
     for prop in group:
@@ -14,7 +14,10 @@ def make_citations_graph(group: htm.PropertiesGroup):
         if label not in references:
 
             references.append(label)
-            nb_citations.append(prop.nb_citations)
+            if per_year:
+                nb_citations.append(prop.nb_citations/(2022-year))
+            else:
+                nb_citations.append(prop.nb_citations)
 
     # sort values
     references = [val_y for _, val_y in sorted(zip(nb_citations, references))]
@@ -25,7 +28,11 @@ def make_citations_graph(group: htm.PropertiesGroup):
             y=references,
             orientation='h')
     fig = go.Figure(bar)
-    fig.update_xaxes(title="Number of citations (Crossref)")
+    if per_year:
+        x_label = "Average number of citations per year (Crossref)"
+    else:
+        x_label = "Number of citations (Crossref)"
+    fig.update_xaxes(title=x_label)
     return fig
 
 
