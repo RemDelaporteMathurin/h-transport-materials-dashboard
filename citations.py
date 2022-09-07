@@ -31,9 +31,9 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool=True):
             orientation='h')
     fig = go.Figure(bar)
     if per_year:
-        x_label = "Average number of citations per year (Crossref)"
+        x_label = "Average number of citations per year (Crossref) DISABLED"
     else:
-        x_label = "Number of citations (Crossref)"
+        x_label = "Number of citations (Crossref) DISABLED"
     fig.update_xaxes(title=x_label)
     return fig
 
