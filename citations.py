@@ -11,13 +11,15 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool=True):
         year = prop.year
 
         label = "{} ({})".format(author.capitalize(), year)
-        if label not in references:
+        
+        # disable references temporarily
+        # if label not in references:
 
-            references.append(label)
-            if per_year:
-                nb_citations.append(prop.nb_citations/(2022-year))
-            else:
-                nb_citations.append(prop.nb_citations)
+        #     references.append(label)
+        #     if per_year:
+        #         nb_citations.append(prop.nb_citations/(2022-year))
+        #     else:
+        #         nb_citations.append(prop.nb_citations)
 
     # sort values
     references = [val_y for _, val_y in sorted(zip(nb_citations, references))]
@@ -29,9 +31,9 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool=True):
             orientation='h')
     fig = go.Figure(bar)
     if per_year:
-        x_label = "Average number of citations per year (Crossref)"
+        x_label = "Average number of citations per year (Crossref) DISABLED"
     else:
-        x_label = "Number of citations (Crossref)"
+        x_label = "Number of citations (Crossref) DISABLED"
     fig.update_xaxes(title=x_label)
     return fig
 
