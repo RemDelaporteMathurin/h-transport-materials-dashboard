@@ -109,6 +109,8 @@ def make_graph(diffusivities):
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
+                + D.material
+                + "<br>"
                 + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
                 + "T: %{customdata:.0f} K<br>"
                 + "D: %{y:,.2e} m<sup>2</sup>/s <br>"
@@ -170,6 +172,8 @@ def make_graph_solubilities(solubilities):
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
+                + S.material
+                + "<br>"
                 + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
                 + "T: %{customdata:.0f} K<br>"
                 + "S: %{y:,.2e} <br>"
