@@ -48,404 +48,396 @@ authors_options_sol = np.unique(
     [S.author.capitalize() for S in all_solubilities]
 ).tolist()
 
-layout = dbc.Container(
-    [
+tab_diffusivity = dcc.Tab(
+    label="Diffusivity",
+    value="tab-1",
+    children=[
         dbc.Row(
             [
                 dbc.Col(
                     [
-                        html.H2("H-transport properties dashboard"),
-                        html.H5("Rémi Delaporte-Mathurin"),
+                        html.Label("Filter by material:"),
+                        dcc.Dropdown(
+                            options=materials_options,
+                            value=["tungsten"],
+                            multi=True,
+                            id="material_filter_diffusivities",
+                        ),
+                        html.Div(
+                            dbc.Button(
+                                "All",
+                                id="add_all_materials_diffusivity",
+                                style={"font-size": "12px"},
+                            )
+                        ),
+                        html.Br(),
+                        html.Label("Filter by isotope:"),
+                        dcc.Checklist(
+                            value=isotope_options,
+                            options=isotope_options,
+                            inline=True,
+                            id="isotope_filter_diffusivities",
+                            inputStyle={
+                                "margin-left": "20px",
+                                "margin-right": "4px",
+                            },
+                        ),
+                        html.Br(),
+                        html.Label("Filter by author:"),
+                        dcc.Dropdown(
+                            value=np.unique(
+                                [
+                                    D.author.capitalize()
+                                    for D in all_diffusivities
+                                    if D.material == "tungsten"
+                                ]
+                            ).tolist(),
+                            options=authors_options_diff,
+                            multi=True,
+                            id="author_filter_diffusivities",
+                        ),
+                        html.Div(
+                            dbc.Button(
+                                "All",
+                                id="add_all_authors_diffusivity",
+                                style={"font-size": "12px"},
+                            )
+                        ),
+                        html.Br(),
+                        html.Label("Filter by year:"),
+                        dcc.RangeSlider(
+                            id="year_filter_diffusivities",
+                            min=min_year_diffusivities,
+                            max=max_year_diffusivities,
+                            step=1,
+                            value=[
+                                min_year_diffusivities,
+                                max_year_diffusivities,
+                            ],
+                            marks={
+                                int(i): str(i)
+                                for i in np.arange(
+                                    min_year_diffusivities,
+                                    max_year_diffusivities,
+                                )
+                                if int(i) % 10 == 0
+                            },
+                            tooltip={
+                                "placement": "bottom",
+                                "always_visible": True,
+                            },
+                        ),
+                        html.Br(),
+                        html.Div(
+                            [
+                                dbc.Button(
+                                    "Compute mean curve",
+                                    id="mean_button_diffusivity",
+                                    color="primary",
+                                    style={"margin": "5px"},
+                                    n_clicks="0",
+                                ),
+                                dbc.Button(
+                                    "Add property",
+                                    id="add_property_diffusivity",
+                                    color="primary",
+                                    style={"margin": "5px"},
+                                    n_clicks="0",
+                                ),
+                                dbc.Button(
+                                    [
+                                        "Extract data",
+                                        dcc.Download(id="download-text_diffusivity"),
+                                    ],
+                                    id="extract_button_diffusivity",
+                                    color="primary",
+                                    style={"margin": "5px"},
+                                    n_clicks="0",
+                                ),
+                                dbc.Button(
+                                    [
+                                        "Python",
+                                        dcc.Download(id="download-python_diffusivity"),
+                                    ],
+                                    id="python_button_diffusivity",
+                                    color="primary",
+                                    style={"margin": "5px"},
+                                    n_clicks_timestamp="0",
+                                ),
+                            ]
+                        ),
                     ],
-                    width=9,
+                    className="pretty_container",
                 ),
                 dbc.Col(
-                    html.Div(
-                        [
-                            html.A(
-                                [
-                                    "Infos",
-                                    html.Img(
-                                        src="https://dash.gallery/dash-world-cell-towers/assets/question-circle-solid.svg",
-                                        height=20,
-                                        style={"margin-left": "5px"},
-                                    ),
-                                ],
-                                style={
-                                    "margin-right": "45px",
-                                    "cursor": "pointer",
-                                },
-                                id="open-sm",
-                            ),
-                            dbc.Modal(
-                                [
-                                    dbc.ModalHeader(
-                                        dbc.ModalTitle(
-                                            html.H2(
-                                                "Welcome to the H-transport materials dashboard!"
-                                            )
-                                        )
-                                    ),
-                                    dbc.ModalBody(text_infos),
-                                    dbc.ModalFooter(
-                                        "Contact: rdelaportemathurin@gmail.com"
-                                    ),
-                                ],
-                                id="modal",
-                                is_open=False,
-                                size="lg",
-                            ),
-                            html.A(
-                                [
-                                    "View it on GitHub",
-                                    html.Img(
-                                        src="https://cdn-icons-png.flaticon.com/512/25/25231.png",
-                                        height=40,
-                                    ),
-                                ],
-                                href="https://github.com/RemDelaporteMathurin/h-transport-materials-dashboard",
-                                target="_blank",  # opens in a new tab
-                            ),
-                        ]
-                    ),
-                    align="end",
-                    width=3,
+                    [
+                        dcc.Graph(
+                            id="graph_diffusivity",
+                            style={"width": "120vh", "height": "70vh"},
+                        ),
+                    ],
+                    className="pretty_container",
                 ),
             ],
-            align="end",
         ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        dcc.Graph(id="graph_prop_per_year_diffusivity"),
+                    ],
+                    className="pretty_container",
+                    width=4,
+                ),
+                dbc.Col(
+                    [
+                        dcc.RadioItems(
+                            options=["Total", "Per year"],
+                            value="Total",
+                            id="radio_citations_diffusivity",
+                            inline=True,
+                            inputStyle={
+                                "margin-left": "20px",
+                                "margin-right": "5px",
+                            },
+                        ),
+                        dcc.Graph(id="graph_nb_citations_diffusivity"),
+                    ],
+                    className="pretty_container",
+                ),
+            ]
+        ),
+    ],
+)
+tab_solubility = dcc.Tab(
+    label="Solubility",
+    value="tab-2",
+    children=[
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Label("Filter by material:"),
+                        dcc.Dropdown(
+                            value=materials_options,
+                            options=materials_options,
+                            multi=True,
+                            id="material_filter_solubilities",
+                        ),
+                        html.Div(
+                            dbc.Button(
+                                "All",
+                                id="add_all_materials_solubility",
+                                style={"font-size": "12px"},
+                            )
+                        ),
+                        html.Br(),
+                        html.Label("Filter by isotope:"),
+                        dcc.Checklist(
+                            options=isotope_options,
+                            value=isotope_options,
+                            inline=True,
+                            id="isotope_filter_solubilities",
+                            inputStyle={
+                                "margin-left": "20px",
+                                "margin-right": "4px",
+                            },
+                        ),
+                        html.Br(),
+                        html.Label("Filter by author:"),
+                        dcc.Dropdown(
+                            options=authors_options_sol,
+                            value=authors_options_sol,
+                            multi=True,
+                            id="author_filter_solubilities",
+                        ),
+                        html.Div(
+                            dbc.Button(
+                                "All",
+                                id="add_all_authors_solubility",
+                                style={"font-size": "12px"},
+                            )
+                        ),
+                        html.Br(),
+                        html.Label("Filter by year:"),
+                        dcc.RangeSlider(
+                            id="year_filter_solubilities",
+                            min=min_year_solubilities,
+                            max=max_year_solubilities,
+                            step=1,
+                            value=[
+                                min_year_solubilities,
+                                max_year_solubilities,
+                            ],
+                            marks={
+                                int(i): str(i)
+                                for i in np.arange(
+                                    min_year_solubilities,
+                                    max_year_solubilities,
+                                )
+                                if int(i) % 10 == 0
+                            },
+                            tooltip={
+                                "placement": "bottom",
+                                "always_visible": True,
+                            },
+                        ),
+                        html.Br(),
+                        html.Div(
+                            [
+                                dbc.Button(
+                                    "Compute mean curve",
+                                    id="mean_button_solubility",
+                                    color="primary",
+                                    style={"margin": "5px"},
+                                    n_clicks_timestamp="0",
+                                ),
+                                dbc.Button(
+                                    "Add property",
+                                    id="add_property_solubility",
+                                    color="primary",
+                                    style={"margin": "5px"},
+                                    n_clicks="0",
+                                ),
+                                dbc.Button(
+                                    [
+                                        "Extract data",
+                                        dcc.Download(id="download-text_solubility"),
+                                    ],
+                                    id="extract_button_solubility",
+                                    color="primary",
+                                    style={"margin": "5px"},
+                                    n_clicks_timestamp="0",
+                                ),
+                                dbc.Button(
+                                    [
+                                        "Python",
+                                        dcc.Download(id="download-python_solubility"),
+                                    ],
+                                    id="python_button_solubility",
+                                    color="primary",
+                                    style={"margin": "5px"},
+                                    n_clicks_timestamp="0",
+                                ),
+                            ]
+                        ),
+                    ],
+                    className="pretty_container",
+                ),
+                dbc.Col(
+                    [
+                        dcc.Graph(
+                            id="graph_solubilities",
+                            style={"width": "120vh", "height": "70vh"},
+                        ),
+                    ],
+                    className="pretty_container",
+                ),
+            ],
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        dcc.Graph(
+                            id="graph_prop_per_year_solubility",
+                        ),
+                    ],
+                    className="pretty_container",
+                    width=4,
+                ),
+                dbc.Col(
+                    [
+                        dcc.RadioItems(
+                            options=["Total", "Per year"],
+                            value="Total",
+                            id="radio_citations_solubility",
+                            inline=True,
+                            inputStyle={
+                                "margin-left": "20px",
+                                "margin-right": "5px",
+                            },
+                        ),
+                        dcc.Graph(id="graph_nb_citations_solubility"),
+                    ],
+                    className="pretty_container",
+                ),
+            ]
+        ),
+    ],
+)
+
+header = dbc.Row(
+    [
+        dbc.Col(
+            [
+                html.H2("H-transport properties dashboard"),
+                html.H5("Rémi Delaporte-Mathurin"),
+            ],
+            width=9,
+        ),
+        dbc.Col(
+            html.Div(
+                [
+                    html.A(
+                        [
+                            "Infos",
+                            html.Img(
+                                src="https://dash.gallery/dash-world-cell-towers/assets/question-circle-solid.svg",
+                                height=20,
+                                style={"margin-left": "5px"},
+                            ),
+                        ],
+                        style={
+                            "margin-right": "45px",
+                            "cursor": "pointer",
+                        },
+                        id="open-sm",
+                    ),
+                    dbc.Modal(
+                        [
+                            dbc.ModalHeader(
+                                dbc.ModalTitle(
+                                    html.H2(
+                                        "Welcome to the H-transport materials dashboard!"
+                                    )
+                                )
+                            ),
+                            dbc.ModalBody(text_infos),
+                            dbc.ModalFooter("Contact: rdelaportemathurin@gmail.com"),
+                        ],
+                        id="modal",
+                        is_open=False,
+                        size="lg",
+                    ),
+                    html.A(
+                        [
+                            "View it on GitHub",
+                            html.Img(
+                                src="https://cdn-icons-png.flaticon.com/512/25/25231.png",
+                                height=40,
+                            ),
+                        ],
+                        href="https://github.com/RemDelaporteMathurin/h-transport-materials-dashboard",
+                        target="_blank",  # opens in a new tab
+                    ),
+                ]
+            ),
+            align="end",
+            width=3,
+        ),
+    ],
+    align="end",
+)
+
+layout = dbc.Container(
+    [
+        header,
         html.Hr(),
         dcc.Tabs(
             id="tabs-example-graph",
             value="tab-1",
-            children=[
-                dcc.Tab(
-                    label="Diffusivity",
-                    value="tab-1",
-                    children=[
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    [
-                                        html.Label("Filter by material:"),
-                                        dcc.Dropdown(
-                                            options=materials_options,
-                                            value=["tungsten"],
-                                            multi=True,
-                                            id="material_filter_diffusivities",
-                                        ),
-                                        html.Div(
-                                            dbc.Button(
-                                                "All",
-                                                id="add_all_materials_diffusivity",
-                                                style={"font-size": "12px"},
-                                            )
-                                        ),
-                                        html.Br(),
-                                        html.Label("Filter by isotope:"),
-                                        dcc.Checklist(
-                                            value=isotope_options,
-                                            options=isotope_options,
-                                            inline=True,
-                                            id="isotope_filter_diffusivities",
-                                            inputStyle={
-                                                "margin-left": "20px",
-                                                "margin-right": "4px",
-                                            },
-                                        ),
-                                        html.Br(),
-                                        html.Label("Filter by author:"),
-                                        dcc.Dropdown(
-                                            value=np.unique(
-                                                [
-                                                    D.author.capitalize()
-                                                    for D in all_diffusivities
-                                                    if D.material == "tungsten"
-                                                ]
-                                            ).tolist(),
-                                            options=authors_options_diff,
-                                            multi=True,
-                                            id="author_filter_diffusivities",
-                                        ),
-                                        html.Div(
-                                            dbc.Button(
-                                                "All",
-                                                id="add_all_authors_diffusivity",
-                                                style={"font-size": "12px"},
-                                            )
-                                        ),
-                                        html.Br(),
-                                        html.Label("Filter by year:"),
-                                        dcc.RangeSlider(
-                                            id="year_filter_diffusivities",
-                                            min=min_year_diffusivities,
-                                            max=max_year_diffusivities,
-                                            step=1,
-                                            value=[
-                                                min_year_diffusivities,
-                                                max_year_diffusivities,
-                                            ],
-                                            marks={
-                                                int(i): str(i)
-                                                for i in np.arange(
-                                                    min_year_diffusivities,
-                                                    max_year_diffusivities,
-                                                )
-                                                if int(i) % 10 == 0
-                                            },
-                                            tooltip={
-                                                "placement": "bottom",
-                                                "always_visible": True,
-                                            },
-                                        ),
-                                        html.Br(),
-                                        html.Div(
-                                            [
-                                                dbc.Button(
-                                                    "Compute mean curve",
-                                                    id="mean_button_diffusivity",
-                                                    color="primary",
-                                                    style={"margin": "5px"},
-                                                    n_clicks="0",
-                                                ),
-                                                dbc.Button(
-                                                    "Add property",
-                                                    id="add_property_diffusivity",
-                                                    color="primary",
-                                                    style={"margin": "5px"},
-                                                    n_clicks="0",
-                                                ),
-                                                dbc.Button(
-                                                    [
-                                                        "Extract data",
-                                                        dcc.Download(
-                                                            id="download-text_diffusivity"
-                                                        ),
-                                                    ],
-                                                    id="extract_button_diffusivity",
-                                                    color="primary",
-                                                    style={"margin": "5px"},
-                                                    n_clicks="0",
-                                                ),
-                                                dbc.Button(
-                                                    [
-                                                        "Python",
-                                                        dcc.Download(
-                                                            id="download-python_diffusivity"
-                                                        ),
-                                                    ],
-                                                    id="python_button_diffusivity",
-                                                    color="primary",
-                                                    style={"margin": "5px"},
-                                                    n_clicks_timestamp="0",
-                                                ),
-                                            ]
-                                        ),
-                                    ],
-                                    className="pretty_container",
-                                ),
-                                dbc.Col(
-                                    [
-                                        dcc.Graph(
-                                            id="graph_diffusivity",
-                                            style={"width": "120vh", "height": "70vh"},
-                                        ),
-                                    ],
-                                    className="pretty_container",
-                                ),
-                            ],
-                        ),
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    [
-                                        dcc.Graph(id="graph_prop_per_year_diffusivity"),
-                                    ],
-                                    className="pretty_container",
-                                    width=4,
-                                ),
-                                dbc.Col(
-                                    [
-                                        dcc.RadioItems(
-                                            options=["Total", "Per year"],
-                                            value="Total",
-                                            id="radio_citations_diffusivity",
-                                            inline=True,
-                                            inputStyle={
-                                                "margin-left": "20px",
-                                                "margin-right": "5px",
-                                            },
-                                        ),
-                                        dcc.Graph(id="graph_nb_citations_diffusivity"),
-                                    ],
-                                    className="pretty_container",
-                                ),
-                            ]
-                        ),
-                    ],
-                ),
-                dcc.Tab(
-                    label="Solubility",
-                    value="tab-2",
-                    children=[
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    [
-                                        html.Label("Filter by material:"),
-                                        dcc.Dropdown(
-                                            value=materials_options,
-                                            options=materials_options,
-                                            multi=True,
-                                            id="material_filter_solubilities",
-                                        ),
-                                        html.Div(
-                                            dbc.Button(
-                                                "All",
-                                                id="add_all_materials_solubility",
-                                                style={"font-size": "12px"},
-                                            )
-                                        ),
-                                        html.Br(),
-                                        html.Label("Filter by isotope:"),
-                                        dcc.Checklist(
-                                            options=isotope_options,
-                                            value=isotope_options,
-                                            inline=True,
-                                            id="isotope_filter_solubilities",
-                                            inputStyle={
-                                                "margin-left": "20px",
-                                                "margin-right": "4px",
-                                            },
-                                        ),
-                                        html.Br(),
-                                        html.Label("Filter by author:"),
-                                        dcc.Dropdown(
-                                            options=authors_options_sol,
-                                            value=authors_options_sol,
-                                            multi=True,
-                                            id="author_filter_solubilities",
-                                        ),
-                                        html.Div(
-                                            dbc.Button(
-                                                "All",
-                                                id="add_all_authors_solubility",
-                                                style={"font-size": "12px"},
-                                            )
-                                        ),
-                                        html.Br(),
-                                        html.Label("Filter by year:"),
-                                        dcc.RangeSlider(
-                                            id="year_filter_solubilities",
-                                            min=min_year_solubilities,
-                                            max=max_year_solubilities,
-                                            step=1,
-                                            value=[
-                                                min_year_solubilities,
-                                                max_year_solubilities,
-                                            ],
-                                            marks={
-                                                int(i): str(i)
-                                                for i in np.arange(
-                                                    min_year_solubilities,
-                                                    max_year_solubilities,
-                                                )
-                                                if int(i) % 10 == 0
-                                            },
-                                            tooltip={
-                                                "placement": "bottom",
-                                                "always_visible": True,
-                                            },
-                                        ),
-                                        html.Br(),
-                                        html.Div(
-                                            [
-                                                dbc.Button(
-                                                    "Compute mean curve",
-                                                    id="mean_button_solubility",
-                                                    color="primary",
-                                                    style={"margin": "5px"},
-                                                    n_clicks_timestamp="0",
-                                                ),
-                                                dbc.Button(
-                                                    "Add property",
-                                                    id="add_property_solubility",
-                                                    color="primary",
-                                                    style={"margin": "5px"},
-                                                    n_clicks="0",
-                                                ),
-                                                dbc.Button(
-                                                    [
-                                                        "Extract data",
-                                                        dcc.Download(
-                                                            id="download-text_solubility"
-                                                        ),
-                                                    ],
-                                                    id="extract_button_solubility",
-                                                    color="primary",
-                                                    style={"margin": "5px"},
-                                                    n_clicks_timestamp="0",
-                                                ),
-                                                dbc.Button(
-                                                    [
-                                                        "Python",
-                                                        dcc.Download(
-                                                            id="download-python_solubility"
-                                                        ),
-                                                    ],
-                                                    id="python_button_solubility",
-                                                    color="primary",
-                                                    style={"margin": "5px"},
-                                                    n_clicks_timestamp="0",
-                                                ),
-                                            ]
-                                        ),
-                                    ],
-                                    className="pretty_container",
-                                ),
-                                dbc.Col(
-                                    [
-                                        dcc.Graph(
-                                            id="graph_solubilities",
-                                            style={"width": "120vh", "height": "70vh"},
-                                        ),
-                                    ],
-                                    className="pretty_container",
-                                ),
-                            ],
-                        ),
-                        dbc.Row(
-                            [
-                                dbc.Col(
-                                    [
-                                        dcc.Graph(
-                                            id="graph_prop_per_year_solubility",
-                                        ),
-                                    ],
-                                    className="pretty_container",
-                                    width=4,
-                                ),
-                                dbc.Col(
-                                    [
-                                        dcc.RadioItems(
-                                            options=["Total", "Per year"],
-                                            value="Total",
-                                            id="radio_citations_solubility",
-                                            inline=True,
-                                            inputStyle={
-                                                "margin-left": "20px",
-                                                "margin-right": "5px",
-                                            },
-                                        ),
-                                        dcc.Graph(id="graph_nb_citations_solubility"),
-                                    ],
-                                    className="pretty_container",
-                                ),
-                            ]
-                        ),
-                    ],
-                ),
-            ],
+            children=[tab_diffusivity, tab_solubility],
         ),
         dbc.Modal(
             [
