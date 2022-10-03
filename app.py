@@ -515,11 +515,9 @@ def make_figure(
         isotopes=isotope_filter_diffusivities,
         years=year_filter_diffusivities,
     )
-    if radio_citations_diffusivity == "Per year":
-        per_year = True
-    else:
-        per_year = False
-    return make_citations_graph(diffusitivites, per_year)
+    return make_citations_graph(
+        diffusitivites, per_year=radio_citations_diffusivity == "Per year"
+    )
 
 
 @app.callback(
@@ -545,11 +543,9 @@ def make_figure(
         isotopes=isotope_filter_solubilities,
         years=year_filter_solubilities,
     )
-    if radio_citations_solubility == "Per year":
-        per_year = True
-    else:
-        per_year = False
-    return make_citations_graph(solubilities, per_year)
+    return make_citations_graph(
+        solubilities, per_year=radio_citations_solubility == "Per year"
+    )
 
 
 @app.callback(
