@@ -246,7 +246,8 @@ layout = dbc.Container(
                                                 ),
                                             ]
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                                 dbc.Col(
                                     [
@@ -263,12 +264,12 @@ layout = dbc.Container(
                                                     ],
                                                 )
                                             ),
-                                            style={"width": "150vh", "height": "70vh"},
+                                            style={"width": "120vh", "height": "70vh"},
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                             ],
-                            className="pretty_container",
                         ),
                         dbc.Row(
                             [
@@ -429,7 +430,8 @@ layout = dbc.Container(
                                                 ),
                                             ]
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                                 dbc.Col(
                                     [
@@ -446,12 +448,12 @@ layout = dbc.Container(
                                                     ],
                                                 )
                                             ),
-                                            style={"width": "150vh", "height": "70vh"},
+                                            style={"width": "120vh", "height": "70vh"},
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                             ],
-                            className="pretty_container",
                         ),
                         dbc.Row(
                             [
