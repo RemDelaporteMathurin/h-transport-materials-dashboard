@@ -130,7 +130,6 @@ def make_graph(diffusivities):
 
 
 def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
-    print(materials, authors, isotopes, years)
     if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
         solubilities = []
     else:
@@ -140,13 +139,8 @@ def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
             .filter(isotope=[isotope.lower() for isotope in isotopes])
             .filter(year=np.arange(years[0], years[1], step=1).tolist())
         )
-        print(solubilities)
-        print(len(solubilities.properties))
 
     return solubilities
-
-
-i = 0
 
 
 def make_graph_solubilities(solubilities):
@@ -160,8 +154,6 @@ def make_graph_solubilities(solubilities):
             else:
                 range = (300, 1200)
         T = np.linspace(range[0], range[1], num=500)
-        print(i)
-        i += 1
         fig.add_trace(
             go.Scatter(
                 x=1 / T,
