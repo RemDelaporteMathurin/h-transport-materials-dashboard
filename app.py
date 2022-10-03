@@ -253,17 +253,6 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph_diffusivity",
-                                            figure=make_graph(
-                                                make_diffusivities(
-                                                    materials=["tungsten"],
-                                                    authors=all_authors_diffusivities,
-                                                    isotopes=all_isotopes,
-                                                    years=[
-                                                        min_year_diffusivities,
-                                                        max_year_diffusivities,
-                                                    ],
-                                                )
-                                            ),
                                             style={"width": "120vh", "height": "70vh"},
                                         ),
                                     ],
@@ -277,18 +266,6 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph_prop_per_year_diffusivity",
-                                            figure=make_figure_prop_per_year(
-                                                make_diffusivities(
-                                                    materials=["tungsten"],
-                                                    authors=all_authors_diffusivities,
-                                                    isotopes=all_isotopes,
-                                                    years=[
-                                                        min_year_diffusivities,
-                                                        max_year_diffusivities,
-                                                    ],
-                                                ),
-                                                step=5,
-                                            ),
                                         ),
                                     ],
                                     className="pretty_container",
@@ -437,17 +414,6 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph_solubilities",
-                                            figure=make_graph_solubilities(
-                                                make_solubilities(
-                                                    materials=all_materials,
-                                                    authors=all_authors_diffusivities,
-                                                    isotopes=all_isotopes,
-                                                    years=[
-                                                        min_year_solubilities,
-                                                        max_year_diffusivities,
-                                                    ],
-                                                )
-                                            ),
                                             style={"width": "120vh", "height": "70vh"},
                                         ),
                                     ],
@@ -461,18 +427,6 @@ layout = dbc.Container(
                                     [
                                         dcc.Graph(
                                             id="graph_prop_per_year_solubility",
-                                            figure=make_figure_prop_per_year(
-                                                make_diffusivities(
-                                                    materials=all_materials,
-                                                    authors=all_authors_diffusivities,
-                                                    isotopes=all_isotopes,
-                                                    years=[
-                                                        min_year_solubilities,
-                                                        max_year_diffusivities,
-                                                    ],
-                                                ),
-                                                step=5,
-                                            ),
                                         ),
                                     ],
                                     className="pretty_container",
