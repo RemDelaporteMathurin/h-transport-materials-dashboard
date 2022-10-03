@@ -4,8 +4,6 @@ from graph import (
     all_solubilities,
     make_diffusivities,
     make_solubilities,
-    all_authors_diffusivities,
-    all_authors_solubilities,
     make_graph,
     make_graph_solubilities,
     add_mean_value,
@@ -35,13 +33,20 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
 
 server = app.server
 
-all_materials = np.unique(
+materials_options = np.unique(
     [
         prop.material
         for prop in all_diffusivities.properties + all_solubilities.properties
     ]
 ).tolist()
-all_isotopes = ["H", "D", "T"]
+isotope_options = ["H", "D", "T"]
+
+authors_options_diff = np.unique(
+    [D.author.capitalize() for D in all_diffusivities]
+).tolist()
+authors_options_sol = np.unique(
+    [S.author.capitalize() for S in all_solubilities]
+).tolist()
 
 layout = dbc.Container(
     [
@@ -124,7 +129,7 @@ layout = dbc.Container(
                                     [
                                         html.Label("Filter by material:"),
                                         dcc.Dropdown(
-                                            all_materials,
+                                            materials_options,
                                             ["tungsten"],
                                             multi=True,
                                             id="material_filter_diffusivities",
@@ -139,8 +144,8 @@ layout = dbc.Container(
                                         html.Br(),
                                         html.Label("Filter by isotope:"),
                                         dcc.Checklist(
-                                            all_isotopes,
-                                            all_isotopes,
+                                            value=isotope_options,
+                                            options=isotope_options,
                                             inline=True,
                                             id="isotope_filter_diffusivities",
                                             inputStyle={
@@ -151,20 +156,14 @@ layout = dbc.Container(
                                         html.Br(),
                                         html.Label("Filter by author:"),
                                         dcc.Dropdown(
-                                            np.unique(
+                                            value=np.unique(
                                                 [
                                                     D.author.capitalize()
                                                     for D in all_diffusivities
                                                     if D.material == "tungsten"
                                                 ]
                                             ).tolist(),
-                                            np.unique(
-                                                [
-                                                    D.author.capitalize()
-                                                    for D in all_diffusivities
-                                                    if D.material == "tungsten"
-                                                ]
-                                            ).tolist(),
+                                            options=authors_options_diff,
                                             multi=True,
                                             id="author_filter_diffusivities",
                                         ),
@@ -295,8 +294,8 @@ layout = dbc.Container(
                                     [
                                         html.Label("Filter by material:"),
                                         dcc.Dropdown(
-                                            all_materials,
-                                            all_materials,
+                                            materials_options,
+                                            materials_options,
                                             multi=True,
                                             id="material_filter_solubilities",
                                         ),
@@ -310,8 +309,8 @@ layout = dbc.Container(
                                         html.Br(),
                                         html.Label("Filter by isotope:"),
                                         dcc.Checklist(
-                                            all_isotopes,
-                                            all_isotopes,
+                                            isotope_options,
+                                            isotope_options,
                                             inline=True,
                                             id="isotope_filter_solubilities",
                                             inputStyle={
@@ -322,8 +321,8 @@ layout = dbc.Container(
                                         html.Br(),
                                         html.Label("Filter by author:"),
                                         dcc.Dropdown(
-                                            all_authors_solubilities,
-                                            all_authors_solubilities,
+                                            authors_options_sol,
+                                            authors_options_sol,
                                             multi=True,
                                             id="author_filter_solubilities",
                                         ),
@@ -559,7 +558,7 @@ def make_figure(
 )
 def add_all_material(n_clicks):
     if n_clicks:
-        return all_materials
+        return materials_options
     else:
         return dash.no_update
 
@@ -621,7 +620,7 @@ def update_graph(
 )
 def add_all_material(n_clicks):
     if n_clicks:
-        return all_materials
+        return materials_options
     else:
         return dash.no_update
 
@@ -632,7 +631,7 @@ def add_all_material(n_clicks):
 )
 def add_all_authors(n_clicks):
     if n_clicks:
-        return all_authors_solubilities
+        return authors_options_sol
     else:
         return dash.no_update
 
