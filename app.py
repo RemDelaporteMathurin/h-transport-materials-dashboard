@@ -428,8 +428,8 @@ layout = dbc.Container(
                                 dbc.Col(
                                     [
                                         dcc.RadioItems(
-                                            ["Total", "Per year"],
-                                            "Total",
+                                            options=["Total", "Per year"],
+                                            value="Total",
                                             id="radio_citations_solubility",
                                             inline=True,
                                             inputStyle={
