@@ -289,10 +289,10 @@ layout = dbc.Container(
                                                 ),
                                                 step=5,
                                             ),
-                                            style={"width": "100vh", "height": "50vh"},
                                         ),
                                     ],
                                     className="pretty_container",
+                                    width=4,
                                 ),
                                 dbc.Col(
                                     [
@@ -473,10 +473,10 @@ layout = dbc.Container(
                                                 ),
                                                 step=5,
                                             ),
-                                            style={"width": "100vh", "height": "50vh"},
                                         ),
                                     ],
                                     className="pretty_container",
+                                    width=4,
                                 ),
                                 dbc.Col(
                                     [
