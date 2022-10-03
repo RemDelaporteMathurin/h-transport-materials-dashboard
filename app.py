@@ -129,8 +129,8 @@ layout = dbc.Container(
                                     [
                                         html.Label("Filter by material:"),
                                         dcc.Dropdown(
-                                            materials_options,
-                                            ["tungsten"],
+                                            options=materials_options,
+                                            value=["tungsten"],
                                             multi=True,
                                             id="material_filter_diffusivities",
                                         ),
@@ -267,8 +267,8 @@ layout = dbc.Container(
                                 dbc.Col(
                                     [
                                         dcc.RadioItems(
-                                            ["Total", "Per year"],
-                                            "Total",
+                                            options=["Total", "Per year"],
+                                            value="Total",
                                             id="radio_citations_diffusivity",
                                             inline=True,
                                             inputStyle={
@@ -294,8 +294,8 @@ layout = dbc.Container(
                                     [
                                         html.Label("Filter by material:"),
                                         dcc.Dropdown(
-                                            materials_options,
-                                            materials_options,
+                                            value=materials_options,
+                                            options=materials_options,
                                             multi=True,
                                             id="material_filter_solubilities",
                                         ),
@@ -309,8 +309,8 @@ layout = dbc.Container(
                                         html.Br(),
                                         html.Label("Filter by isotope:"),
                                         dcc.Checklist(
-                                            isotope_options,
-                                            isotope_options,
+                                            options=isotope_options,
+                                            value=isotope_options,
                                             inline=True,
                                             id="isotope_filter_solubilities",
                                             inputStyle={
@@ -321,8 +321,8 @@ layout = dbc.Container(
                                         html.Br(),
                                         html.Label("Filter by author:"),
                                         dcc.Dropdown(
-                                            authors_options_sol,
-                                            authors_options_sol,
+                                            options=authors_options_sol,
+                                            value=authors_options_sol,
                                             multi=True,
                                             id="author_filter_solubilities",
                                         ),
