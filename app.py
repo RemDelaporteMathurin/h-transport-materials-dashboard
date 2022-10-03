@@ -483,7 +483,10 @@ layout = dbc.Container(
                                             "Total",
                                             id="radio_citations_solubility",
                                             inline=True,
-                                            inputStyle={"margin-left": "20px"},
+                                            inputStyle={
+                                                "margin-left": "20px",
+                                                "margin-right": "5px",
+                                            },
                                         ),
                                         citations_graph_solubility,
                                     ],
