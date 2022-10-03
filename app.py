@@ -98,7 +98,7 @@ layout = dbc.Container(
                                 [
                                     "View it on GitHub",
                                     html.Img(
-                                        src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+                                        src="https://cdn-icons-png.flaticon.com/512/25/25231.png",
                                         height=40,
                                     ),
                                 ],
@@ -267,7 +267,8 @@ layout = dbc.Container(
                                         ),
                                     ]
                                 ),
-                            ]
+                            ],
+                            className="pretty_container",
                         ),
                         dbc.Row(
                             [
@@ -289,7 +290,8 @@ layout = dbc.Container(
                                             ),
                                             style={"width": "100vh", "height": "50vh"},
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                                 dbc.Col(
                                     [
@@ -304,7 +306,8 @@ layout = dbc.Container(
                                             },
                                         ),
                                         citations_graph_diffusivity,
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                             ]
                         ),
@@ -447,7 +450,8 @@ layout = dbc.Container(
                                         ),
                                     ]
                                 ),
-                            ]
+                            ],
+                            className="pretty_container",
                         ),
                         dbc.Row(
                             [
@@ -469,7 +473,8 @@ layout = dbc.Container(
                                             ),
                                             style={"width": "100vh", "height": "50vh"},
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                                 dbc.Col(
                                     [
@@ -481,7 +486,8 @@ layout = dbc.Container(
                                             inputStyle={"margin-left": "20px"},
                                         ),
                                         citations_graph_solubility,
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                             ]
                         ),

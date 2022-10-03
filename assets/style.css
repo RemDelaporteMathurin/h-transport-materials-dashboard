@@ -1,0 +1,17 @@
+body {
+    background-color: #f2f2f2;
+    margin: 2%;
+}
+
+.pretty_container {
+    border-radius: 5px;
+    background-color: white;
+    margin: 5px;
+    /*margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 0px;
+  margin-right: 00px;*/
+    padding: 15px;
+    position: relative;
+    box-shadow: 2px 2px 2px lightgrey;
+}
