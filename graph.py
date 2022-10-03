@@ -42,7 +42,9 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
             hovertemplate="<b>%{text}</b><br><br>"
             + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
             + "T: %{customdata:.0f} K<br>"
-            + "D: %{y:,.2e} m<sup>2</sup>/s"
+            + "D: %{y:,.2e} m<sup>2</sup>/s <br>"
+            + "D_0: {:.2e} m<sup>2</sup>/s <br>".format(mean_prop.pre_exp)
+            + "E_D : {:.2f} eV".format(mean_prop.act_energy)
             + "<extra></extra>",
         )
     )
@@ -65,7 +67,9 @@ def add_mean_value_solubilities(group: htm.PropertiesGroup, fig: go.Figure):
             hovertemplate="<b>%{text}</b><br><br>"
             + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
             + "T: %{customdata:.0f} K<br>"
-            + "D: %{y:,.2e}"
+            + "S: %{y:,.2e}"
+            + "S_0: {:.2e} <br>".format(mean_prop.pre_exp)
+            + "E_S : {:.2f} eV".format(mean_prop.act_energy)
             + "<extra></extra>",
         )
     )
@@ -107,7 +111,9 @@ def make_graph(diffusivities):
                 hovertemplate="<b>%{text}</b><br><br>"
                 + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
                 + "T: %{customdata:.0f} K<br>"
-                + "D: %{y:,.2e} m<sup>2</sup>/s"
+                + "D: %{y:,.2e} m<sup>2</sup>/s <br>"
+                + "D_0: {:.2e} m<sup>2</sup>/s <br>".format(D.pre_exp)
+                + "E_D : {:.2f} eV".format(D.act_energy)
                 + "<extra></extra>",
             )
         )
@@ -166,7 +172,9 @@ def make_graph_solubilities(solubilities):
                 hovertemplate="<b>%{text}</b><br><br>"
                 + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
                 + "T: %{customdata:.0f} K<br>"
-                + "S: %{y:,.2e}"
+                + "S: %{y:,.2e} <br>"
+                + "S_0: {:.2e} <br>".format(S.pre_exp)
+                + "E_S : {:.2f} eV".format(S.act_energy)
                 + "<extra></extra>",
             )
         )
