@@ -565,7 +565,7 @@ def add_all_material(n_clicks):
 )
 def add_all_authors(n_clicks):
     if n_clicks:
-        return all_authors_diffusivities
+        return authors_options_diff
     else:
         return dash.no_update
 
