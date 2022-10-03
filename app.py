@@ -17,11 +17,7 @@ from graph import (
     make_figure_prop_per_year,
 )
 
-from citations import (
-    citations_graph_diffusivity,
-    citations_graph_solubility,
-    make_citations_graph,
-)
+from citations import make_citations_graph
 
 import h_transport_materials as htm
 
@@ -264,9 +260,7 @@ layout = dbc.Container(
                             [
                                 dbc.Col(
                                     [
-                                        dcc.Graph(
-                                            id="graph_prop_per_year_diffusivity",
-                                        ),
+                                        dcc.Graph(id="graph_prop_per_year_diffusivity"),
                                     ],
                                     className="pretty_container",
                                     width=4,
@@ -283,7 +277,7 @@ layout = dbc.Container(
                                                 "margin-right": "5px",
                                             },
                                         ),
-                                        citations_graph_diffusivity,
+                                        dcc.Graph(id="graph_nb_citations_diffusivity"),
                                     ],
                                     className="pretty_container",
                                 ),
@@ -444,7 +438,7 @@ layout = dbc.Container(
                                                 "margin-right": "5px",
                                             },
                                         ),
-                                        citations_graph_solubility,
+                                        dcc.Graph(id="graph_nb_citations_solubility"),
                                     ],
                                     className="pretty_container",
                                 ),

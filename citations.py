@@ -35,18 +35,3 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool=True):
         x_label = "Number of citations (Crossref)"
     fig.update_xaxes(title=x_label)
     return fig
-
-
-citations_graph_diffusivity = dcc.Graph(
-    id="graph_nb_citations_diffusivity",
-    figure=go.Figure(),
-    # style={"width": "100vh", "height": "50vh"},
-)
-
-citations_graph_solubility = dcc.Graph(
-    id="graph_nb_citations_solubility",
-    figure=go.Figure(),
-    # style={"width": "100vh", "height": "50vh"},
-)
-
-
