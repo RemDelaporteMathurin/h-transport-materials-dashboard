@@ -24,6 +24,8 @@ from infos import text_infos
 from new_diffusivity_form import form_new_diffusivity
 from new_solubility_form import form_new_solubility
 
+from tab import make_tab
+
 import dash
 from dash import dcc
 from dash import html
@@ -48,324 +50,8 @@ authors_options_sol = np.unique(
     [S.author.capitalize() for S in all_solubilities]
 ).tolist()
 
-tab_diffusivity = dcc.Tab(
-    label="Diffusivity",
-    value="tab-1",
-    children=[
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Label("Filter by material:"),
-                        dcc.Dropdown(
-                            options=materials_options,
-                            value=["tungsten"],
-                            multi=True,
-                            id="material_filter_diffusivities",
-                        ),
-                        html.Div(
-                            dbc.Button(
-                                "All",
-                                id="add_all_materials_diffusivity",
-                                style={"font-size": "12px"},
-                            )
-                        ),
-                        html.Br(),
-                        html.Label("Filter by isotope:"),
-                        dcc.Checklist(
-                            value=isotope_options,
-                            options=isotope_options,
-                            inline=True,
-                            id="isotope_filter_diffusivities",
-                            inputStyle={
-                                "margin-left": "20px",
-                                "margin-right": "4px",
-                            },
-                        ),
-                        html.Br(),
-                        html.Label("Filter by author:"),
-                        dcc.Dropdown(
-                            value=np.unique(
-                                [
-                                    D.author.capitalize()
-                                    for D in all_diffusivities
-                                    if D.material == "tungsten"
-                                ]
-                            ).tolist(),
-                            options=authors_options_diff,
-                            multi=True,
-                            id="author_filter_diffusivities",
-                        ),
-                        html.Div(
-                            dbc.Button(
-                                "All",
-                                id="add_all_authors_diffusivity",
-                                style={"font-size": "12px"},
-                            )
-                        ),
-                        html.Br(),
-                        html.Label("Filter by year:"),
-                        dcc.RangeSlider(
-                            id="year_filter_diffusivities",
-                            min=min_year_diffusivities,
-                            max=max_year_diffusivities,
-                            step=1,
-                            value=[
-                                min_year_diffusivities,
-                                max_year_diffusivities,
-                            ],
-                            marks={
-                                int(i): str(i)
-                                for i in np.arange(
-                                    min_year_diffusivities,
-                                    max_year_diffusivities,
-                                )
-                                if int(i) % 10 == 0
-                            },
-                            tooltip={
-                                "placement": "bottom",
-                                "always_visible": True,
-                            },
-                        ),
-                        html.Br(),
-                        html.Div(
-                            [
-                                dbc.Button(
-                                    "Compute mean curve",
-                                    id="mean_button_diffusivity",
-                                    color="primary",
-                                    style={"margin": "5px"},
-                                    n_clicks="0",
-                                ),
-                                dbc.Button(
-                                    "Add property",
-                                    id="add_property_diffusivity",
-                                    color="primary",
-                                    style={"margin": "5px"},
-                                    n_clicks="0",
-                                ),
-                                dbc.Button(
-                                    [
-                                        "Extract data",
-                                        dcc.Download(id="download-text_diffusivity"),
-                                    ],
-                                    id="extract_button_diffusivity",
-                                    color="primary",
-                                    style={"margin": "5px"},
-                                    n_clicks="0",
-                                ),
-                                dbc.Button(
-                                    [
-                                        "Python",
-                                        dcc.Download(id="download-python_diffusivity"),
-                                    ],
-                                    id="python_button_diffusivity",
-                                    color="primary",
-                                    style={"margin": "5px"},
-                                    n_clicks_timestamp="0",
-                                ),
-                            ]
-                        ),
-                    ],
-                    className="pretty_container",
-                ),
-                dbc.Col(
-                    [
-                        dcc.Graph(
-                            id="graph_diffusivity",
-                            style={"width": "120vh", "height": "70vh"},
-                        ),
-                    ],
-                    className="pretty_container",
-                ),
-            ],
-        ),
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        dcc.Graph(id="graph_prop_per_year_diffusivity"),
-                    ],
-                    className="pretty_container",
-                    width=4,
-                ),
-                dbc.Col(
-                    [
-                        dcc.RadioItems(
-                            options=["Total", "Per year"],
-                            value="Total",
-                            id="radio_citations_diffusivity",
-                            inline=True,
-                            inputStyle={
-                                "margin-left": "20px",
-                                "margin-right": "5px",
-                            },
-                        ),
-                        dcc.Graph(id="graph_nb_citations_diffusivity"),
-                    ],
-                    className="pretty_container",
-                ),
-            ]
-        ),
-    ],
-)
-tab_solubility = dcc.Tab(
-    label="Solubility",
-    value="tab-2",
-    children=[
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        html.Label("Filter by material:"),
-                        dcc.Dropdown(
-                            value=materials_options,
-                            options=materials_options,
-                            multi=True,
-                            id="material_filter_solubilities",
-                        ),
-                        html.Div(
-                            dbc.Button(
-                                "All",
-                                id="add_all_materials_solubility",
-                                style={"font-size": "12px"},
-                            )
-                        ),
-                        html.Br(),
-                        html.Label("Filter by isotope:"),
-                        dcc.Checklist(
-                            options=isotope_options,
-                            value=isotope_options,
-                            inline=True,
-                            id="isotope_filter_solubilities",
-                            inputStyle={
-                                "margin-left": "20px",
-                                "margin-right": "4px",
-                            },
-                        ),
-                        html.Br(),
-                        html.Label("Filter by author:"),
-                        dcc.Dropdown(
-                            options=authors_options_sol,
-                            value=authors_options_sol,
-                            multi=True,
-                            id="author_filter_solubilities",
-                        ),
-                        html.Div(
-                            dbc.Button(
-                                "All",
-                                id="add_all_authors_solubility",
-                                style={"font-size": "12px"},
-                            )
-                        ),
-                        html.Br(),
-                        html.Label("Filter by year:"),
-                        dcc.RangeSlider(
-                            id="year_filter_solubilities",
-                            min=min_year_solubilities,
-                            max=max_year_solubilities,
-                            step=1,
-                            value=[
-                                min_year_solubilities,
-                                max_year_solubilities,
-                            ],
-                            marks={
-                                int(i): str(i)
-                                for i in np.arange(
-                                    min_year_solubilities,
-                                    max_year_solubilities,
-                                )
-                                if int(i) % 10 == 0
-                            },
-                            tooltip={
-                                "placement": "bottom",
-                                "always_visible": True,
-                            },
-                        ),
-                        html.Br(),
-                        html.Div(
-                            [
-                                dbc.Button(
-                                    "Compute mean curve",
-                                    id="mean_button_solubility",
-                                    color="primary",
-                                    style={"margin": "5px"},
-                                    n_clicks_timestamp="0",
-                                ),
-                                dbc.Button(
-                                    "Add property",
-                                    id="add_property_solubility",
-                                    color="primary",
-                                    style={"margin": "5px"},
-                                    n_clicks="0",
-                                ),
-                                dbc.Button(
-                                    [
-                                        "Extract data",
-                                        dcc.Download(id="download-text_solubility"),
-                                    ],
-                                    id="extract_button_solubility",
-                                    color="primary",
-                                    style={"margin": "5px"},
-                                    n_clicks_timestamp="0",
-                                ),
-                                dbc.Button(
-                                    [
-                                        "Python",
-                                        dcc.Download(id="download-python_solubility"),
-                                    ],
-                                    id="python_button_solubility",
-                                    color="primary",
-                                    style={"margin": "5px"},
-                                    n_clicks_timestamp="0",
-                                ),
-                            ]
-                        ),
-                    ],
-                    className="pretty_container",
-                ),
-                dbc.Col(
-                    [
-                        dcc.Graph(
-                            id="graph_solubilities",
-                            style={"width": "120vh", "height": "70vh"},
-                        ),
-                    ],
-                    className="pretty_container",
-                ),
-            ],
-        ),
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        dcc.Graph(
-                            id="graph_prop_per_year_solubility",
-                        ),
-                    ],
-                    className="pretty_container",
-                    width=4,
-                ),
-                dbc.Col(
-                    [
-                        dcc.RadioItems(
-                            options=["Total", "Per year"],
-                            value="Total",
-                            id="radio_citations_solubility",
-                            inline=True,
-                            inputStyle={
-                                "margin-left": "20px",
-                                "margin-right": "5px",
-                            },
-                        ),
-                        dcc.Graph(id="graph_nb_citations_solubility"),
-                    ],
-                    className="pretty_container",
-                ),
-            ]
-        ),
-    ],
-)
+tab_diffusivity = make_tab("diffusivity")
+tab_solubility = make_tab("solubility")
 
 header = dbc.Row(
     [
@@ -436,7 +122,7 @@ layout = dbc.Container(
         html.Hr(),
         dcc.Tabs(
             id="tabs-example-graph",
-            value="tab-1",
+            value="tab_diffusivity",
             children=[tab_diffusivity, tab_solubility],
         ),
         dbc.Modal(
@@ -488,10 +174,10 @@ app.layout = layout
     dash.Output("graph_nb_citations_diffusivity", "figure"),
     dash.Input("graph_diffusivity", "figure"),
     dash.Input("radio_citations_diffusivity", "value"),
-    dash.State("material_filter_diffusivities", "value"),
-    dash.State("isotope_filter_diffusivities", "value"),
-    dash.State("author_filter_diffusivities", "value"),
-    dash.State("year_filter_diffusivities", "value"),
+    dash.State("material_filter_diffusivity", "value"),
+    dash.State("isotope_filter_diffusivity", "value"),
+    dash.State("author_filter_diffusivity", "value"),
+    dash.State("year_filter_diffusivity", "value"),
 )
 def make_figure(
     figure,
@@ -514,12 +200,12 @@ def make_figure(
 
 @app.callback(
     dash.Output("graph_nb_citations_solubility", "figure"),
-    dash.Input("graph_solubilities", "figure"),
+    dash.Input("graph_solubility", "figure"),
     dash.Input("radio_citations_solubility", "value"),
-    dash.State("material_filter_solubilities", "value"),
-    dash.State("isotope_filter_solubilities", "value"),
-    dash.State("author_filter_solubilities", "value"),
-    dash.State("year_filter_solubilities", "value"),
+    dash.State("material_filter_solubility", "value"),
+    dash.State("isotope_filter_solubility", "value"),
+    dash.State("author_filter_solubility", "value"),
+    dash.State("year_filter_solubility", "value"),
 )
 def make_figure(
     figure,
@@ -541,7 +227,7 @@ def make_figure(
 
 
 @app.callback(
-    dash.Output("material_filter_diffusivities", "value"),
+    dash.Output("material_filter_diffusivity", "value"),
     dash.Input("add_all_materials_diffusivity", "n_clicks"),
 )
 def add_all_material(n_clicks):
@@ -552,7 +238,7 @@ def add_all_material(n_clicks):
 
 
 @app.callback(
-    dash.Output("author_filter_diffusivities", "value"),
+    dash.Output("author_filter_diffusivity", "value"),
     dash.Input("add_all_authors_diffusivity", "n_clicks"),
 )
 def add_all_authors(n_clicks):
@@ -566,10 +252,10 @@ def add_all_authors(n_clicks):
 @app.callback(
     dash.Output("graph_diffusivity", "figure"),
     dash.Output("graph_prop_per_year_diffusivity", "figure"),
-    dash.Input("material_filter_diffusivities", "value"),
-    dash.Input("isotope_filter_diffusivities", "value"),
-    dash.Input("author_filter_diffusivities", "value"),
-    dash.Input("year_filter_diffusivities", "value"),
+    dash.Input("material_filter_diffusivity", "value"),
+    dash.Input("isotope_filter_diffusivity", "value"),
+    dash.Input("author_filter_diffusivity", "value"),
+    dash.Input("year_filter_diffusivity", "value"),
     dash.Input("mean_button_diffusivity", "n_clicks"),
 )
 def update_graph(
@@ -603,7 +289,7 @@ def update_graph(
 
 
 @app.callback(
-    dash.Output("material_filter_solubilities", "value"),
+    dash.Output("material_filter_solubility", "value"),
     dash.Input("add_all_materials_solubility", "n_clicks"),
 )
 def add_all_material(n_clicks):
@@ -614,7 +300,7 @@ def add_all_material(n_clicks):
 
 
 @app.callback(
-    dash.Output("author_filter_solubilities", "value"),
+    dash.Output("author_filter_solubility", "value"),
     dash.Input("add_all_authors_solubility", "n_clicks"),
 )
 def add_all_authors(n_clicks):
@@ -626,12 +312,12 @@ def add_all_authors(n_clicks):
 
 # callback filters solubility
 @app.callback(
-    dash.Output("graph_solubilities", "figure"),
+    dash.Output("graph_solubility", "figure"),
     dash.Output("graph_prop_per_year_solubility", "figure"),
-    dash.Input("material_filter_solubilities", "value"),
-    dash.Input("isotope_filter_solubilities", "value"),
-    dash.Input("author_filter_solubilities", "value"),
-    dash.Input("year_filter_solubilities", "value"),
+    dash.Input("material_filter_solubility", "value"),
+    dash.Input("isotope_filter_solubility", "value"),
+    dash.Input("author_filter_solubility", "value"),
+    dash.Input("year_filter_solubility", "value"),
     dash.Input("mean_button_solubility", "n_clicks"),
 )
 def update_solubility_graph(
@@ -667,10 +353,10 @@ def update_solubility_graph(
 @app.callback(
     dash.Output("download-text_diffusivity", "data"),
     dash.Input("extract_button_diffusivity", "n_clicks"),
-    dash.Input("material_filter_diffusivities", "value"),
-    dash.Input("isotope_filter_diffusivities", "value"),
-    dash.Input("author_filter_diffusivities", "value"),
-    dash.Input("year_filter_diffusivities", "value"),
+    dash.Input("material_filter_diffusivity", "value"),
+    dash.Input("isotope_filter_diffusivity", "value"),
+    dash.Input("author_filter_diffusivity", "value"),
+    dash.Input("year_filter_diffusivity", "value"),
     prevent_initial_call=True,
 )
 def func(
@@ -697,10 +383,10 @@ def func(
 @app.callback(
     dash.Output("download-text_solubility", "data"),
     dash.Input("extract_button_solubility", "n_clicks"),
-    dash.Input("material_filter_solubilities", "value"),
-    dash.Input("isotope_filter_solubilities", "value"),
-    dash.Input("author_filter_solubilities", "value"),
-    dash.Input("year_filter_solubilities", "value"),
+    dash.Input("material_filter_solubility", "value"),
+    dash.Input("isotope_filter_solubility", "value"),
+    dash.Input("author_filter_solubility", "value"),
+    dash.Input("year_filter_solubility", "value"),
     prevent_initial_call=True,
 )
 def func(
@@ -728,10 +414,10 @@ def func(
 @app.callback(
     dash.Output("download-python_solubility", "data"),
     dash.Input("python_button_solubility", "n_clicks"),
-    dash.Input("material_filter_solubilities", "value"),
-    dash.Input("isotope_filter_solubilities", "value"),
-    dash.Input("author_filter_solubilities", "value"),
-    dash.Input("year_filter_solubilities", "value"),
+    dash.Input("material_filter_solubility", "value"),
+    dash.Input("isotope_filter_solubility", "value"),
+    dash.Input("author_filter_solubility", "value"),
+    dash.Input("year_filter_solubility", "value"),
     prevent_initial_call=True,
 )
 def func(
@@ -760,10 +446,10 @@ def func(
 @app.callback(
     dash.Output("download-python_diffusivity", "data"),
     dash.Input("python_button_diffusivity", "n_clicks"),
-    dash.Input("material_filter_diffusivities", "value"),
-    dash.Input("isotope_filter_diffusivities", "value"),
-    dash.Input("author_filter_diffusivities", "value"),
-    dash.Input("year_filter_diffusivities", "value"),
+    dash.Input("material_filter_diffusivity", "value"),
+    dash.Input("isotope_filter_diffusivity", "value"),
+    dash.Input("author_filter_diffusivity", "value"),
+    dash.Input("year_filter_diffusivity", "value"),
     prevent_initial_call=True,
 )
 def func(
@@ -877,11 +563,11 @@ def toggle_modal(
 
 
 @app.callback(
-    dash.Output("material_filter_diffusivities", "options"),
-    dash.Output("author_filter_diffusivities", "options"),
+    dash.Output("material_filter_diffusivity", "options"),
+    dash.Output("author_filter_diffusivity", "options"),
     dash.Output("error_message_new_diffusivity", "children"),
     dash.Input("submit_new_diffusivity", "n_clicks"),
-    dash.Input("material_filter_diffusivities", "value"),
+    dash.Input("material_filter_diffusivity", "value"),
     dash.State("new_diffusivity_pre_exp", "value"),
     dash.State("new_diffusivity_act_energy", "value"),
     dash.State("new_diffusivity_author", "value"),
@@ -941,11 +627,11 @@ def add_diffusivity(
 
 
 @app.callback(
-    dash.Output("material_filter_solubilities", "options"),
-    dash.Output("author_filter_solubilities", "options"),
+    dash.Output("material_filter_solubility", "options"),
+    dash.Output("author_filter_solubility", "options"),
     dash.Output("error_message_new_solubility", "children"),
     dash.Input("submit_new_solubility", "n_clicks"),
-    dash.Input("material_filter_solubilities", "value"),
+    dash.Input("material_filter_solubility", "value"),
     dash.State("new_solubility_pre_exp", "value"),
     dash.State("new_solubility_act_energy", "value"),
     dash.State("new_solubility_author", "value"),
