@@ -1,7 +1,10 @@
 import plotly.graph_objects as go
+import plotly.io as pio
 import h_transport_materials as htm
 import numpy as np
 import plotly.express as px
+
+pio.templates.default = "plotly_white"
 
 all_diffusivities = htm.diffusivities
 all_solubilities = htm.solubilities

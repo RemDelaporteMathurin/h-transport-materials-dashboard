@@ -98,7 +98,7 @@ layout = dbc.Container(
                                 [
                                     "View it on GitHub",
                                     html.Img(
-                                        src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+                                        src="https://cdn-icons-png.flaticon.com/512/25/25231.png",
                                         height=40,
                                     ),
                                 ],
@@ -246,7 +246,8 @@ layout = dbc.Container(
                                                 ),
                                             ]
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                                 dbc.Col(
                                     [
@@ -263,11 +264,12 @@ layout = dbc.Container(
                                                     ],
                                                 )
                                             ),
-                                            style={"width": "150vh", "height": "70vh"},
+                                            style={"width": "120vh", "height": "70vh"},
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
-                            ]
+                            ],
                         ),
                         dbc.Row(
                             [
@@ -287,9 +289,10 @@ layout = dbc.Container(
                                                 ),
                                                 step=5,
                                             ),
-                                            style={"width": "100vh", "height": "50vh"},
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
+                                    width=4,
                                 ),
                                 dbc.Col(
                                     [
@@ -298,10 +301,14 @@ layout = dbc.Container(
                                             "Total",
                                             id="radio_citations_diffusivity",
                                             inline=True,
-                                            inputStyle={"margin-left": "20px"},
+                                            inputStyle={
+                                                "margin-left": "20px",
+                                                "margin-right": "5px",
+                                            },
                                         ),
                                         citations_graph_diffusivity,
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                             ]
                         ),
@@ -423,7 +430,8 @@ layout = dbc.Container(
                                                 ),
                                             ]
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                                 dbc.Col(
                                     [
@@ -440,11 +448,12 @@ layout = dbc.Container(
                                                     ],
                                                 )
                                             ),
-                                            style={"width": "150vh", "height": "70vh"},
+                                            style={"width": "120vh", "height": "70vh"},
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
-                            ]
+                            ],
                         ),
                         dbc.Row(
                             [
@@ -464,9 +473,10 @@ layout = dbc.Container(
                                                 ),
                                                 step=5,
                                             ),
-                                            style={"width": "100vh", "height": "50vh"},
                                         ),
-                                    ]
+                                    ],
+                                    className="pretty_container",
+                                    width=4,
                                 ),
                                 dbc.Col(
                                     [
@@ -475,10 +485,14 @@ layout = dbc.Container(
                                             "Total",
                                             id="radio_citations_solubility",
                                             inline=True,
-                                            inputStyle={"margin-left": "20px"},
+                                            inputStyle={
+                                                "margin-left": "20px",
+                                                "margin-right": "5px",
+                                            },
                                         ),
                                         citations_graph_solubility,
-                                    ]
+                                    ],
+                                    className="pretty_container",
                                 ),
                             ]
                         ),
