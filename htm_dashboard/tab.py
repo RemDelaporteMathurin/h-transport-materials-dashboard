@@ -222,7 +222,7 @@ def make_tab(property):
                     dbc.Col(
                         [piechart_materials],
                         className="pretty_container",
-                        width=3,
+                        width=4,
                     ),
                 ],
                 justify="evenly",
