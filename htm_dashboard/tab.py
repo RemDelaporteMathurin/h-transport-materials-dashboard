@@ -163,6 +163,13 @@ def make_tab(property):
                     ),
                     dbc.Col(
                         [
+                            html.Label("Colour by:"),
+                            dcc.Dropdown(
+                                ["property", "material", "author", "isotope"],
+                                "property",
+                                id=f"colour-by_{property}",
+                                style=dict(width="150px"),
+                            ),
                             dcc.Graph(
                                 id=f"graph_{property}",
                                 style={"width": "120vh", "height": "70vh"},

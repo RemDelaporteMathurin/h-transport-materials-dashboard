@@ -96,7 +96,12 @@ def create_update_entries_per_year_graph_function(group):
 
 def create_update_graph_function(group):
     def update_graph(
-        material_filter, isotope_filter, author_filter, year_filter, mean_button
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+        mean_button,
+        colour_by,
     ):
         if group == "diffusivity":
             make_graph = make_graph_diffusivities
@@ -112,7 +117,7 @@ def create_update_graph_function(group):
             years=year_filter,
         )
 
-        figure = make_graph(properties_group)
+        figure = make_graph(properties_group, colour_by)
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"mean_button_{group}.n_clicks":
             add_mean(properties_group, figure)
