@@ -51,6 +51,7 @@ for group in ["diffusivity", "solubility"]:
         dash.Input(f"author_filter_{group}", "value"),
         dash.Input(f"year_filter_{group}", "value"),
         dash.Input(f"mean_button_{group}", "n_clicks"),
+        dash.Input(f"colour-by_{group}", "value"),
     )(cb.create_update_graph_function(group))
 
     app.callback(
