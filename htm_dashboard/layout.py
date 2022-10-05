@@ -8,8 +8,34 @@ from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
 
-tab_diffusivity = make_tab("diffusivity")
-tab_solubility = make_tab("solubility")
+
+def make_modal_add_property(property: str):
+    prop_to_form = {
+        "diffusivity": form_new_diffusivity,
+        "solubility": form_new_solubility,
+    }
+    modal = dbc.Modal(
+        [
+            dbc.ModalHeader(dbc.ModalTitle(html.H2(f"Add a {property}"))),
+            dbc.ModalBody(prop_to_form[property]),
+            dbc.ModalFooter(
+                [
+                    html.Div("", id=f"error_message_new_{property}"),
+                    dbc.Button(
+                        "Submit",
+                        id=f"submit_new_{property}",
+                        color="primary",
+                        n_clicks="0",
+                    ),
+                ]
+            ),
+        ],
+        id=f"modal_add_{property}",
+        is_open=False,
+        # size="lg",
+    )
+    return modal
+
 
 header = dbc.Row(
     [
@@ -81,47 +107,10 @@ layout = dbc.Container(
         dcc.Tabs(
             id="tabs-example-graph",
             value="tab_diffusivity",
-            children=[tab_diffusivity, tab_solubility],
+            children=[make_tab("diffusivity"), make_tab("solubility")],
         ),
-        dbc.Modal(
-            [
-                dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a diffusivity"))),
-                dbc.ModalBody(form_new_diffusivity),
-                dbc.ModalFooter(
-                    [
-                        html.Div("", id="error_message_new_diffusivity"),
-                        dbc.Button(
-                            "Submit",
-                            id="submit_new_diffusivity",
-                            color="primary",
-                            n_clicks="0",
-                        ),
-                    ]
-                ),
-            ],
-            id="modal_add_diffusivity",
-            is_open=False,
-            # size="lg",
-        ),
-        dbc.Modal(
-            [
-                dbc.ModalHeader(dbc.ModalTitle(html.H2("Add a solubility"))),
-                dbc.ModalBody(form_new_solubility),
-                dbc.ModalFooter(
-                    [
-                        html.Div("", id="error_message_new_solubility"),
-                        dbc.Button(
-                            "Submit",
-                            id="submit_new_solubility",
-                            color="primary",
-                            n_clicks="0",
-                        ),
-                    ]
-                ),
-            ],
-            id="modal_add_solubility",
-            is_open=False,
-        ),
+        make_modal_add_property("diffusivity"),
+        make_modal_add_property("solubility"),
     ],
     fluid=True,
 )
