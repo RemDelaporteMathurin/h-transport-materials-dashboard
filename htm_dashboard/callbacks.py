@@ -32,7 +32,7 @@ group_to_make = {"diffusivity": make_diffusivities, "solubility": make_solubilit
 def create_make_citations_figure_function(group):
     def make_citations_figure(
         figure,
-        radio_citations,
+        per_year,
         material_filter,
         isotope_filter,
         author_filter,
@@ -44,9 +44,8 @@ def create_make_citations_figure_function(group):
             isotopes=isotope_filter,
             years=year_filter,
         )
-        return make_citations_graph(
-            properties_group, per_year=radio_citations == "Per year"
-        )
+
+        return make_citations_graph(properties_group, per_year=per_year)
 
     return make_citations_figure
 

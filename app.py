@@ -27,7 +27,7 @@ for group in ["diffusivity", "solubility"]:
     app.callback(
         dash.Output(f"graph_nb_citations_{group}", "figure"),
         dash.Input(f"graph_{group}", "figure"),
-        dash.Input(f"radio_citations_{group}", "value"),
+        dash.Input(f"per_year_citations_{group}", "on"),
         dash.State(f"material_filter_{group}", "value"),
         dash.State(f"isotope_filter_{group}", "value"),
         dash.State(f"author_filter_{group}", "value"),
