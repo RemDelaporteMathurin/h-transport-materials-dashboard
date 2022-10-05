@@ -306,132 +306,83 @@ for group in ["diffusivity", "solubility"]:
     )(make_toggle_modal_function(group))
 
 
-@app.callback(
-    dash.Output("material_filter_diffusivity", "options"),
-    dash.Output("author_filter_diffusivity", "options"),
-    dash.Output("error_message_new_diffusivity", "children"),
-    dash.Input("submit_new_diffusivity", "n_clicks"),
-    dash.Input("material_filter_diffusivity", "value"),
-    dash.State("new_diffusivity_pre_exp", "value"),
-    dash.State("new_diffusivity_act_energy", "value"),
-    dash.State("new_diffusivity_author", "value"),
-    dash.State("new_diffusivity_year", "value"),
-    dash.State("new_diffusivity_isotope", "value"),
-    dash.State("new_diffusivity_material", "value"),
-    dash.State("new_diffusivity_range_low", "value"),
-    dash.State("new_diffusivity_range_high", "value"),
-    prevent_initial_call=True,
-)
-def add_diffusivity(
-    n_clicks,
-    material_filter_diffusivities,
-    new_diffusivity_pre_exp,
-    new_diffusivity_act_energy,
-    new_diffusivity_author,
-    new_diffusivity_year,
-    new_diffusivity_isotope,
-    new_diffusivity_material,
-    new_diffusivity_range_low,
-    new_diffusivity_range_high,
-):
-    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
-    if changed_id == "submit_new_diffusivity.n_clicks":
-        if None in [
-            new_diffusivity_pre_exp,
-            new_diffusivity_act_energy,
-            new_diffusivity_author,
-            new_diffusivity_year,
-            new_diffusivity_isotope,
-            new_diffusivity_material,
-        ]:
-            return dash.no_update, dash.no_update, "Error!"
-        if (new_diffusivity_range_low, new_diffusivity_range_high) == (None, None):
-            (new_diffusivity_range_low, new_diffusivity_range_high) = (300, 1200)
-        new_property = htm.ArrheniusProperty(
-            pre_exp=new_diffusivity_pre_exp,
-            act_energy=new_diffusivity_act_energy,
-            author=new_diffusivity_author.lower(),
-            year=new_diffusivity_year,
-            isotope=new_diffusivity_isotope,
-            material=new_diffusivity_material,
-            range=(new_diffusivity_range_low, new_diffusivity_range_high),
-        )
-        all_diffusivities.properties.append(new_property)
+def make_add_property(group):
+    def add_property(
+        n_clicks,
+        material_filter,
+        new_pre_exp,
+        new_act_energy,
+        new_author,
+        new_year,
+        new_isotope,
+        new_material,
+        new_range_low,
+        new_range_high,
+    ):
+        if group == "diffusivity":
+            properties_group = all_diffusivities
+            prop_class = htm.ArrheniusProperty
+        elif group == "solubility":
+            properties_group = all_solubilities
+            prop_class = htm.Solubility
+        changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+        if changed_id == f"submit_new_{group}.n_clicks":
+            if None in [
+                new_pre_exp,
+                new_act_energy,
+                new_author,
+                new_year,
+                new_isotope,
+                new_material,
+            ]:
+                return dash.no_update, dash.no_update, "Error!"
+            if (new_range_low, new_range_high) == (None, None):
+                (new_range_low, new_range_high) = (300, 1200)
+            new_property = htm.ArrheniusProperty(
+                pre_exp=new_pre_exp,
+                act_energy=new_act_energy,
+                author=new_author.lower(),
+                year=new_year,
+                isotope=new_isotope,
+                material=new_material,
+                range=(new_range_low, new_range_high),
+            )
+            properties_group.properties.append(new_property)
 
-    all_authors = np.unique(
-        [
-            D.author.capitalize()
-            for D in all_diffusivities
-            if D.material in material_filter_diffusivities
-        ]
-    ).tolist()
-    all_materials = np.unique([D.material.lower() for D in all_diffusivities]).tolist()
+        all_authors = np.unique(
+            [
+                prop.author.capitalize()
+                for prop in properties_group
+                if prop.material in material_filter
+            ]
+        ).tolist()
+        all_materials = np.unique(
+            [prop.material.lower() for prop in properties_group]
+        ).tolist()
 
-    return all_materials, all_authors, ""
+        return all_materials, all_authors, ""
+
+    return add_property
 
 
-@app.callback(
-    dash.Output("material_filter_solubility", "options"),
-    dash.Output("author_filter_solubility", "options"),
-    dash.Output("error_message_new_solubility", "children"),
-    dash.Input("submit_new_solubility", "n_clicks"),
-    dash.Input("material_filter_solubility", "value"),
-    dash.State("new_solubility_pre_exp", "value"),
-    dash.State("new_solubility_act_energy", "value"),
-    dash.State("new_solubility_author", "value"),
-    dash.State("new_solubility_year", "value"),
-    dash.State("new_solubility_isotope", "value"),
-    dash.State("new_solubility_material", "value"),
-    dash.State("new_solubility_range_low", "value"),
-    dash.State("new_solubility_range_high", "value"),
-    prevent_initial_call=True,
-)
-def add_solubility(
-    n_clicks,
-    material_filter_solubilities,
-    new_solubility_pre_exp,
-    new_solubility_act_energy,
-    new_solubility_author,
-    new_solubility_year,
-    new_solubility_isotope,
-    new_solubility_material,
-    new_solubility_range_low,
-    new_solubility_range_high,
-):
-    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
-    if changed_id == "submit_new_diffusivity.n_clicks":
-        if None in [
-            new_solubility_pre_exp,
-            new_solubility_act_energy,
-            new_solubility_author,
-            new_solubility_year,
-            new_solubility_isotope,
-            new_solubility_material,
-        ]:
-            return dash.no_update, dash.no_update, "Error!"
-        if (new_solubility_range_low, new_solubility_range_high) == (None, None):
-            (new_solubility_range_low, new_solubility_range_high) = (300, 1200)
-        new_property = htm.ArrheniusProperty(
-            pre_exp=new_solubility_pre_exp,
-            act_energy=new_solubility_act_energy,
-            author=new_solubility_author.lower(),
-            year=new_solubility_year,
-            isotope=new_solubility_isotope,
-            material=new_solubility_material,
-            range=(new_solubility_range_low, new_solubility_range_high),
-        )
-        all_solubilities.properties.append(new_property)
-    all_authors = np.unique(
-        [
-            D.author.capitalize()
-            for D in all_solubilities
-            if D.material in material_filter_solubilities
-        ]
-    ).tolist()
-    all_materials = np.unique([D.material.lower() for D in all_solubilities]).tolist()
+for group in ["diffusivity", "solubility"]:
 
-    return all_materials, all_authors, ""
-
+    app.callback(
+        dash.Output(f"material_filter_{group}", "options"),
+        dash.Output(f"author_filter_{group}", "options"),
+        dash.Output(f"error_message_new_{group}", "children"),
+        dash.Input(f"submit_new_{group}", "n_clicks"),
+        dash.Input(f"material_filter_{group}", "value"),
+        dash.State(f"new_{group}_pre_exp", "value"),
+        dash.State(f"new_{group}_act_energy", "value"),
+        dash.State(f"new_{group}_author", "value"),
+        dash.State(f"new_{group}_year", "value"),
+        dash.State(f"new_{group}_isotope", "value"),
+        dash.State(f"new_{group}_material", "value"),
+        dash.State(f"new_{group}_range_low", "value"),
+        dash.State(f"new_{group}_range_high", "value"),
+        prevent_initial_call=True,
+    )(make_add_property(group))
 
 if __name__ == "__main__":
     app.run_server(debug=True)
