@@ -1,6 +1,7 @@
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
+import dash_daq as daq
 
 import h_transport_materials as htm
 import numpy as np
@@ -182,15 +183,21 @@ def make_tab(property):
                     ),
                     dbc.Col(
                         [
-                            dcc.RadioItems(
-                                options=["Total", "Per year"],
-                                value="Total",
-                                id=f"radio_citations_{property}",
-                                inline=True,
-                                inputStyle={
-                                    "margin-left": "20px",
-                                    "margin-right": "5px",
-                                },
+                            # dcc.RadioItems(
+                            #     options=["Total", "Per year"],
+                            #     value="Total",
+                            #     id=f"radio_citations_{property}",
+                            #     inline=True,
+                            #     inputStyle={
+                            #         "margin-left": "20px",
+                            #         "margin-right": "5px",
+                            #     },
+                            # ),
+                            daq.BooleanSwitch(
+                                on=False,
+                                label="Per year",
+                                labelPosition="top",
+                                id=f"per_year_citations_{property}",
                             ),
                             dcc.Graph(id=f"graph_nb_citations_{property}"),
                         ],
