@@ -72,16 +72,14 @@ def make_tab(property):
                                 )
                             ),
                             html.Br(),
-                            html.Label("Filter by isotope:"),
-                            dcc.Checklist(
+                            dbc.Label("Filter by isotope:"),
+                            dbc.Checklist(
                                 value=isotope_options,
-                                options=isotope_options,
+                                options=[
+                                    {"label": i, "value": i} for i in isotope_options
+                                ],
                                 inline=True,
                                 id=f"isotope_filter_{property}",
-                                inputStyle={
-                                    "margin-left": "20px",
-                                    "margin-right": "4px",
-                                },
                             ),
                             html.Br(),
                             html.Label("Filter by author:"),
