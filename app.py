@@ -46,13 +46,21 @@ for group in ["diffusivity", "solubility"]:
 
     app.callback(
         dash.Output(f"graph_{group}", "figure"),
-        dash.Output(f"graph_prop_per_year_{group}", "figure"),
         dash.Input(f"material_filter_{group}", "value"),
         dash.Input(f"isotope_filter_{group}", "value"),
         dash.Input(f"author_filter_{group}", "value"),
         dash.Input(f"year_filter_{group}", "value"),
         dash.Input(f"mean_button_{group}", "n_clicks"),
     )(cb.create_update_graph_function(group))
+
+    app.callback(
+        dash.Output(f"graph_prop_per_year_{group}", "figure"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(cb.create_update_entries_per_year_graph_function(group))
 
     app.callback(
         dash.Output(f"download-text_{group}", "data"),
