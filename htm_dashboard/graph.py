@@ -186,8 +186,9 @@ def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
     return solubilities
 
 
-def make_graph_solubilities(solubilities):
+def make_graph_solubilities(solubilities, colour_by="property"):
     fig = go.Figure()
+    colour_list = list_of_colours(solubilities, colour_by)
     for i, S in enumerate(solubilities):
         label = "{} {} ({})".format(S.isotope, S.author.capitalize(), S.year)
         range = S.range
@@ -203,7 +204,7 @@ def make_graph_solubilities(solubilities):
                 y=S.value(T),
                 name=label,
                 mode="lines",
-                line=dict(color=colours[i % 10]),
+                line=dict(color=colour_list[i]),
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
