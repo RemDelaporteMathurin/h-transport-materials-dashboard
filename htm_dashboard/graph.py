@@ -308,3 +308,11 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
         x_label = "Number of citations (Crossref)"
     fig.update_xaxes(title=x_label)
     return fig
+
+
+def make_piechart_materials(prop_group):
+    labels = ["Oxygen", "Hydrogen", "Carbon_Dioxide", "Nitrogen"]
+    values = [4500, 2500, 1053, 500]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    return fig
