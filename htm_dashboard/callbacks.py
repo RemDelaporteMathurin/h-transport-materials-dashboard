@@ -9,6 +9,8 @@ from .graph import (
     all_diffusivities,
     all_solubilities,
     make_diffusivities,
+    make_piechart_author,
+    make_piechart_isotopes,
     make_solubilities,
     make_graph_diffusivities,
     make_piechart_materials,
@@ -277,3 +279,41 @@ def create_update_piechart_material_function(group):
         return make_piechart_materials(properties_group)
 
     return update_piechart_material
+
+
+def create_update_piechart_isotopes_function(group):
+    def update_piechart_isotope(
+        figure,
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+    ):
+        properties_group = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+        return make_piechart_isotopes(properties_group)
+
+    return update_piechart_isotope
+
+
+def create_update_piechart_authors_function(group):
+    def update_piechart_author(
+        figure,
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+    ):
+        properties_group = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+        return make_piechart_author(properties_group)
+
+    return update_piechart_author
