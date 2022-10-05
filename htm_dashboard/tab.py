@@ -1,6 +1,7 @@
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
+import dash_daq as daq
 
 import h_transport_materials as htm
 import numpy as np
@@ -50,9 +51,8 @@ def make_tab(property):
     min_year = min(years_options)
     max_year = max(years_options)
 
-    tab = dcc.Tab(
+    tab = dbc.Tab(
         label=property.capitalize(),
-        value=f"tab_{property}",
         children=[
             dbc.Row(
                 [
@@ -73,16 +73,14 @@ def make_tab(property):
                                 )
                             ),
                             html.Br(),
-                            html.Label("Filter by isotope:"),
-                            dcc.Checklist(
+                            dbc.Label("Filter by isotope:"),
+                            dbc.Checklist(
                                 value=isotope_options,
-                                options=isotope_options,
+                                options=[
+                                    {"label": i, "value": i} for i in isotope_options
+                                ],
                                 inline=True,
                                 id=f"isotope_filter_{property}",
-                                inputStyle={
-                                    "margin-left": "20px",
-                                    "margin-right": "4px",
-                                },
                             ),
                             html.Br(),
                             html.Label("Filter by author:"),
@@ -185,17 +183,24 @@ def make_tab(property):
                     ),
                     dbc.Col(
                         [
-                            dcc.RadioItems(
-                                options=["Total", "Per year"],
-                                value="Total",
-                                id=f"radio_citations_{property}",
-                                inline=True,
-                                inputStyle={
-                                    "margin-left": "20px",
-                                    "margin-right": "5px",
-                                },
-                            ),
-                            dcc.Graph(id=f"graph_nb_citations_{property}"),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        [
+                                            daq.BooleanSwitch(
+                                                label="Per year",
+                                                on=False,
+                                                id=f"per_year_citations_{property}",
+                                            ),
+                                        ],
+                                        width=1,
+                                    ),
+                                    dbc.Col(
+                                        [dcc.Graph(id=f"graph_nb_citations_{property}")]
+                                    ),
+                                ],
+                                align="center",
+                            )
                         ],
                         className="pretty_container",
                     ),
