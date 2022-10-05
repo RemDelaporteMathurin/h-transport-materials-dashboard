@@ -172,66 +172,44 @@ for group in ["diffusivity", "solubility"]:
     )(create_update_graph_function(group))
 
 
-# extract data buttons
-@app.callback(
-    dash.Output("download-text_diffusivity", "data"),
-    dash.Input("extract_button_diffusivity", "n_clicks"),
-    dash.Input("material_filter_diffusivity", "value"),
-    dash.Input("isotope_filter_diffusivity", "value"),
-    dash.Input("author_filter_diffusivity", "value"),
-    dash.Input("year_filter_diffusivity", "value"),
-    prevent_initial_call=True,
-)
-def func(
-    n_clicks,
-    material_filter_diffusivities,
-    isotope_filter_diffusivities,
-    author_filter_diffusivities,
-    year_filter_diffusivities,
-):
-    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
-    if changed_id == "extract_button_diffusivity.n_clicks":
-        diffusivities = make_diffusivities(
-            materials=material_filter_diffusivities,
-            authors=author_filter_diffusivities,
-            isotopes=isotope_filter_diffusivities,
-            years=year_filter_diffusivities,
-        )
-        return dict(
-            content=create_data_as_dict(diffusivities),
-            filename="data.json",
-        )
+def create_make_download_data_function(group):
+    def make_download_data(
+        n_clicks,
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+    ):
+        if group == "diffusivity":
+            make_group = make_diffusivities
+        elif group == "solubility":
+            make_group = make_solubilities
+        changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+        if changed_id == f"extract_button_{group}.n_clicks":
+            properties_group = make_group(
+                materials=material_filter,
+                authors=author_filter,
+                isotopes=isotope_filter,
+                years=year_filter,
+            )
+            return dict(
+                content=create_data_as_dict(properties_group),
+                filename="data.json",
+            )
+
+    return make_download_data
 
 
-@app.callback(
-    dash.Output("download-text_solubility", "data"),
-    dash.Input("extract_button_solubility", "n_clicks"),
-    dash.Input("material_filter_solubility", "value"),
-    dash.Input("isotope_filter_solubility", "value"),
-    dash.Input("author_filter_solubility", "value"),
-    dash.Input("year_filter_solubility", "value"),
-    prevent_initial_call=True,
-)
-def func(
-    n_clicks,
-    material_filter_solubilities,
-    isotope_filter_solubilities,
-    author_filter_solubilities,
-    year_filter_solubilities,
-):
-    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
-    if changed_id == "extract_button_solubility.n_clicks":
-        solubilities = make_solubilities(
-            materials=material_filter_solubilities,
-            authors=author_filter_solubilities,
-            isotopes=isotope_filter_solubilities,
-            years=year_filter_solubilities,
-        )
-        return dict(
-            content=create_data_as_dict(solubilities),
-            filename="data.json",
-        )
-
+for group in ["diffusivity", "solubility"]:
+    app.callback(
+        dash.Output(f"download-text_{group}", "data"),
+        dash.Input(f"extract_button_{group}", "n_clicks"),
+        dash.Input(f"material_filter_{group}", "value"),
+        dash.Input(f"isotope_filter_{group}", "value"),
+        dash.Input(f"author_filter_{group}", "value"),
+        dash.Input(f"year_filter_{group}", "value"),
+        prevent_initial_call=True,
+    )(create_make_download_data_function(group))
 
 # callbacks for python buttons
 @app.callback(
