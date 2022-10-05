@@ -36,9 +36,16 @@ def make_tab(property):
 
     all_properties = property_to_group[property]
 
+
+    initial_material = "tungsten"
+
     authors_options = np.unique(
-        [prop.author.capitalize() for prop in all_properties]
-    ).tolist()
+                                    [
+                                        prop.author.capitalize()
+                                        for prop in all_properties
+                                        if prop.material == "tungsten"
+                                    ]
+                                ).tolist()
 
     years_options = [prop.year for prop in all_properties]
     min_year = min(years_options)
@@ -55,7 +62,7 @@ def make_tab(property):
                             html.Label("Filter by material:"),
                             dcc.Dropdown(
                                 options=materials_options,
-                                value=["tungsten"],
+                                value=[initial_material],
                                 multi=True,
                                 id="material_filter_{}".format(property),
                             ),
@@ -81,13 +88,7 @@ def make_tab(property):
                             html.Br(),
                             html.Label("Filter by author:"),
                             dcc.Dropdown(
-                                value=np.unique(
-                                    [
-                                        prop.author.capitalize()
-                                        for prop in all_properties
-                                        if prop.material == "tungsten"
-                                    ]
-                                ).tolist(),
+                                value=authors_options,
                                 options=authors_options,
                                 multi=True,
                                 id="author_filter_{}".format(property),
