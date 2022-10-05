@@ -234,7 +234,9 @@ def make_download_python_callback(group):
                 ),
                 filename="script.py",
             )
+
     return download_python
+
 
 for group in ["diffusivity", "solubility"]:
 
@@ -250,9 +252,9 @@ for group in ["diffusivity", "solubility"]:
 
 
 @app.callback(
-    dash.Output("modal", "is_open"),
+    dash.Output("modal-infos", "is_open"),
     dash.Input("open-sm", "n_clicks"),
-    dash.State("modal", "is_open"),
+    dash.State("modal-infos", "is_open"),
 )
 def toggle_modal(n1, is_open):
     if n1:
@@ -260,80 +262,48 @@ def toggle_modal(n1, is_open):
     return is_open
 
 
-@app.callback(
-    dash.Output("modal_add_diffusivity", "is_open"),
-    dash.Input("add_property_diffusivity", "n_clicks"),
-    dash.Input("submit_new_diffusivity", "n_clicks"),
-    dash.State("modal_add_diffusivity", "is_open"),
-    dash.State("new_diffusivity_pre_exp", "value"),
-    dash.State("new_diffusivity_act_energy", "value"),
-    dash.State("new_diffusivity_author", "value"),
-    dash.State("new_diffusivity_year", "value"),
-    dash.State("new_diffusivity_isotope", "value"),
-    dash.State("new_diffusivity_material", "value"),
-    prevent_initial_call=True,
-)
-def toggle_modal(
-    n1,
-    n2,
-    is_open,
-    new_diffusivity_pre_exp,
-    new_diffusivity_act_energy,
-    new_diffusivity_author,
-    new_diffusivity_year,
-    new_diffusivity_isotope,
-    new_diffusivity_material,
-):
-    if is_open and None in [
-        new_diffusivity_pre_exp,
-        new_diffusivity_act_energy,
-        new_diffusivity_author,
-        new_diffusivity_year,
-        new_diffusivity_isotope,
-        new_diffusivity_material,
-    ]:
+def make_toggle_modal_function(group):
+    def toggle_modal(
+        n1,
+        n2,
+        is_open,
+        new_prop_pre_exp,
+        new_prop_act_energy,
+        new_prop_author,
+        new_prop_year,
+        new_prop_isotope,
+        new_prop_material,
+    ):
+        if is_open and None in [
+            new_prop_pre_exp,
+            new_prop_act_energy,
+            new_prop_author,
+            new_prop_year,
+            new_prop_isotope,
+            new_prop_material,
+        ]:
+            return is_open
+        if n1 or n2:
+            return not is_open
         return is_open
-    if n1 or n2:
-        return not is_open
-    return is_open
+
+    return toggle_modal
 
 
-@app.callback(
-    dash.Output("modal_add_solubility", "is_open"),
-    dash.Input("add_property_solubility", "n_clicks"),
-    dash.Input("submit_new_solubility", "n_clicks"),
-    dash.State("new_solubility_pre_exp", "value"),
-    dash.State("new_solubility_act_energy", "value"),
-    dash.State("new_solubility_author", "value"),
-    dash.State("new_solubility_year", "value"),
-    dash.State("new_solubility_isotope", "value"),
-    dash.State("new_solubility_material", "value"),
-    dash.State("modal_add_solubility", "is_open"),
-    prevent_initial_call=True,
-)
-def toggle_modal(
-    n1,
-    n2,
-    is_open,
-    new_solubility_pre_exp,
-    new_solubility_act_energy,
-    new_solubility_author,
-    new_solubility_year,
-    new_solubility_isotope,
-    new_solubility_material,
-):
-    if is_open and None in [
-        new_solubility_pre_exp,
-        new_solubility_act_energy,
-        new_solubility_author,
-        new_solubility_year,
-        new_solubility_isotope,
-        new_solubility_material,
-    ]:
-        return is_open
-    if n1 or n2:
-        return not is_open
-    return is_open
+for group in ["diffusivity", "solubility"]:
+    app.callback(
+        dash.Output(f"modal_add_{group}", "is_open"),
+        dash.Input(f"add_property_{group}", "n_clicks"),
+        dash.Input(f"submit_new_{group}", "n_clicks"),
+        dash.State(f"modal_add_{group}", "is_open"),
+        dash.State(f"new_{group}_pre_exp", "value"),
+        dash.State(f"new_{group}_act_energy", "value"),
+        dash.State(f"new_{group}_author", "value"),
+        dash.State(f"new_{group}_year", "value"),
+        dash.State(f"new_{group}_isotope", "value"),
+        dash.State(f"new_{group}_material", "value"),
+        prevent_initial_call=True,
+    )(make_toggle_modal_function(group))
 
 
 @app.callback(

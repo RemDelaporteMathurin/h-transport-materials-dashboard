@@ -50,7 +50,7 @@ header = dbc.Row(
                             dbc.ModalBody(text_infos),
                             dbc.ModalFooter("Contact: rdelaportemathurin@gmail.com"),
                         ],
-                        id="modal",
+                        id="modal-infos",
                         is_open=False,
                         size="lg",
                     ),
