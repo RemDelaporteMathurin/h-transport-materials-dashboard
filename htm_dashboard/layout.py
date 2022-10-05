@@ -1,8 +1,8 @@
-from infos import text_infos
-from new_diffusivity_form import form_new_diffusivity
-from new_solubility_form import form_new_solubility
+from .infos import text_infos
+from .new_diffusivity_form import form_new_diffusivity
+from .new_solubility_form import form_new_solubility
 
-from tab import make_tab
+from .tab import make_tab
 
 from dash import dcc
 from dash import html

@@ -1,11 +1,11 @@
 import numpy as np
 import dash
 
-from export import create_data_as_dict, generate_python_code
+from .export import create_data_as_dict, generate_python_code
 
-from tab import materials_options
+from .tab import materials_options
 
-from graph import (
+from .graph import (
     all_diffusivities,
     all_solubilities,
     make_diffusivities,
