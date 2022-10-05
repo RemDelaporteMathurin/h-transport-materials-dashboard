@@ -9,26 +9,19 @@ pio.templates.default = "plotly_white"
 all_diffusivities = htm.diffusivities
 all_solubilities = htm.solubilities
 
-all_authors_diffusivities = np.unique(
-    [D.author.capitalize() for D in all_diffusivities]
-).tolist()
-all_authors_solubilities = np.unique(
-    [S.author.capitalize() for S in all_solubilities]
-).tolist()
-
 all_years_solubilities = [S.year for S in all_solubilities]
-min_year_solubilities = min(all_years_solubilities)
-max_year_solubilities = max(all_years_solubilities)
+MIN_YEAR_SOL = min(all_years_solubilities)
+MAX_YEAR_SOL = max(all_years_solubilities)
 
 all_years_diffusivities = [S.year for S in all_diffusivities]
-min_year_diffusivities = min(all_years_diffusivities)
-max_year_diffusivities = max(all_years_diffusivities)
+MIN_YEAR_DIFF = min(all_years_diffusivities)
+MAX_YEAR_DIFF = max(all_years_diffusivities)
 
 
 colours = px.colors.qualitative.Plotly
 
 
-def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
+def add_mean_value_diffusivities(group: htm.PropertiesGroup, fig: go.Figure):
     D_0, E_D = group.mean()
     mean_prop = htm.ArrheniusProperty(D_0, E_D)
     label = "Mean value"
@@ -91,7 +84,7 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
     return diffusivities
 
 
-def make_graph(diffusivities):
+def make_graph_diffusivities(diffusivities):
     fig = go.Figure()
     for i, D in enumerate(diffusivities):
         label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
@@ -230,4 +223,35 @@ def make_figure_prop_per_year(group, step, selected_years=[1950, 2022]):
         [go.Bar(x=average_years, y=nb_props_per_year, selectedpoints=selected)]
     )
     fig.update_yaxes(title_text="Nb of properties")
+    return fig
+
+
+def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
+    references = []
+    nb_citations = []
+    for prop in group:
+        author = prop.author
+        year = prop.year
+
+        label = "{} ({})".format(author.capitalize(), year)
+
+        if label not in references:
+
+            references.append(label)
+            if per_year:
+                nb_citations.append(prop.nb_citations / (2022 - year))
+            else:
+                nb_citations.append(prop.nb_citations)
+
+    # sort values
+    references = [val_y for _, val_y in sorted(zip(nb_citations, references))]
+    nb_citations = sorted(nb_citations)
+
+    bar = go.Bar(x=nb_citations, y=references, orientation="h")
+    fig = go.Figure(bar)
+    if per_year:
+        x_label = "Average number of citations per year (Crossref)"
+    else:
+        x_label = "Number of citations (Crossref)"
+    fig.update_xaxes(title=x_label)
     return fig
