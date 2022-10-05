@@ -21,7 +21,7 @@ MAX_YEAR_DIFF = max(all_years_diffusivities)
 colours = px.colors.qualitative.Plotly
 
 
-def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
+def add_mean_value_diffusivities(group: htm.PropertiesGroup, fig: go.Figure):
     D_0, E_D = group.mean()
     mean_prop = htm.ArrheniusProperty(D_0, E_D)
     label = "Mean value"

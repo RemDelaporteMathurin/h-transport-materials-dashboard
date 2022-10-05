@@ -12,7 +12,7 @@ from graph import (
     make_solubilities,
     make_graph_diffusivities,
     make_graph_solubilities,
-    add_mean_value,
+    add_mean_value_diffusivities,
     add_mean_value_solubilities,
     MIN_YEAR_SOL,
     MAX_YEAR_SOL,
@@ -84,7 +84,7 @@ def create_update_graph_function(group):
         if group == "diffusivity":
             make_group = make_diffusivities
             make_graph = make_graph_diffusivities
-            add_mean = add_mean_value
+            add_mean = add_mean_value_diffusivities
             min_year, max_year = MIN_YEAR_DIFF, MAX_YEAR_DIFF
         elif group == "solubility":
             make_group = make_solubilities
