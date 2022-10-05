@@ -51,6 +51,8 @@ def make_tab(property):
     min_year = min(years_options)
     max_year = max(years_options)
 
+    piechart_materials = dcc.Graph(id=f"graph_materials_{property}")
+
     tab = dbc.Tab(
         label=property.capitalize(),
         children=[
