@@ -42,13 +42,6 @@ materials_options = np.unique(
     ]
 ).tolist()
 
-authors_options_diff = np.unique(
-    [D.author.capitalize() for D in all_diffusivities]
-).tolist()
-authors_options_sol = np.unique(
-    [S.author.capitalize() for S in all_solubilities]
-).tolist()
-
 tab_diffusivity = make_tab("diffusivity")
 tab_solubility = make_tab("solubility")
 
@@ -242,7 +235,7 @@ def add_all_material(n_clicks):
 )
 def add_all_authors(n_clicks):
     if n_clicks:
-        return authors_options_diff
+        return np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
     else:
         return dash.no_update
 
@@ -304,7 +297,7 @@ def add_all_material(n_clicks):
 )
 def add_all_authors(n_clicks):
     if n_clicks:
-        return authors_options_sol
+        return np.unique([S.author.capitalize() for S in all_solubilities]).tolist()
     else:
         return dash.no_update
 
