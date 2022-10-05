@@ -52,6 +52,8 @@ def make_tab(property):
     max_year = max(years_options)
 
     piechart_materials = dcc.Graph(id=f"graph_materials_{property}")
+    piechart_isotopes = dcc.Graph(id=f"graph_isotopes_{property}")
+    piechart_authors = dcc.Graph(id=f"graph_authors_{property}")
 
     tab = dbc.Tab(
         label=property.capitalize(),
@@ -226,6 +228,20 @@ def make_tab(property):
                     ),
                 ],
                 justify="evenly",
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [piechart_isotopes],
+                        className="pretty_container",
+                        width=4,
+                    ),
+                    dbc.Col(
+                        [piechart_authors],
+                        className="pretty_container",
+                        width=4,
+                    ),
+                ]
             ),
         ],
     )

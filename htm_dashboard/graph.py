@@ -318,3 +318,25 @@ def make_piechart_materials(prop_group):
 
     fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
     return fig
+
+
+def make_piechart_isotopes(prop_group):
+    list_of_isotopes = [prop.isotope for prop in prop_group]
+    labels = ["H", "D", "T"]
+
+    values = [list_of_isotopes.count(isotope) for isotope in labels]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    return fig
+
+
+def make_piechart_author(prop_group):
+    list_of_authors = [prop.author for prop in prop_group]
+    labels = np.unique(list_of_authors).tolist()
+
+    values = [list_of_authors.count(isotope) for isotope in labels]
+
+    labels = [lab.capitalize() for lab in labels]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    return fig
