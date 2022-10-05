@@ -311,8 +311,10 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
 
 
 def make_piechart_materials(prop_group):
-    labels = ["Oxygen", "Hydrogen", "Carbon_Dioxide", "Nitrogen"]
-    values = [4500, 2500, 1053, 500]
+    list_of_mats = [prop.material for prop in prop_group]
+    labels = np.unique(list_of_mats).tolist()
+
+    values = [list_of_mats.count(mat) for mat in labels]
 
     fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
     return fig
