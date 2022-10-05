@@ -100,9 +100,13 @@ def create_update_graph_function(group):
         if group == "diffusivity":
             make_group = make_diffusivities
             make_graph = make_graph_diffusivities
+            add_mean = add_mean_value
+            min_year, max_year = MIN_YEAR_DIFF, MAX_YEAR_DIFF
         elif group == "solubility":
             make_group = make_solubilities
             make_graph = make_graph_solubilities
+            add_mean = add_mean_value_solubilities
+            min_year, max_year = MIN_YEAR_SOL, MAX_YEAR_SOL
 
         properties_group = make_group(
             materials=material_filter,
@@ -115,13 +119,13 @@ def create_update_graph_function(group):
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
-            years=[MIN_YEAR_DIFF, MAX_YEAR_DIFF],
+            years=[min_year, max_year],
         )
 
         figure = make_graph(properties_group)
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"mean_button_{group}.n_clicks":
-            add_mean_value(properties_group, figure)
+            add_mean(properties_group, figure)
 
         return figure, make_figure_prop_per_year(
             all_time_properties, step=5, selected_years=year_filter
