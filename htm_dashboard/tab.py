@@ -50,9 +50,8 @@ def make_tab(property):
     min_year = min(years_options)
     max_year = max(years_options)
 
-    tab = dcc.Tab(
+    tab = dbc.Tab(
         label=property.capitalize(),
-        value=f"tab_{property}",
         children=[
             dbc.Row(
                 [
