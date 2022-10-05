@@ -33,17 +33,8 @@ server = app.server
 
 app.layout = layout
 
-for group in ["diffusivity", "solubility"]:
 
-    @app.callback(
-        dash.Output(f"graph_nb_citations_{group}", "figure"),
-        dash.Input(f"graph_{group}", "figure"),
-        dash.Input(f"radio_citations_{group}", "value"),
-        dash.State(f"material_filter_{group}", "value"),
-        dash.State(f"isotope_filter_{group}", "value"),
-        dash.State(f"author_filter_{group}", "value"),
-        dash.State(f"year_filter_{group}", "value"),
-    )
+def create_make_figure_function(group):
     def make_figure(
         figure,
         radio_citations,
@@ -73,26 +64,41 @@ for group in ["diffusivity", "solubility"]:
                 solubilities, per_year=radio_citations == "Per year"
             )
 
+    return make_figure
+
 
 for group in ["diffusivity", "solubility"]:
 
-    @app.callback(
-        dash.Output(f"material_filter_{group}", "value"),
-        dash.Input(f"add_all_materials_{group}", "n_clicks"),
-    )
-    def add_all_material(n_clicks):
+    app.callback(
+        dash.Output(f"graph_nb_citations_{group}", "figure"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.Input(f"radio_citations_{group}", "value"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(create_make_figure_function(group))
+
+
+def create_add_all_materials_function(group):
+    def add_all_materials(n_clicks):
         if n_clicks:
             return materials_options
         else:
             return dash.no_update
 
+    return add_all_materials
+
 
 for group in ["diffusivity", "solubility"]:
 
-    @app.callback(
-        dash.Output(f"author_filter_{group}", "value"),
-        dash.Input(f"add_all_authors_{group}", "n_clicks"),
-    )
+    app.callback(
+        dash.Output(f"material_filter_{group}", "value"),
+        dash.Input(f"add_all_materials_{group}", "n_clicks"),
+    )(create_add_all_materials_function(group))
+
+
+def create_add_all_authors_function(group):
     def add_all_authors(n_clicks):
         if group == "diffusivity":
             properties_group = all_diffusivities
@@ -105,95 +111,65 @@ for group in ["diffusivity", "solubility"]:
         else:
             return dash.no_update
 
-
-# callback filter material diffusivity
-@app.callback(
-    dash.Output("graph_diffusivity", "figure"),
-    dash.Output("graph_prop_per_year_diffusivity", "figure"),
-    dash.Input("material_filter_diffusivity", "value"),
-    dash.Input("isotope_filter_diffusivity", "value"),
-    dash.Input("author_filter_diffusivity", "value"),
-    dash.Input("year_filter_diffusivity", "value"),
-    dash.Input("mean_button_diffusivity", "n_clicks"),
-)
-def update_graph(
-    material_filter_diffusivities,
-    isotope_filter_diffusivities,
-    author_filter_diffusivities,
-    year_filter_diffusivities,
-    mean_button_diffusivity,
-):
-    diffusitivites = make_diffusivities(
-        materials=material_filter_diffusivities,
-        authors=author_filter_diffusivities,
-        isotopes=isotope_filter_diffusivities,
-        years=year_filter_diffusivities,
-    )
-
-    all_time_diffusivities = make_diffusivities(
-        materials=material_filter_diffusivities,
-        authors=author_filter_diffusivities,
-        isotopes=isotope_filter_diffusivities,
-        years=[MIN_YEAR_DIFF, MAX_YEAR_DIFF],
-    )
-    figure = make_graph_diffusivities(diffusitivites)
-    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
-    if changed_id == "mean_button_diffusivity.n_clicks":
-        add_mean_value(diffusitivites, figure)
-
-    return figure, make_figure_prop_per_year(
-        all_time_diffusivities, step=5, selected_years=year_filter_diffusivities
-    )
+    return add_all_authors
 
 
-@app.callback(
-    dash.Output("author_filter_solubility", "value"),
-    dash.Input("add_all_authors_solubility", "n_clicks"),
-)
-def add_all_authors(n_clicks):
-    if n_clicks:
-        return np.unique([S.author.capitalize() for S in all_solubilities]).tolist()
-    else:
-        return dash.no_update
+for group in ["diffusivity", "solubility"]:
+
+    app.callback(
+        dash.Output(f"author_filter_{group}", "value"),
+        dash.Input(f"add_all_authors_{group}", "n_clicks"),
+    )(create_add_all_authors_function(group))
 
 
-# callback filters solubility
-@app.callback(
-    dash.Output("graph_solubility", "figure"),
-    dash.Output("graph_prop_per_year_solubility", "figure"),
-    dash.Input("material_filter_solubility", "value"),
-    dash.Input("isotope_filter_solubility", "value"),
-    dash.Input("author_filter_solubility", "value"),
-    dash.Input("year_filter_solubility", "value"),
-    dash.Input("mean_button_solubility", "n_clicks"),
-)
-def update_solubility_graph(
-    material_filter_solubilities,
-    isotope_filter_solubilities,
-    author_filter_solubilities,
-    year_filter_solubilities,
-    mean_button_solubility,
-):
-    solubilities = make_solubilities(
-        materials=material_filter_solubilities,
-        authors=author_filter_solubilities,
-        isotopes=isotope_filter_solubilities,
-        years=year_filter_solubilities,
-    )
-    all_time_solubilities = make_solubilities(
-        materials=material_filter_solubilities,
-        authors=author_filter_solubilities,
-        isotopes=isotope_filter_solubilities,
-        years=[MIN_YEAR_SOL, MAX_YEAR_SOL],
-    )
-    figure = make_graph_solubilities(solubilities)
-    changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
-    if changed_id == "mean_button_solubility.n_clicks":
-        add_mean_value_solubilities(solubilities, figure)
+def create_update_graph_function(group):
+    def update_graph(
+        material_filter, isotope_filter, author_filter, year_filter, mean_button
+    ):
+        if group == "diffusivity":
+            make_group = make_diffusivities
+            make_graph = make_graph_diffusivities
+        elif group == "solubility":
+            make_group = make_solubilities
+            make_graph = make_graph_solubilities
 
-    return figure, make_figure_prop_per_year(
-        all_time_solubilities, step=5, selected_years=year_filter_solubilities
-    )
+        properties_group = make_group(
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+
+        all_time_properties = make_group(
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=[MIN_YEAR_DIFF, MAX_YEAR_DIFF],
+        )
+
+        figure = make_graph(properties_group)
+        changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
+        if changed_id == f"mean_button_{group}.n_clicks":
+            add_mean_value(properties_group, figure)
+
+        return figure, make_figure_prop_per_year(
+            all_time_properties, step=5, selected_years=year_filter
+        )
+
+    return update_graph
+
+
+for group in ["diffusivity", "solubility"]:
+
+    app.callback(
+        dash.Output(f"graph_{group}", "figure"),
+        dash.Output(f"graph_prop_per_year_{group}", "figure"),
+        dash.Input(f"material_filter_{group}", "value"),
+        dash.Input(f"isotope_filter_{group}", "value"),
+        dash.Input(f"author_filter_{group}", "value"),
+        dash.Input(f"year_filter_{group}", "value"),
+        dash.Input(f"mean_button_{group}", "n_clicks"),
+    )(create_update_graph_function(group))
 
 
 # extract data buttons
