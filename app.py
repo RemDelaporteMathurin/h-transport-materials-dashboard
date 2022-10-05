@@ -87,15 +87,23 @@ for group in ["diffusivity", "solubility"]:
             return dash.no_update
 
 
-@app.callback(
-    dash.Output("author_filter_diffusivity", "value"),
-    dash.Input("add_all_authors_diffusivity", "n_clicks"),
-)
-def add_all_authors(n_clicks):
-    if n_clicks:
-        return np.unique([D.author.capitalize() for D in all_diffusivities]).tolist()
-    else:
-        return dash.no_update
+for group in ["diffusivity", "solubility"]:
+
+    @app.callback(
+        dash.Output(f"author_filter_{group}", "value"),
+        dash.Input(f"add_all_authors_{group}", "n_clicks"),
+    )
+    def add_all_authors(n_clicks):
+        if group == "diffusivity":
+            properties_group = all_diffusivities
+        elif group == "solubility":
+            properties_group = all_solubilities
+        if n_clicks:
+            return np.unique(
+                [prop.author.capitalize() for prop in properties_group]
+            ).tolist()
+        else:
+            return dash.no_update
 
 
 # callback filter material diffusivity
