@@ -33,72 +33,58 @@ server = app.server
 
 app.layout = layout
 
+for group in ["diffusivity", "solubility"]:
 
-@app.callback(
-    dash.Output("graph_nb_citations_diffusivity", "figure"),
-    dash.Input("graph_diffusivity", "figure"),
-    dash.Input("radio_citations_diffusivity", "value"),
-    dash.State("material_filter_diffusivity", "value"),
-    dash.State("isotope_filter_diffusivity", "value"),
-    dash.State("author_filter_diffusivity", "value"),
-    dash.State("year_filter_diffusivity", "value"),
-)
-def make_figure(
-    figure,
-    radio_citations_diffusivity,
-    material_filter_diffusivities,
-    isotope_filter_diffusivities,
-    author_filter_diffusivities,
-    year_filter_diffusivities,
-):
-    diffusitivites = make_diffusivities(
-        materials=material_filter_diffusivities,
-        authors=author_filter_diffusivities,
-        isotopes=isotope_filter_diffusivities,
-        years=year_filter_diffusivities,
+    @app.callback(
+        dash.Output(f"graph_nb_citations_{group}", "figure"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.Input(f"radio_citations_{group}", "value"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
     )
-    return make_citations_graph(
-        diffusitivites, per_year=radio_citations_diffusivity == "Per year"
+    def make_figure(
+        figure,
+        radio_citations,
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+    ):
+        if group == "diffusivity":
+            diffusitivites = make_diffusivities(
+                materials=material_filter,
+                authors=author_filter,
+                isotopes=isotope_filter,
+                years=year_filter,
+            )
+            return make_citations_graph(
+                diffusitivites, per_year=radio_citations == "Per year"
+            )
+        elif group == "solubility":
+            solubilities = make_solubilities(
+                materials=material_filter,
+                authors=author_filter,
+                isotopes=isotope_filter,
+                years=year_filter,
+            )
+            return make_citations_graph(
+                solubilities, per_year=radio_citations == "Per year"
+            )
+
+
+for group in ["diffusivity", "solubility"]:
+
+    @app.callback(
+        dash.Output(f"material_filter_{group}", "value"),
+        dash.Input(f"add_all_materials_{group}", "n_clicks"),
     )
-
-
-@app.callback(
-    dash.Output("graph_nb_citations_solubility", "figure"),
-    dash.Input("graph_solubility", "figure"),
-    dash.Input("radio_citations_solubility", "value"),
-    dash.State("material_filter_solubility", "value"),
-    dash.State("isotope_filter_solubility", "value"),
-    dash.State("author_filter_solubility", "value"),
-    dash.State("year_filter_solubility", "value"),
-)
-def make_figure(
-    figure,
-    radio_citations_solubility,
-    material_filter_solubilities,
-    isotope_filter_solubilities,
-    author_filter_solubilities,
-    year_filter_solubilities,
-):
-    solubilities = make_solubilities(
-        materials=material_filter_solubilities,
-        authors=author_filter_solubilities,
-        isotopes=isotope_filter_solubilities,
-        years=year_filter_solubilities,
-    )
-    return make_citations_graph(
-        solubilities, per_year=radio_citations_solubility == "Per year"
-    )
-
-
-@app.callback(
-    dash.Output("material_filter_diffusivity", "value"),
-    dash.Input("add_all_materials_diffusivity", "n_clicks"),
-)
-def add_all_material(n_clicks):
-    if n_clicks:
-        return materials_options
-    else:
-        return dash.no_update
+    def add_all_material(n_clicks):
+        if n_clicks:
+            return materials_options
+        else:
+            return dash.no_update
 
 
 @app.callback(
@@ -150,17 +136,6 @@ def update_graph(
     return figure, make_figure_prop_per_year(
         all_time_diffusivities, step=5, selected_years=year_filter_diffusivities
     )
-
-
-@app.callback(
-    dash.Output("material_filter_solubility", "value"),
-    dash.Input("add_all_materials_solubility", "n_clicks"),
-)
-def add_all_material(n_clicks):
-    if n_clicks:
-        return materials_options
-    else:
-        return dash.no_update
 
 
 @app.callback(
