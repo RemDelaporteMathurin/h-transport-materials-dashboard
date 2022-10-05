@@ -7,6 +7,7 @@ from .tab import make_tab
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import ThemeSwitchAIO
 
 
 def make_modal_add_property(property: str):
@@ -36,6 +37,12 @@ def make_modal_add_property(property: str):
     )
     return modal
 
+
+template_theme1 = "plotly_white"
+template_theme2 = "plotly_dark"
+url_theme1 = dbc.themes.MINTY
+url_theme2 = dbc.themes.DARKLY
+theme_switch = ThemeSwitchAIO(aio_id="theme", themes=[url_theme1, url_theme2])
 
 header = dbc.Row(
     [
@@ -91,6 +98,7 @@ header = dbc.Row(
                         href="https://github.com/RemDelaporteMathurin/h-transport-materials-dashboard",
                         target="_blank",  # opens in a new tab
                     ),
+                    theme_switch,
                 ]
             ),
             align="end",
