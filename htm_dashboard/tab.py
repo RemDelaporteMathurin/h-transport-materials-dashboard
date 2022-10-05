@@ -188,7 +188,7 @@ def make_tab(property):
                             dcc.Graph(id=f"graph_prop_per_year_{property}"),
                         ],
                         className="pretty_container",
-                        width=4,
+                        width=3,
                     ),
                     dbc.Col(
                         [
@@ -205,15 +205,27 @@ def make_tab(property):
                                         width=1,
                                     ),
                                     dbc.Col(
-                                        [dcc.Graph(id=f"graph_nb_citations_{property}")]
+                                        [
+                                            dcc.Graph(
+                                                id=f"graph_nb_citations_{property}"
+                                            )
+                                        ],
+                                        width=11,
                                     ),
                                 ],
                                 align="center",
                             )
                         ],
                         className="pretty_container",
+                        width=4,
                     ),
-                ]
+                    dbc.Col(
+                        [piechart_materials],
+                        className="pretty_container",
+                        width=3,
+                    ),
+                ],
+                justify="evenly",
             ),
         ],
     )

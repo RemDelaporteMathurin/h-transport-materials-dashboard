@@ -11,6 +11,7 @@ from .graph import (
     make_diffusivities,
     make_solubilities,
     make_graph_diffusivities,
+    make_piechart_materials,
     make_graph_solubilities,
     add_mean_value_diffusivities,
     add_mean_value_solubilities,
