@@ -224,3 +224,34 @@ def make_figure_prop_per_year(group, step, selected_years=[1950, 2022]):
     )
     fig.update_yaxes(title_text="Nb of properties")
     return fig
+
+
+def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
+    references = []
+    nb_citations = []
+    for prop in group:
+        author = prop.author
+        year = prop.year
+
+        label = "{} ({})".format(author.capitalize(), year)
+
+        if label not in references:
+
+            references.append(label)
+            if per_year:
+                nb_citations.append(prop.nb_citations / (2022 - year))
+            else:
+                nb_citations.append(prop.nb_citations)
+
+    # sort values
+    references = [val_y for _, val_y in sorted(zip(nb_citations, references))]
+    nb_citations = sorted(nb_citations)
+
+    bar = go.Bar(x=nb_citations, y=references, orientation="h")
+    fig = go.Figure(bar)
+    if per_year:
+        x_label = "Average number of citations per year (Crossref)"
+    else:
+        x_label = "Number of citations (Crossref)"
+    fig.update_xaxes(title=x_label)
+    return fig

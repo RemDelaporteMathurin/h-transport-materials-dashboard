@@ -19,9 +19,8 @@ from graph import (
     MIN_YEAR_DIFF,
     MAX_YEAR_DIFF,
     make_figure_prop_per_year,
+    make_citations_graph,
 )
-
-from citations import make_citations_graph
 
 import h_transport_materials as htm
 
