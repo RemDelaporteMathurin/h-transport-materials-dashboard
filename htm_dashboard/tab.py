@@ -183,23 +183,24 @@ def make_tab(property):
                     ),
                     dbc.Col(
                         [
-                            # dcc.RadioItems(
-                            #     options=["Total", "Per year"],
-                            #     value="Total",
-                            #     id=f"radio_citations_{property}",
-                            #     inline=True,
-                            #     inputStyle={
-                            #         "margin-left": "20px",
-                            #         "margin-right": "5px",
-                            #     },
-                            # ),
-                            daq.BooleanSwitch(
-                                on=False,
-                                label="Per year",
-                                labelPosition="top",
-                                id=f"per_year_citations_{property}",
-                            ),
-                            dcc.Graph(id=f"graph_nb_citations_{property}"),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        [
+                                            daq.BooleanSwitch(
+                                                label="Per year",
+                                                on=False,
+                                                id=f"per_year_citations_{property}",
+                                            ),
+                                        ],
+                                        width=1,
+                                    ),
+                                    dbc.Col(
+                                        [dcc.Graph(id=f"graph_nb_citations_{property}")]
+                                    ),
+                                ],
+                                align="center",
+                            )
                         ],
                         className="pretty_container",
                     ),
