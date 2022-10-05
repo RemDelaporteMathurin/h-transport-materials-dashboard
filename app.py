@@ -24,7 +24,7 @@ from infos import text_infos
 from new_diffusivity_form import form_new_diffusivity
 from new_solubility_form import form_new_solubility
 
-from tab import make_tab
+from tab import make_tab, materials_options
 
 import dash
 from dash import dcc
@@ -41,7 +41,6 @@ materials_options = np.unique(
         for prop in all_diffusivities.properties + all_solubilities.properties
     ]
 ).tolist()
-isotope_options = ["H", "D", "T"]
 
 authors_options_diff = np.unique(
     [D.author.capitalize() for D in all_diffusivities]
