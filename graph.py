@@ -84,7 +84,7 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
     return diffusivities
 
 
-def make_graph(diffusivities):
+def make_graph_diffusivities(diffusivities):
     fig = go.Figure()
     for i, D in enumerate(diffusivities):
         label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)

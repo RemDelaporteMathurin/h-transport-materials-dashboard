@@ -4,7 +4,7 @@ from graph import (
     all_solubilities,
     make_diffusivities,
     make_solubilities,
-    make_graph,
+    make_graph_diffusivities,
     make_graph_solubilities,
     add_mean_value,
     add_mean_value_solubilities,
@@ -278,7 +278,7 @@ def update_graph(
         isotopes=isotope_filter_diffusivities,
         years=[min_year_diffusivities, max_year_diffusivities],
     )
-    figure = make_graph(diffusitivites)
+    figure = make_graph_diffusivities(diffusitivites)
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
     if changed_id == "mean_button_diffusivity.n_clicks":
         add_mean_value(diffusitivites, figure)
