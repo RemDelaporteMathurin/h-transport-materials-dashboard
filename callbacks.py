@@ -25,8 +25,8 @@ from graph import (
 import h_transport_materials as htm
 
 
-def create_make_figure_function(group):
-    def make_figure(
+def create_make_citations_figure_function(group):
+    def make_citations_figure(
         figure,
         radio_citations,
         material_filter,
@@ -48,7 +48,7 @@ def create_make_figure_function(group):
             properties_group, per_year=radio_citations == "Per year"
         )
 
-    return make_figure
+    return make_citations_figure
 
 
 def create_add_all_materials_function(group):

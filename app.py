@@ -32,7 +32,7 @@ for group in ["diffusivity", "solubility"]:
         dash.State(f"isotope_filter_{group}", "value"),
         dash.State(f"author_filter_{group}", "value"),
         dash.State(f"year_filter_{group}", "value"),
-    )(callbacks.create_make_figure_function(group))
+    )(callbacks.create_make_citations_figure_function(group))
 
     app.callback(
         dash.Output(f"material_filter_{group}", "value"),
