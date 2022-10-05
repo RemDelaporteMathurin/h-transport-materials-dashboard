@@ -25,6 +25,10 @@ from graph import (
 import h_transport_materials as htm
 
 
+group_to_all_props = {"diffusivity": all_diffusivities, "solubility": all_solubilities}
+group_to_make = {"diffusivity": make_diffusivities, "solubility": make_solubilities}
+
+
 def create_make_citations_figure_function(group):
     def make_citations_figure(
         figure,
@@ -34,10 +38,6 @@ def create_make_citations_figure_function(group):
         author_filter,
         year_filter,
     ):
-        group_to_make = {
-            "diffusivity": make_diffusivities,
-            "solubility": make_solubilities,
-        }
         properties_group = group_to_make[group](
             materials=material_filter,
             authors=author_filter,
@@ -63,13 +63,10 @@ def create_add_all_materials_function(group):
 
 def create_add_all_authors_function(group):
     def add_all_authors(n_clicks):
-        if group == "diffusivity":
-            properties_group = all_diffusivities
-        elif group == "solubility":
-            properties_group = all_solubilities
+
         if n_clicks:
             return np.unique(
-                [prop.author.capitalize() for prop in properties_group]
+                [prop.author.capitalize() for prop in group_to_all_props[group]]
             ).tolist()
         else:
             return dash.no_update
@@ -82,24 +79,22 @@ def create_update_graph_function(group):
         material_filter, isotope_filter, author_filter, year_filter, mean_button
     ):
         if group == "diffusivity":
-            make_group = make_diffusivities
             make_graph = make_graph_diffusivities
             add_mean = add_mean_value_diffusivities
             min_year, max_year = MIN_YEAR_DIFF, MAX_YEAR_DIFF
         elif group == "solubility":
-            make_group = make_solubilities
             make_graph = make_graph_solubilities
             add_mean = add_mean_value_solubilities
             min_year, max_year = MIN_YEAR_SOL, MAX_YEAR_SOL
 
-        properties_group = make_group(
+        properties_group = group_to_make[group](
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
             years=year_filter,
         )
 
-        all_time_properties = make_group(
+        all_time_properties = group_to_make[group](
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
@@ -126,13 +121,10 @@ def create_make_download_data_function(group):
         author_filter,
         year_filter,
     ):
-        if group == "diffusivity":
-            make_group = make_diffusivities
-        elif group == "solubility":
-            make_group = make_solubilities
+
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"extract_button_{group}.n_clicks":
-            properties_group = make_group(
+            properties_group = group_to_make[group](
                 materials=material_filter,
                 authors=author_filter,
                 isotopes=isotope_filter,
@@ -213,10 +205,6 @@ def make_add_property(group):
         new_range_low,
         new_range_high,
     ):
-        if group == "diffusivity":
-            properties_group = all_diffusivities
-        elif group == "solubility":
-            properties_group = all_solubilities
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"submit_new_{group}.n_clicks":
             if None in [
@@ -239,17 +227,17 @@ def make_add_property(group):
                 material=new_material,
                 range=(new_range_low, new_range_high),
             )
-            properties_group.properties.append(new_property)
+            group_to_all_props[group].properties.append(new_property)
 
         all_authors = np.unique(
             [
                 prop.author.capitalize()
-                for prop in properties_group
+                for prop in group_to_all_props[group]
                 if prop.material in material_filter
             ]
         ).tolist()
         all_materials = np.unique(
-            [prop.material.lower() for prop in properties_group]
+            [prop.material.lower() for prop in group_to_all_props[group]]
         ).tolist()
 
         return all_materials, all_authors, ""
