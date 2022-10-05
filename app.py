@@ -35,13 +35,6 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
 
 server = app.server
 
-materials_options = np.unique(
-    [
-        prop.material
-        for prop in all_diffusivities.properties + all_solubilities.properties
-    ]
-).tolist()
-
 tab_diffusivity = make_tab("diffusivity")
 tab_solubility = make_tab("solubility")
 
