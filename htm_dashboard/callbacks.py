@@ -74,6 +74,27 @@ def create_add_all_authors_function(group):
     return add_all_authors
 
 
+def create_update_entries_per_year_graph_function(group):
+    def update_entries_per_year_graph(
+        figure, material_filter, isotope_filter, author_filter, year_filter
+    ):
+        if group == "diffusivity":
+            min_year, max_year = MIN_YEAR_DIFF, MAX_YEAR_DIFF
+        elif group == "solubility":
+            min_year, max_year = MIN_YEAR_SOL, MAX_YEAR_SOL
+        all_time_properties = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=[min_year, max_year],
+        )
+        return make_figure_prop_per_year(
+            all_time_properties, step=5, selected_years=year_filter
+        )
+
+    return update_entries_per_year_graph
+
+
 def create_update_graph_function(group):
     def update_graph(
         material_filter, isotope_filter, author_filter, year_filter, mean_button
@@ -81,11 +102,9 @@ def create_update_graph_function(group):
         if group == "diffusivity":
             make_graph = make_graph_diffusivities
             add_mean = add_mean_value_diffusivities
-            min_year, max_year = MIN_YEAR_DIFF, MAX_YEAR_DIFF
         elif group == "solubility":
             make_graph = make_graph_solubilities
             add_mean = add_mean_value_solubilities
-            min_year, max_year = MIN_YEAR_SOL, MAX_YEAR_SOL
 
         properties_group = group_to_make[group](
             materials=material_filter,
@@ -94,21 +113,12 @@ def create_update_graph_function(group):
             years=year_filter,
         )
 
-        all_time_properties = group_to_make[group](
-            materials=material_filter,
-            authors=author_filter,
-            isotopes=isotope_filter,
-            years=[min_year, max_year],
-        )
-
         figure = make_graph(properties_group)
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"mean_button_{group}.n_clicks":
             add_mean(properties_group, figure)
 
-        return figure, make_figure_prop_per_year(
-            all_time_properties, step=5, selected_years=year_filter
-        )
+        return figure
 
     return update_graph
 
