@@ -34,26 +34,19 @@ def create_make_figure_function(group):
         author_filter,
         year_filter,
     ):
-        if group == "diffusivity":
-            diffusitivites = make_diffusivities(
-                materials=material_filter,
-                authors=author_filter,
-                isotopes=isotope_filter,
-                years=year_filter,
-            )
-            return make_citations_graph(
-                diffusitivites, per_year=radio_citations == "Per year"
-            )
-        elif group == "solubility":
-            solubilities = make_solubilities(
-                materials=material_filter,
-                authors=author_filter,
-                isotopes=isotope_filter,
-                years=year_filter,
-            )
-            return make_citations_graph(
-                solubilities, per_year=radio_citations == "Per year"
-            )
+        group_to_make = {
+            "diffusivity": make_diffusivities,
+            "solubility": make_solubilities,
+        }
+        properties_group = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+        return make_citations_graph(
+            properties_group, per_year=radio_citations == "Per year"
+        )
 
     return make_figure
 
