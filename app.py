@@ -67,19 +67,6 @@ def create_make_figure_function(group):
     return make_figure
 
 
-for group in ["diffusivity", "solubility"]:
-
-    app.callback(
-        dash.Output(f"graph_nb_citations_{group}", "figure"),
-        dash.Input(f"graph_{group}", "figure"),
-        dash.Input(f"radio_citations_{group}", "value"),
-        dash.State(f"material_filter_{group}", "value"),
-        dash.State(f"isotope_filter_{group}", "value"),
-        dash.State(f"author_filter_{group}", "value"),
-        dash.State(f"year_filter_{group}", "value"),
-    )(create_make_figure_function(group))
-
-
 def create_add_all_materials_function(group):
     def add_all_materials(n_clicks):
         if n_clicks:
@@ -88,14 +75,6 @@ def create_add_all_materials_function(group):
             return dash.no_update
 
     return add_all_materials
-
-
-for group in ["diffusivity", "solubility"]:
-
-    app.callback(
-        dash.Output(f"material_filter_{group}", "value"),
-        dash.Input(f"add_all_materials_{group}", "n_clicks"),
-    )(create_add_all_materials_function(group))
 
 
 def create_add_all_authors_function(group):
@@ -112,14 +91,6 @@ def create_add_all_authors_function(group):
             return dash.no_update
 
     return add_all_authors
-
-
-for group in ["diffusivity", "solubility"]:
-
-    app.callback(
-        dash.Output(f"author_filter_{group}", "value"),
-        dash.Input(f"add_all_authors_{group}", "n_clicks"),
-    )(create_add_all_authors_function(group))
 
 
 def create_update_graph_function(group):
@@ -159,19 +130,6 @@ def create_update_graph_function(group):
     return update_graph
 
 
-for group in ["diffusivity", "solubility"]:
-
-    app.callback(
-        dash.Output(f"graph_{group}", "figure"),
-        dash.Output(f"graph_prop_per_year_{group}", "figure"),
-        dash.Input(f"material_filter_{group}", "value"),
-        dash.Input(f"isotope_filter_{group}", "value"),
-        dash.Input(f"author_filter_{group}", "value"),
-        dash.Input(f"year_filter_{group}", "value"),
-        dash.Input(f"mean_button_{group}", "n_clicks"),
-    )(create_update_graph_function(group))
-
-
 def create_make_download_data_function(group):
     def make_download_data(
         n_clicks,
@@ -200,18 +158,6 @@ def create_make_download_data_function(group):
     return make_download_data
 
 
-for group in ["diffusivity", "solubility"]:
-    app.callback(
-        dash.Output(f"download-text_{group}", "data"),
-        dash.Input(f"extract_button_{group}", "n_clicks"),
-        dash.Input(f"material_filter_{group}", "value"),
-        dash.Input(f"isotope_filter_{group}", "value"),
-        dash.Input(f"author_filter_{group}", "value"),
-        dash.Input(f"year_filter_{group}", "value"),
-        prevent_initial_call=True,
-    )(create_make_download_data_function(group))
-
-
 def make_download_python_callback(group):
     def download_python(
         n_clicks,
@@ -236,30 +182,6 @@ def make_download_python_callback(group):
             )
 
     return download_python
-
-
-for group in ["diffusivity", "solubility"]:
-
-    app.callback(
-        dash.Output(f"download-python_{group}", "data"),
-        dash.Input(f"python_button_{group}", "n_clicks"),
-        dash.Input(f"material_filter_{group}", "value"),
-        dash.Input(f"isotope_filter_{group}", "value"),
-        dash.Input(f"author_filter_{group}", "value"),
-        dash.Input(f"year_filter_{group}", "value"),
-        prevent_initial_call=True,
-    )(make_download_python_callback(group))
-
-
-@app.callback(
-    dash.Output("modal-infos", "is_open"),
-    dash.Input("open-sm", "n_clicks"),
-    dash.State("modal-infos", "is_open"),
-)
-def toggle_modal(n1, is_open):
-    if n1:
-        return not is_open
-    return is_open
 
 
 def make_toggle_modal_function(group):
@@ -288,22 +210,6 @@ def make_toggle_modal_function(group):
         return is_open
 
     return toggle_modal
-
-
-for group in ["diffusivity", "solubility"]:
-    app.callback(
-        dash.Output(f"modal_add_{group}", "is_open"),
-        dash.Input(f"add_property_{group}", "n_clicks"),
-        dash.Input(f"submit_new_{group}", "n_clicks"),
-        dash.State(f"modal_add_{group}", "is_open"),
-        dash.State(f"new_{group}_pre_exp", "value"),
-        dash.State(f"new_{group}_act_energy", "value"),
-        dash.State(f"new_{group}_author", "value"),
-        dash.State(f"new_{group}_year", "value"),
-        dash.State(f"new_{group}_isotope", "value"),
-        dash.State(f"new_{group}_material", "value"),
-        prevent_initial_call=True,
-    )(make_toggle_modal_function(group))
 
 
 def make_add_property(group):
@@ -365,7 +271,82 @@ def make_add_property(group):
     return add_property
 
 
+@app.callback(
+    dash.Output("modal-infos", "is_open"),
+    dash.Input("open-sm", "n_clicks"),
+    dash.State("modal-infos", "is_open"),
+)
+def toggle_modal(n1, is_open):
+    if n1:
+        return not is_open
+    return is_open
+
+
 for group in ["diffusivity", "solubility"]:
+
+    app.callback(
+        dash.Output(f"graph_nb_citations_{group}", "figure"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.Input(f"radio_citations_{group}", "value"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(create_make_figure_function(group))
+
+    app.callback(
+        dash.Output(f"material_filter_{group}", "value"),
+        dash.Input(f"add_all_materials_{group}", "n_clicks"),
+    )(create_add_all_materials_function(group))
+
+    app.callback(
+        dash.Output(f"author_filter_{group}", "value"),
+        dash.Input(f"add_all_authors_{group}", "n_clicks"),
+    )(create_add_all_authors_function(group))
+
+    app.callback(
+        dash.Output(f"graph_{group}", "figure"),
+        dash.Output(f"graph_prop_per_year_{group}", "figure"),
+        dash.Input(f"material_filter_{group}", "value"),
+        dash.Input(f"isotope_filter_{group}", "value"),
+        dash.Input(f"author_filter_{group}", "value"),
+        dash.Input(f"year_filter_{group}", "value"),
+        dash.Input(f"mean_button_{group}", "n_clicks"),
+    )(create_update_graph_function(group))
+
+    app.callback(
+        dash.Output(f"download-text_{group}", "data"),
+        dash.Input(f"extract_button_{group}", "n_clicks"),
+        dash.Input(f"material_filter_{group}", "value"),
+        dash.Input(f"isotope_filter_{group}", "value"),
+        dash.Input(f"author_filter_{group}", "value"),
+        dash.Input(f"year_filter_{group}", "value"),
+        prevent_initial_call=True,
+    )(create_make_download_data_function(group))
+
+    app.callback(
+        dash.Output(f"download-python_{group}", "data"),
+        dash.Input(f"python_button_{group}", "n_clicks"),
+        dash.Input(f"material_filter_{group}", "value"),
+        dash.Input(f"isotope_filter_{group}", "value"),
+        dash.Input(f"author_filter_{group}", "value"),
+        dash.Input(f"year_filter_{group}", "value"),
+        prevent_initial_call=True,
+    )(make_download_python_callback(group))
+
+    app.callback(
+        dash.Output(f"modal_add_{group}", "is_open"),
+        dash.Input(f"add_property_{group}", "n_clicks"),
+        dash.Input(f"submit_new_{group}", "n_clicks"),
+        dash.State(f"modal_add_{group}", "is_open"),
+        dash.State(f"new_{group}_pre_exp", "value"),
+        dash.State(f"new_{group}_act_energy", "value"),
+        dash.State(f"new_{group}_author", "value"),
+        dash.State(f"new_{group}_year", "value"),
+        dash.State(f"new_{group}_isotope", "value"),
+        dash.State(f"new_{group}_material", "value"),
+        prevent_initial_call=True,
+    )(make_toggle_modal_function(group))
 
     app.callback(
         dash.Output(f"material_filter_{group}", "options"),
