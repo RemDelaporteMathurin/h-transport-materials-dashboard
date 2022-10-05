@@ -64,6 +64,15 @@ for group in ["diffusivity", "solubility"]:
     )(cb.create_update_entries_per_year_graph_function(group))
 
     app.callback(
+        dash.Output(f"graph_materials_{group}", "figure"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(cb.create_update_piechart_material_function(group))
+
+    app.callback(
         dash.Output(f"download-text_{group}", "data"),
         dash.Input(f"extract_button_{group}", "n_clicks"),
         dash.Input(f"material_filter_{group}", "value"),

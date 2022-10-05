@@ -257,3 +257,22 @@ def make_add_property(group):
         return all_materials, all_authors, ""
 
     return add_property
+
+
+def create_update_piechart_material_function(group):
+    def update_piechart_material(
+        figure,
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+    ):
+        properties_group = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+        return make_piechart_materials(properties_group)
+
+    return update_piechart_material
