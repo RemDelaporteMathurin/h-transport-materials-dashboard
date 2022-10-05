@@ -308,3 +308,13 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
         x_label = "Number of citations (Crossref)"
     fig.update_xaxes(title=x_label)
     return fig
+
+
+def make_piechart_materials(prop_group):
+    list_of_mats = [prop.material for prop in prop_group]
+    labels = np.unique(list_of_mats).tolist()
+
+    values = [list_of_mats.count(mat) for mat in labels]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    return fig
