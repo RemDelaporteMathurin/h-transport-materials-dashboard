@@ -212,9 +212,10 @@ def make_graph_solubilities(solubilities, colour_by="property"):
                 + "<br>"
                 + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
                 + "T: %{customdata:.0f} K<br>"
-                + "S: %{y:,.2e} <br>"
-                + "S_0: {:.2e} <br>".format(S.pre_exp)
-                + "E_S : {:.2f} eV".format(S.act_energy)
+                + "S: %{y:,.2e}"
+                + f" {S.units}<br>"
+                + f"S_0: {S.pre_exp:.2e} {S.units} <br>"
+                + f"E_S : {S.act_energy:.2f} eV"
                 + "<extra></extra>",
             )
         )
@@ -229,9 +230,21 @@ def make_graph_solubilities(solubilities, colour_by="property"):
                 )
             )
 
-    fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" ")
+    all_units = np.unique([S.units for S in solubilities]).tolist()
+    if len(all_units) == 1:
+        if all_units == ["m-3 Pa-1/2"]:
+            y_suffix = "m<sup>-3</sup> Pa<sup>-1/2</sup>"
+        elif all_units == ["m-3 Pa-1"]:
+            y_suffix = "m<sup>-3</sup> Pa<sup>-1</sup>"
+        title_units = f"({y_suffix})"
+    else:
+        # if the group contains mixed units, display nothing
+        title_units = "(mixed units)"
+        y_suffix = ""
+
+    fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=y_suffix)
     fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
-    fig.update_yaxes(title_text="Solubility")
+    fig.update_yaxes(title_text=f"Solubility {title_units}")
     # fig.write_html("out.html")
     return fig
 
