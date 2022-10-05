@@ -36,16 +36,15 @@ def make_tab(property):
 
     all_properties = property_to_group[property]
 
-
     initial_material = "tungsten"
 
     authors_options = np.unique(
-                                    [
-                                        prop.author.capitalize()
-                                        for prop in all_properties
-                                        if prop.material == "tungsten"
-                                    ]
-                                ).tolist()
+        [
+            prop.author.capitalize()
+            for prop in all_properties
+            if prop.material == "tungsten"
+        ]
+    ).tolist()
 
     years_options = [prop.year for prop in all_properties]
     min_year = min(years_options)
@@ -53,7 +52,7 @@ def make_tab(property):
 
     tab = dcc.Tab(
         label=property.capitalize(),
-        value="tab_{}".format(property),
+        value=f"tab_{property}",
         children=[
             dbc.Row(
                 [
@@ -64,12 +63,12 @@ def make_tab(property):
                                 options=materials_options,
                                 value=[initial_material],
                                 multi=True,
-                                id="material_filter_{}".format(property),
+                                id=f"material_filter_{property}",
                             ),
                             html.Div(
                                 dbc.Button(
                                     "All",
-                                    id="add_all_materials_{}".format(property),
+                                    id=f"add_all_materials_{property}",
                                     style={"font-size": "12px"},
                                 )
                             ),
@@ -79,7 +78,7 @@ def make_tab(property):
                                 value=isotope_options,
                                 options=isotope_options,
                                 inline=True,
-                                id="isotope_filter_{}".format(property),
+                                id=f"isotope_filter_{property}",
                                 inputStyle={
                                     "margin-left": "20px",
                                     "margin-right": "4px",
@@ -91,19 +90,19 @@ def make_tab(property):
                                 value=authors_options,
                                 options=authors_options,
                                 multi=True,
-                                id="author_filter_{}".format(property),
+                                id=f"author_filter_{property}",
                             ),
                             html.Div(
                                 dbc.Button(
                                     "All",
-                                    id="add_all_authors_{}".format(property),
+                                    id=f"add_all_authors_{property}",
                                     style={"font-size": "12px"},
                                 )
                             ),
                             html.Br(),
                             html.Label("Filter by year:"),
                             dcc.RangeSlider(
-                                id="year_filter_{}".format(property),
+                                id=f"year_filter_{property}",
                                 min=min_year,
                                 max=max_year,
                                 step=1,
@@ -123,14 +122,14 @@ def make_tab(property):
                                 [
                                     dbc.Button(
                                         "Compute mean curve",
-                                        id="mean_button_{}".format(property),
+                                        id=f"mean_button_{property}",
                                         color="primary",
                                         style={"margin": "5px"},
                                         n_clicks="0",
                                     ),
                                     dbc.Button(
                                         "Add property",
-                                        id="add_property_{}".format(property),
+                                        id=f"add_property_{property}",
                                         color="primary",
                                         style={"margin": "5px"},
                                         n_clicks="0",
@@ -139,10 +138,10 @@ def make_tab(property):
                                         [
                                             "Extract data",
                                             dcc.Download(
-                                                id="download-text_{}".format(property)
+                                                id=f"download-text_{property}"
                                             ),
                                         ],
-                                        id="extract_button_{}".format(property),
+                                        id=f"extract_button_{property}",
                                         color="primary",
                                         style={"margin": "5px"},
                                         n_clicks="0",
@@ -151,10 +150,10 @@ def make_tab(property):
                                         [
                                             "Python",
                                             dcc.Download(
-                                                id="download-python_{}".format(property)
+                                                id=f"download-python_{property}"
                                             ),
                                         ],
-                                        id="python_button_{}".format(property),
+                                        id=f"python_button_{property}",
                                         color="primary",
                                         style={"margin": "5px"},
                                         n_clicks_timestamp="0",
@@ -167,7 +166,7 @@ def make_tab(property):
                     dbc.Col(
                         [
                             dcc.Graph(
-                                id="graph_{}".format(property),
+                                id=f"graph_{property}",
                                 style={"width": "120vh", "height": "70vh"},
                             ),
                         ],
@@ -179,7 +178,7 @@ def make_tab(property):
                 [
                     dbc.Col(
                         [
-                            dcc.Graph(id="graph_prop_per_year_{}".format(property)),
+                            dcc.Graph(id=f"graph_prop_per_year_{property}"),
                         ],
                         className="pretty_container",
                         width=4,
@@ -189,14 +188,14 @@ def make_tab(property):
                             dcc.RadioItems(
                                 options=["Total", "Per year"],
                                 value="Total",
-                                id="radio_citations_{}".format(property),
+                                id=f"radio_citations_{property}",
                                 inline=True,
                                 inputStyle={
                                     "margin-left": "20px",
                                     "margin-right": "5px",
                                 },
                             ),
-                            dcc.Graph(id="graph_nb_citations_{}".format(property)),
+                            dcc.Graph(id=f"graph_nb_citations_{property}"),
                         ],
                         className="pretty_container",
                     ),
