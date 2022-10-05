@@ -10,12 +10,12 @@ all_diffusivities = htm.diffusivities
 all_solubilities = htm.solubilities
 
 all_years_solubilities = [S.year for S in all_solubilities]
-min_year_solubilities = min(all_years_solubilities)
-max_year_solubilities = max(all_years_solubilities)
+MIN_YEAR_SOL = min(all_years_solubilities)
+MAX_YEAR_SOL = max(all_years_solubilities)
 
 all_years_diffusivities = [S.year for S in all_diffusivities]
-min_year_diffusivities = min(all_years_diffusivities)
-max_year_diffusivities = max(all_years_diffusivities)
+MIN_YEAR_DIFF = min(all_years_diffusivities)
+MAX_YEAR_DIFF = max(all_years_diffusivities)
 
 
 colours = px.colors.qualitative.Plotly

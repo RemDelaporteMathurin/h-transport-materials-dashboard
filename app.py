@@ -8,10 +8,10 @@ from graph import (
     make_graph_solubilities,
     add_mean_value,
     add_mean_value_solubilities,
-    min_year_solubilities,
-    max_year_solubilities,
-    min_year_diffusivities,
-    max_year_diffusivities,
+    MIN_YEAR_SOL,
+    MAX_YEAR_SOL,
+    MIN_YEAR_DIFF,
+    MAX_YEAR_DIFF,
     make_figure_prop_per_year,
 )
 
@@ -257,11 +257,11 @@ def update_graph(
         years=year_filter_diffusivities,
     )
 
-    all_diffusivities = make_diffusivities(
+    all_time_diffusivities = make_diffusivities(
         materials=material_filter_diffusivities,
         authors=author_filter_diffusivities,
         isotopes=isotope_filter_diffusivities,
-        years=[min_year_diffusivities, max_year_diffusivities],
+        years=[MIN_YEAR_DIFF, MAX_YEAR_DIFF],
     )
     figure = make_graph_diffusivities(diffusitivites)
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
@@ -269,7 +269,7 @@ def update_graph(
         add_mean_value(diffusitivites, figure)
 
     return figure, make_figure_prop_per_year(
-        all_diffusivities, step=5, selected_years=year_filter_diffusivities
+        all_time_diffusivities, step=5, selected_years=year_filter_diffusivities
     )
 
 
@@ -318,11 +318,11 @@ def update_solubility_graph(
         isotopes=isotope_filter_solubilities,
         years=year_filter_solubilities,
     )
-    all_solubilities = make_solubilities(
+    all_time_solubilities = make_solubilities(
         materials=material_filter_solubilities,
         authors=author_filter_solubilities,
         isotopes=isotope_filter_solubilities,
-        years=[min_year_solubilities, max_year_solubilities],
+        years=[MIN_YEAR_SOL, MAX_YEAR_SOL],
     )
     figure = make_graph_solubilities(solubilities)
     changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
@@ -330,7 +330,7 @@ def update_solubility_graph(
         add_mean_value_solubilities(solubilities, figure)
 
     return figure, make_figure_prop_per_year(
-        all_solubilities, step=5, selected_years=year_filter_solubilities
+        all_time_solubilities, step=5, selected_years=year_filter_solubilities
     )
 
 
