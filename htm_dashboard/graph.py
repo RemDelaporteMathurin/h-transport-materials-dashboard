@@ -84,8 +84,47 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
     return diffusivities
 
 
-def make_graph_diffusivities(diffusivities):
+def list_of_colours(prop_group, colour_by):
+    """Returns a list of colours for the properties
+
+    Args:
+        prop_group (list): _description_
+        colour_by (str): "property", "material", "isotope", "author"
+
+    Returns:
+        list: list of colours the same size as prop_group
+    """
+    if colour_by == "property":
+        return [colours[i % 10] for i, _ in enumerate(prop_group)]
+    elif colour_by == "material":
+        list_of_mats = [prop.material for prop in prop_group]
+        unique_mats = np.unique(list_of_mats).tolist()
+        mats_idx = [unique_mats.index(prop.material) for prop in prop_group]
+        return [colours[i % 10] for i in mats_idx]
+    elif colour_by == "author":
+        list_of_auths = [prop.author for prop in prop_group]
+        unique_auths = np.unique(list_of_auths).tolist()
+        auths_idx = [unique_auths.index(prop.author) for prop in prop_group]
+        return [colours[i % 10] for i in auths_idx]
+    elif colour_by == "isotope":
+        list_of_iso = [prop.isotope for prop in prop_group]
+        unique_iso = np.unique(list_of_iso).tolist()
+        iso_idx = [unique_iso.index(prop.isotope) for prop in prop_group]
+        return [colours[i % 10] for i in iso_idx]
+
+
+def make_graph_diffusivities(diffusivities, colour_by="property"):
+    """Creates a graph for visualising diffusivities.
+
+    Args:
+        diffusivities (list): list of htm.ArrheniusProperty
+        colour_by (str, optional): "property", "material", "isotope", "author". Defaults to "property".
+
+    Returns:
+        go.Figure: the diffusivity graph
+    """
     fig = go.Figure()
+    colour_list = list_of_colours(diffusivities, colour_by)
     for i, D in enumerate(diffusivities):
         label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
         range = D.range
@@ -101,7 +140,7 @@ def make_graph_diffusivities(diffusivities):
                 y=D.value(T),
                 name=label,
                 mode="lines",
-                line=dict(color=colours[i % 10]),
+                line=dict(color=colour_list[i]),
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
@@ -147,8 +186,9 @@ def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
     return solubilities
 
 
-def make_graph_solubilities(solubilities):
+def make_graph_solubilities(solubilities, colour_by="property"):
     fig = go.Figure()
+    colour_list = list_of_colours(solubilities, colour_by)
     for i, S in enumerate(solubilities):
         label = "{} {} ({})".format(S.isotope, S.author.capitalize(), S.year)
         range = S.range
@@ -164,7 +204,7 @@ def make_graph_solubilities(solubilities):
                 y=S.value(T),
                 name=label,
                 mode="lines",
-                line=dict(color=colours[i % 10]),
+                line=dict(color=colour_list[i]),
                 text=[label] * len(T),
                 customdata=T,
                 hovertemplate="<b>%{text}</b><br><br>"
@@ -172,9 +212,10 @@ def make_graph_solubilities(solubilities):
                 + "<br>"
                 + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
                 + "T: %{customdata:.0f} K<br>"
-                + "S: %{y:,.2e} <br>"
-                + "S_0: {:.2e} <br>".format(S.pre_exp)
-                + "E_S : {:.2f} eV".format(S.act_energy)
+                + "S: %{y:,.2e}"
+                + f" {S.units}<br>"
+                + f"S_0: {S.pre_exp:.2e} {S.units} <br>"
+                + f"E_S : {S.act_energy:.2f} eV"
                 + "<extra></extra>",
             )
         )
@@ -189,9 +230,21 @@ def make_graph_solubilities(solubilities):
                 )
             )
 
-    fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" ")
+    all_units = np.unique([S.units for S in solubilities]).tolist()
+    if len(all_units) == 1:
+        if all_units == ["m-3 Pa-1/2"]:
+            y_suffix = "m<sup>-3</sup> Pa<sup>-1/2</sup>"
+        elif all_units == ["m-3 Pa-1"]:
+            y_suffix = "m<sup>-3</sup> Pa<sup>-1</sup>"
+        title_units = f"({y_suffix})"
+    else:
+        # if the group contains mixed units, display nothing
+        title_units = "(mixed units)"
+        y_suffix = ""
+
+    fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=y_suffix)
     fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
-    fig.update_yaxes(title_text="Solubility")
+    fig.update_yaxes(title_text=f"Solubility {title_units}")
     # fig.write_html("out.html")
     return fig
 
@@ -254,4 +307,36 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
     else:
         x_label = "Number of citations (Crossref)"
     fig.update_xaxes(title=x_label)
+    return fig
+
+
+def make_piechart_materials(prop_group):
+    list_of_mats = [prop.material for prop in prop_group]
+    labels = np.unique(list_of_mats).tolist()
+
+    values = [list_of_mats.count(mat) for mat in labels]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    return fig
+
+
+def make_piechart_isotopes(prop_group):
+    list_of_isotopes = [prop.isotope for prop in prop_group]
+    labels = ["H", "D", "T"]
+
+    values = [list_of_isotopes.count(isotope) for isotope in labels]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    return fig
+
+
+def make_piechart_author(prop_group):
+    list_of_authors = [prop.author for prop in prop_group]
+    labels = np.unique(list_of_authors).tolist()
+
+    values = [list_of_authors.count(isotope) for isotope in labels]
+
+    labels = [lab.capitalize() for lab in labels]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
     return fig

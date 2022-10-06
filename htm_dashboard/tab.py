@@ -1,6 +1,7 @@
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
+import dash_daq as daq
 
 import h_transport_materials as htm
 import numpy as np
@@ -50,9 +51,12 @@ def make_tab(property):
     min_year = min(years_options)
     max_year = max(years_options)
 
-    tab = dcc.Tab(
+    piechart_materials = dcc.Graph(id=f"graph_materials_{property}")
+    piechart_isotopes = dcc.Graph(id=f"graph_isotopes_{property}")
+    piechart_authors = dcc.Graph(id=f"graph_authors_{property}")
+
+    tab = dbc.Tab(
         label=property.capitalize(),
-        value=f"tab_{property}",
         children=[
             dbc.Row(
                 [
@@ -73,16 +77,14 @@ def make_tab(property):
                                 )
                             ),
                             html.Br(),
-                            html.Label("Filter by isotope:"),
-                            dcc.Checklist(
+                            dbc.Label("Filter by isotope:"),
+                            dbc.Checklist(
                                 value=isotope_options,
-                                options=isotope_options,
+                                options=[
+                                    {"label": i, "value": i} for i in isotope_options
+                                ],
                                 inline=True,
                                 id=f"isotope_filter_{property}",
-                                inputStyle={
-                                    "margin-left": "20px",
-                                    "margin-right": "4px",
-                                },
                             ),
                             html.Br(),
                             html.Label("Filter by author:"),
@@ -165,6 +167,13 @@ def make_tab(property):
                     ),
                     dbc.Col(
                         [
+                            html.Label("Colour by:"),
+                            dcc.Dropdown(
+                                ["property", "material", "author", "isotope"],
+                                "property",
+                                id=f"colour-by_{property}",
+                                style=dict(width="150px"),
+                            ),
                             dcc.Graph(
                                 id=f"graph_{property}",
                                 style={"width": "120vh", "height": "70vh"},
@@ -181,23 +190,56 @@ def make_tab(property):
                             dcc.Graph(id=f"graph_prop_per_year_{property}"),
                         ],
                         className="pretty_container",
-                        width=4,
+                        width=3,
                     ),
                     dbc.Col(
                         [
-                            dcc.RadioItems(
-                                options=["Total", "Per year"],
-                                value="Total",
-                                id=f"radio_citations_{property}",
-                                inline=True,
-                                inputStyle={
-                                    "margin-left": "20px",
-                                    "margin-right": "5px",
-                                },
-                            ),
-                            dcc.Graph(id=f"graph_nb_citations_{property}"),
+                            dbc.Row(
+                                [
+                                    dbc.Col(
+                                        [
+                                            daq.BooleanSwitch(
+                                                label="Per year",
+                                                on=False,
+                                                id=f"per_year_citations_{property}",
+                                            ),
+                                        ],
+                                        width=1,
+                                    ),
+                                    dbc.Col(
+                                        [
+                                            dcc.Graph(
+                                                id=f"graph_nb_citations_{property}"
+                                            )
+                                        ],
+                                        width=11,
+                                    ),
+                                ],
+                                align="center",
+                            )
                         ],
                         className="pretty_container",
+                        width=4,
+                    ),
+                    dbc.Col(
+                        [piechart_materials],
+                        className="pretty_container",
+                        width=4,
+                    ),
+                ],
+                justify="evenly",
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [piechart_isotopes],
+                        className="pretty_container",
+                        width=4,
+                    ),
+                    dbc.Col(
+                        [piechart_authors],
+                        className="pretty_container",
+                        width=4,
                     ),
                 ]
             ),

@@ -9,8 +9,11 @@ from .graph import (
     all_diffusivities,
     all_solubilities,
     make_diffusivities,
+    make_piechart_author,
+    make_piechart_isotopes,
     make_solubilities,
     make_graph_diffusivities,
+    make_piechart_materials,
     make_graph_solubilities,
     add_mean_value_diffusivities,
     add_mean_value_solubilities,
@@ -32,7 +35,7 @@ group_to_make = {"diffusivity": make_diffusivities, "solubility": make_solubilit
 def create_make_citations_figure_function(group):
     def make_citations_figure(
         figure,
-        radio_citations,
+        per_year,
         material_filter,
         isotope_filter,
         author_filter,
@@ -44,9 +47,8 @@ def create_make_citations_figure_function(group):
             isotopes=isotope_filter,
             years=year_filter,
         )
-        return make_citations_graph(
-            properties_group, per_year=radio_citations == "Per year"
-        )
+
+        return make_citations_graph(properties_group, per_year=per_year)
 
     return make_citations_figure
 
@@ -97,7 +99,12 @@ def create_update_entries_per_year_graph_function(group):
 
 def create_update_graph_function(group):
     def update_graph(
-        material_filter, isotope_filter, author_filter, year_filter, mean_button
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+        mean_button,
+        colour_by,
     ):
         if group == "diffusivity":
             make_graph = make_graph_diffusivities
@@ -113,7 +120,7 @@ def create_update_graph_function(group):
             years=year_filter,
         )
 
-        figure = make_graph(properties_group)
+        figure = make_graph(properties_group, colour_by)
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"mean_button_{group}.n_clicks":
             add_mean(properties_group, figure)
@@ -253,3 +260,60 @@ def make_add_property(group):
         return all_materials, all_authors, ""
 
     return add_property
+
+
+def create_update_piechart_material_function(group):
+    def update_piechart_material(
+        figure,
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+    ):
+        properties_group = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+        return make_piechart_materials(properties_group)
+
+    return update_piechart_material
+
+
+def create_update_piechart_isotopes_function(group):
+    def update_piechart_isotope(
+        figure,
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+    ):
+        properties_group = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+        return make_piechart_isotopes(properties_group)
+
+    return update_piechart_isotope
+
+
+def create_update_piechart_authors_function(group):
+    def update_piechart_author(
+        figure,
+        material_filter,
+        isotope_filter,
+        author_filter,
+        year_filter,
+    ):
+        properties_group = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+        return make_piechart_author(properties_group)
+
+    return update_piechart_author

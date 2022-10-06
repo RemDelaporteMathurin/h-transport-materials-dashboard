@@ -4,7 +4,6 @@ from .new_solubility_form import form_new_solubility
 
 from .tab import make_tab
 
-from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO
@@ -112,9 +111,8 @@ layout = dbc.Container(
     [
         header,
         html.Hr(),
-        dcc.Tabs(
+        dbc.Tabs(
             id="tabs-example-graph",
-            value="tab_diffusivity",
             children=[make_tab("diffusivity"), make_tab("solubility")],
         ),
         make_modal_add_property("diffusivity"),

@@ -27,7 +27,7 @@ for group in ["diffusivity", "solubility"]:
     app.callback(
         dash.Output(f"graph_nb_citations_{group}", "figure"),
         dash.Input(f"graph_{group}", "figure"),
-        dash.Input(f"radio_citations_{group}", "value"),
+        dash.Input(f"per_year_citations_{group}", "on"),
         dash.State(f"material_filter_{group}", "value"),
         dash.State(f"isotope_filter_{group}", "value"),
         dash.State(f"author_filter_{group}", "value"),
@@ -51,6 +51,7 @@ for group in ["diffusivity", "solubility"]:
         dash.Input(f"author_filter_{group}", "value"),
         dash.Input(f"year_filter_{group}", "value"),
         dash.Input(f"mean_button_{group}", "n_clicks"),
+        dash.Input(f"colour-by_{group}", "value"),
     )(cb.create_update_graph_function(group))
 
     app.callback(
@@ -61,6 +62,33 @@ for group in ["diffusivity", "solubility"]:
         dash.State(f"author_filter_{group}", "value"),
         dash.State(f"year_filter_{group}", "value"),
     )(cb.create_update_entries_per_year_graph_function(group))
+
+    app.callback(
+        dash.Output(f"graph_materials_{group}", "figure"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(cb.create_update_piechart_material_function(group))
+
+    app.callback(
+        dash.Output(f"graph_isotopes_{group}", "figure"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(cb.create_update_piechart_isotopes_function(group))
+
+    app.callback(
+        dash.Output(f"graph_authors_{group}", "figure"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(cb.create_update_piechart_authors_function(group))
 
     app.callback(
         dash.Output(f"download-text_{group}", "data"),
