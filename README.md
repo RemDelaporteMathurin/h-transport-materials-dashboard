@@ -1,6 +1,9 @@
 # h-transport-materials-dashboard
 
-This is a web app of the hydrogen transport materials database [HTM](https://github.com/RemDelaporteMathurin/h-transport-materials).
+Finding material properties for hydrogen transport is often tedious as many different values can be found in literature.
+The goal of this tool is to help scientists visualise material properties and compare them.
+
+This web app relies on the hydrogen transport materials database [HTM](https://github.com/RemDelaporteMathurin/h-transport-materials).
 
 :point_right: [The app!](https://htm-dashboard.herokuapp.com/)
 
@@ -9,6 +12,7 @@ This is a web app of the hydrogen transport materials database [HTM](https://git
 
 Features:
 - Quickly visualise the HTM database
+- Add your own properties
 - Compute mean curves of properties groups
 - Extract data to JSON
 - Extract python script (using the htm API)
@@ -19,3 +23,7 @@ Stats:
 - Repartition by material, isotope, author.
 
 ![image](https://user-images.githubusercontent.com/40028739/194307879-33fb7953-62b8-4f0a-8c53-1bfece5e1110.png)
+
+:warning: Disclaimer: 
+This web app is built for visualising properties.
+For integrations in workflows and applications, we recommend using the python API [HTM](https://github.com/RemDelaporteMathurin/h-transport-materials)
