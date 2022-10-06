@@ -14,14 +14,14 @@ For integrations in workflows and applications, we recommend using the python AP
 ![image](https://user-images.githubusercontent.com/40028739/194302707-39c7c659-34a4-42d7-adb1-52b08ad72023.png)
 
 
-## Features:
+## Features
 - Quickly visualise the HTM database
 - Add your own properties
 - Compute mean curves of properties groups
 - Extract data to JSON
 - Extract python script (using the htm API)
 
-## Stats:
+## Stats
 - How many times were the papers cited?
 - When were the papers published?
 - Repartition by material, isotope, author.
