@@ -289,6 +289,8 @@ def make_data_table(property):
                         val = f"{val[0]:.0f}-{val[1]:.0f}"
                 elif key == "pre_exp" and hasattr(prop, "units"):
                     val = f"{val: .2e} {prop.units}"
+                elif key == "act_energy":
+                    val = f"{val:.2f}"
                 entry[key] = val
             elif key == "doi":
                 entry[key] = prop.source
