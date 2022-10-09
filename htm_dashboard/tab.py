@@ -55,19 +55,7 @@ def make_tab(property):
     piechart_isotopes = dcc.Graph(id=f"graph_isotopes_{property}")
     piechart_authors = dcc.Graph(id=f"graph_authors_{property}")
 
-    table = dash_table.DataTable(
-        id=f"table_{property}",
-        columns=[
-            {"name": i, "id": i, "deletable": False} for i in ["pre_exp", "act_energy"]
-        ],
-        # data=df.to_dict("records"),
-        page_size=10,
-        editable=False,
-        cell_selectable=True,
-        # filter_action="native",
-        sort_action="native",
-        style_table={"overflowX": "auto"},
-    )
+    table = make_data_table(property)
 
     table_tab = dbc.Tab([table], label="Table")
 
@@ -268,3 +256,60 @@ def make_tab(property):
         ],
     )
     return tab
+
+
+def make_data_table(property):
+
+    prop_to_keys = {
+        "diffusivity": ["D_0 (m2/s)", "E_D (eV)"],
+        "solubility": ["S_0", "E_S (eV)"],
+    }
+
+    property_to_group = {
+        "diffusivity": htm.diffusivities,
+        "solubility": htm.solubilities,
+    }
+
+    all_properties = property_to_group[property]
+
+    keys = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
+    labels = ["Material"] + prop_to_keys[property] + ["Range (K)", "Author", "DOI"]
+
+    data = []
+
+    for prop in all_properties:
+        entry = {}
+        for key in keys:
+            if hasattr(prop, key):
+                val = getattr(prop, key)
+                if key == "range":
+                    if val is None:
+                        val = "none"
+                    else:
+                        val = f"{val[0]:.0f}-{val[1]:.0f}"
+                elif key == "pre_exp" and hasattr(prop, "units"):
+                    val = f"{val: .2e} {prop.units}"
+                entry[key] = val
+            elif key == "doi":
+                entry[key] = prop.source
+                if prop.bibsource:
+                    if "doi" in prop.bibsource.fields:
+                        entry[key] = prop.bibsource.fields["doi"]
+        data.append(entry)
+
+    table = dash_table.DataTable(
+        id=f"table_{property}",
+        columns=[
+            {"name": label, "id": key, "deletable": False}
+            for key, label in zip(keys, labels)
+        ],
+        data=data,
+        page_size=10,
+        editable=False,
+        cell_selectable=True,
+        # filter_action="native",
+        sort_action="native",
+        style_table={"overflowX": "auto"},
+    )
+
+    return table
