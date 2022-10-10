@@ -351,7 +351,9 @@ def create_update_table_data_function(group):
                     entry[key] = prop.source
                     if prop.bibsource:
                         if "doi" in prop.bibsource.fields:
-                            entry[key] = prop.bibsource.fields["doi"]
+                            entry[
+                                key
+                            ] = f"[{prop.bibsource.fields['doi']}](https://doi.org/{prop.bibsource.fields['doi']})"
             data.append(entry)
 
         return data
