@@ -371,11 +371,9 @@ def make_table(property):
 def make_data_table(group):
     data = []
 
-    keys = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
-
     for prop in group:
         entry = {}
-        for key in keys:
+        for key in TABLE_KEYS:
             if hasattr(prop, key):
                 val = getattr(prop, key)
                 if key == "range":
