@@ -51,10 +51,6 @@ def make_tab(property):
     min_year = min(years_options)
     max_year = max(years_options)
 
-    piechart_materials = dcc.Graph(id=f"graph_materials_{property}")
-    piechart_isotopes = dcc.Graph(id=f"graph_isotopes_{property}")
-    piechart_authors = dcc.Graph(id=f"graph_authors_{property}")
-
     table = make_data_table(property)
 
     table_tab = dbc.Tab([table], label="Table")
@@ -189,6 +185,83 @@ def make_tab(property):
         ),
     ]
 
+    graph_prop_per_year = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Number of properties per year", className="card-title"),
+                    dcc.Graph(id=f"graph_prop_per_year_{property}"),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+
+    graph_citations = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Number of citations", className="card-title"),
+                    html.H6("source: Crossref", className="card-subtitle"),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    daq.BooleanSwitch(
+                                        label="Per year",
+                                        on=False,
+                                        id=f"per_year_citations_{property}",
+                                    ),
+                                ],
+                                width=1,
+                            ),
+                            dbc.Col(
+                                [dcc.Graph(id=f"graph_nb_citations_{property}")],
+                                width=11,
+                            ),
+                        ],
+                        align="center",
+                    ),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+
+    piechart_materials = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Repartition by materials", className="card-title"),
+                    dcc.Graph(id=f"graph_materials_{property}"),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+    piechart_isotopes = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Repartition by isotopes", className="card-title"),
+                    dcc.Graph(id=f"graph_isotopes_{property}"),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+    piechart_authors = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Repartition by authors", className="card-title"),
+                    dcc.Graph(id=f"graph_authors_{property}"),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+
     tab = dbc.Tab(
         label=property.capitalize(),
         children=[
@@ -206,38 +279,12 @@ def make_tab(property):
             dbc.Row(
                 [
                     dbc.Col(
-                        [
-                            dcc.Graph(id=f"graph_prop_per_year_{property}"),
-                        ],
+                        [graph_prop_per_year],
                         className="pretty_container",
                         width=3,
                     ),
                     dbc.Col(
-                        [
-                            dbc.Row(
-                                [
-                                    dbc.Col(
-                                        [
-                                            daq.BooleanSwitch(
-                                                label="Per year",
-                                                on=False,
-                                                id=f"per_year_citations_{property}",
-                                            ),
-                                        ],
-                                        width=1,
-                                    ),
-                                    dbc.Col(
-                                        [
-                                            dcc.Graph(
-                                                id=f"graph_nb_citations_{property}"
-                                            )
-                                        ],
-                                        width=11,
-                                    ),
-                                ],
-                                align="center",
-                            )
-                        ],
+                        [graph_citations],
                         className="pretty_container",
                         width=4,
                     ),
@@ -261,7 +308,8 @@ def make_tab(property):
                         className="pretty_container",
                         width=4,
                     ),
-                ]
+                ],
+                justify="evenly",
             ),
         ],
     )
