@@ -346,7 +346,13 @@ def make_table(property):
     table = dash_table.DataTable(
         id=f"table_{property}",
         columns=[
-            {"name": label, "id": key, "deletable": False}
+            {
+                "name": label,
+                "id": key,
+                "presentation": "markdown",
+            }  # markdown is needed to have clickable links
+            if key == "doi"
+            else {"name": label, "id": key}
             for key, label in zip(TABLE_KEYS, make_table_labels(property))
         ],
         data=[],
