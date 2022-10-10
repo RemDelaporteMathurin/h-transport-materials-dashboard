@@ -79,7 +79,7 @@ def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
             all_diffusivities.filter(material=materials)
             .filter(author=[author.lower() for author in authors])
             .filter(isotope=[isotope.lower() for isotope in isotopes])
-            .filter(year=np.arange(years[0], years[1], step=1).tolist())
+            .filter(year=np.arange(years[0], years[1] + 1, step=1).tolist())
         )
     return diffusivities
 
@@ -180,7 +180,7 @@ def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
             all_solubilities.filter(material=materials)
             .filter(author=[author.lower() for author in authors])
             .filter(isotope=[isotope.lower() for isotope in isotopes])
-            .filter(year=np.arange(years[0], years[1], step=1).tolist())
+            .filter(year=np.arange(years[0], years[1] + 1, step=1).tolist())
         )
 
     return solubilities
