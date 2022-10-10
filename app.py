@@ -141,5 +141,14 @@ for group in ["diffusivity", "solubility"]:
         prevent_initial_call=True,
     )(cb.make_add_property(group))
 
+    app.callback(
+        dash.Output(f"table_{group}", "data"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(cb.create_update_table_data_function(group))
+
 if __name__ == "__main__":
     app.run_server(debug=True)
