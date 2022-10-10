@@ -282,6 +282,7 @@ def make_figure_prop_per_year(group, step, selected_years=[1950, 2022]):
 def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
     references = []
     nb_citations = []
+    dois = []
     for prop in group:
         author = prop.author
         year = prop.year
@@ -296,11 +297,25 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
             else:
                 nb_citations.append(prop.nb_citations)
 
+            if prop.bibsource:
+                if "doi" in prop.bibsource.fields:
+                    dois.append(prop.bibsource.fields["doi"])
+                else:
+                    dois.append("none")
+            else:
+                dois.append("none")
     # sort values
     references = [val_y for _, val_y in sorted(zip(nb_citations, references))]
+    dois = [val_y for _, val_y in sorted(zip(nb_citations, dois))]
     nb_citations = sorted(nb_citations)
 
-    bar = go.Bar(x=nb_citations, y=references, orientation="h")
+    bar = go.Bar(
+        x=nb_citations,
+        y=references,
+        orientation="h",
+        customdata=dois,
+        hovertemplate="<b>DOI</b> " + ": %{customdata} <br>" + "<extra></extra>",
+    )
     fig = go.Figure(bar)
     if per_year:
         x_label = "Average number of citations per year"
