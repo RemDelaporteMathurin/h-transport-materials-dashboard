@@ -113,7 +113,22 @@ layout = dbc.Container(
         html.Hr(),
         dbc.Tabs(
             id="tabs-example-graph",
-            children=[make_tab("diffusivity"), make_tab("solubility")],
+            children=[
+                make_tab("diffusivity"),
+                make_tab("solubility"),
+                dbc.Tab(
+                    label="Permeability",
+                    children=[html.Div([dbc.Label("Work in progress", id="wip_1")])],
+                ),
+                dbc.Tab(
+                    label="Recombination coeff.",
+                    children=[html.Div([dbc.Label("Work in progress", id="wip_2")])],
+                ),
+                dbc.Tab(
+                    label="Dissociation coeff.",
+                    children=[html.Div([dbc.Label("Work in progress", id="wip_3")])],
+                ),
+            ],
         ),
         make_modal_add_property("diffusivity"),
         make_modal_add_property("solubility"),
