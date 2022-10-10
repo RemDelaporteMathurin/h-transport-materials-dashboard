@@ -51,7 +51,7 @@ def make_tab(property):
     min_year = min(years_options)
     max_year = max(years_options)
 
-    table = make_data_table(property)
+    table = make_table(property)
 
     table_tab = dbc.Tab([table], label="Table")
 
@@ -316,12 +316,32 @@ def make_tab(property):
     return tab
 
 
-def make_data_table(property):
+TABLE_KEYS = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
 
-    prop_to_keys = {
-        "diffusivity": ["D_0 (m2/s)", "E_D (eV)"],
-        "solubility": ["S_0", "E_S (eV)"],
-    }
+prop_key_to_label = {
+    "diffusivity": {"pre_exp": "D_0 (m2/s)", "act_energy": "E_D (eV)"},
+    "solubility": {"pre_exp": "S_0", "act_energy": "E_S (eV)"},
+}
+
+key_to_label = {
+    "material": "Material",
+    "range": "Range (K)",
+    "author": "Author",
+    "doi": "DOI",
+}
+
+
+def make_table_labels(property):
+    labels = []
+    for key in TABLE_KEYS:
+        if key in key_to_label:
+            labels.append(key_to_label[key])
+        else:
+            labels.append(prop_key_to_label[property][key])
+    return labels
+
+
+def make_table(property):
 
     property_to_group = {
         "diffusivity": htm.diffusivities,
@@ -330,12 +350,30 @@ def make_data_table(property):
 
     all_properties = property_to_group[property]
 
-    keys = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
-    labels = ["Material"] + prop_to_keys[property] + ["Range (K)", "Author", "DOI"]
+    table = dash_table.DataTable(
+        id=f"table_{property}",
+        columns=[
+            {"name": label, "id": key, "deletable": False}
+            for key, label in zip(TABLE_KEYS, make_table_labels(property))
+        ],
+        data=make_data_table(all_properties),
+        page_size=10,
+        editable=False,
+        cell_selectable=True,
+        # filter_action="native",
+        sort_action="native",
+        style_table={"overflowX": "auto"},
+    )
 
+    return table
+
+
+def make_data_table(group):
     data = []
 
-    for prop in all_properties:
+    keys = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
+
+    for prop in group:
         entry = {}
         for key in keys:
             if hasattr(prop, key):
@@ -357,19 +395,4 @@ def make_data_table(property):
                         entry[key] = prop.bibsource.fields["doi"]
         data.append(entry)
 
-    table = dash_table.DataTable(
-        id=f"table_{property}",
-        columns=[
-            {"name": label, "id": key, "deletable": False}
-            for key, label in zip(keys, labels)
-        ],
-        data=data,
-        page_size=10,
-        editable=False,
-        cell_selectable=True,
-        # filter_action="native",
-        sort_action="native",
-        style_table={"overflowX": "auto"},
-    )
-
-    return table
+    return data
