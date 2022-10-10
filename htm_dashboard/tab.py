@@ -343,20 +343,13 @@ def make_table_labels(property):
 
 def make_table(property):
 
-    property_to_group = {
-        "diffusivity": htm.diffusivities,
-        "solubility": htm.solubilities,
-    }
-
-    all_properties = property_to_group[property]
-
     table = dash_table.DataTable(
         id=f"table_{property}",
         columns=[
             {"name": label, "id": key, "deletable": False}
             for key, label in zip(TABLE_KEYS, make_table_labels(property))
         ],
-        data=make_data_table(all_properties),
+        data=[],
         page_size=10,
         editable=False,
         cell_selectable=True,
@@ -366,31 +359,3 @@ def make_table(property):
     )
 
     return table
-
-
-def make_data_table(group):
-    data = []
-
-    for prop in group:
-        entry = {}
-        for key in TABLE_KEYS:
-            if hasattr(prop, key):
-                val = getattr(prop, key)
-                if key == "range":
-                    if val is None:
-                        val = "none"
-                    else:
-                        val = f"{val[0]:.0f}-{val[1]:.0f}"
-                elif key == "pre_exp" and hasattr(prop, "units"):
-                    val = f"{val: .2e} {prop.units}"
-                elif key == "act_energy":
-                    val = f"{val:.2f}"
-                entry[key] = val
-            elif key == "doi":
-                entry[key] = prop.source
-                if prop.bibsource:
-                    if "doi" in prop.bibsource.fields:
-                        entry[key] = prop.bibsource.fields["doi"]
-        data.append(entry)
-
-    return data

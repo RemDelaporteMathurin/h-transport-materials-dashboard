@@ -3,7 +3,7 @@ import dash
 
 from .export import create_data_as_dict, generate_python_code
 
-from .tab import materials_options
+from .tab import materials_options, TABLE_KEYS
 
 from .graph import (
     all_diffusivities,
@@ -317,3 +317,43 @@ def create_update_piechart_authors_function(group):
         return make_piechart_author(properties_group)
 
     return update_piechart_author
+
+
+def create_update_table_data_function(group):
+    def update_table_data(
+        figure, material_filter, isotope_filter, author_filter, year_filter
+    ):
+        data = []
+
+        properties_group = group_to_make[group](
+            materials=material_filter,
+            authors=author_filter,
+            isotopes=isotope_filter,
+            years=year_filter,
+        )
+
+        for prop in properties_group:
+            entry = {}
+            for key in TABLE_KEYS:
+                if hasattr(prop, key):
+                    val = getattr(prop, key)
+                    if key == "range":
+                        if val is None:
+                            val = "none"
+                        else:
+                            val = f"{val[0]:.0f}-{val[1]:.0f}"
+                    elif key == "pre_exp" and hasattr(prop, "units"):
+                        val = f"{val: .2e} {prop.units}"
+                    elif key == "act_energy":
+                        val = f"{val:.2f}"
+                    entry[key] = val
+                elif key == "doi":
+                    entry[key] = prop.source
+                    if prop.bibsource:
+                        if "doi" in prop.bibsource.fields:
+                            entry[key] = prop.bibsource.fields["doi"]
+            data.append(entry)
+
+        return data
+
+    return update_table_data
