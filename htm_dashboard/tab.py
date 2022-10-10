@@ -72,7 +72,7 @@ def make_tab(property):
                     ),
                     dcc.Graph(
                         id=f"graph_{property}",
-                        style={"width": "120vh", "height": "70vh"},
+                        # style={"width": "120vh", "height": "70vh"},
                     ),
                 ],
                 className="pretty_container",
@@ -189,6 +189,7 @@ def make_tab(property):
                         controls,
                         className="pretty_container",
                         width=3,
+                        style={"overflow-y": "auto", "maxHeight": "600px"},
                     ),
                     dbc.Col([sub_tabs]),
                 ],
