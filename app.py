@@ -4,7 +4,10 @@ import htm_dashboard.callbacks as cb
 import dash
 import dash_bootstrap_components as dbc
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
+# stylesheet with the .dbc class
+dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY, dbc_css])
 
 server = app.server
 

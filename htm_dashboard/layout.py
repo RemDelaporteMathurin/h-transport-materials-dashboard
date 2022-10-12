@@ -128,4 +128,5 @@ layout = dbc.Container(
         make_modal_add_property("recombination_coeff"),
     ],
     fluid=True,
+    className="dbc bg-opacity-10 bg-black mb-2",
 )
