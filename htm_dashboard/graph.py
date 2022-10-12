@@ -6,14 +6,12 @@ import plotly.express as px
 
 pio.templates.default = "plotly_white"
 
-all_diffusivities = htm.diffusivities
-all_solubilities = htm.solubilities
 
-all_years_solubilities = [S.year for S in all_solubilities]
+all_years_solubilities = [S.year for S in htm.solubilities]
 MIN_YEAR_SOL = min(all_years_solubilities)
 MAX_YEAR_SOL = max(all_years_solubilities)
 
-all_years_diffusivities = [S.year for S in all_diffusivities]
+all_years_diffusivities = [S.year for S in htm.diffusivities]
 MIN_YEAR_DIFF = min(all_years_diffusivities)
 MAX_YEAR_DIFF = max(all_years_diffusivities)
 
@@ -63,9 +61,9 @@ def make_group_of_properties(
     type_of_prop: str, materials=[], authors=[], isotopes=[], years=[]
 ):
     if type_of_prop == "diffusivity":
-        database = all_diffusivities
+        database = htm.diffusivities
     elif type_of_prop == "solubility":
-        database = all_solubilities
+        database = htm.solubilities
 
     if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
         filtered_group = []

@@ -6,8 +6,6 @@ from .export import create_data_as_dict, generate_python_code
 from .tab import materials_options, TABLE_KEYS
 
 from .graph import (
-    all_diffusivities,  # TODO no need to import it here can be replaced by htm.diffusivities
-    all_solubilities,
     make_group_of_properties,
     make_piechart_author,
     make_piechart_isotopes,
@@ -26,7 +24,7 @@ from .graph import (
 import h_transport_materials as htm
 
 
-group_to_all_props = {"diffusivity": all_diffusivities, "solubility": all_solubilities}
+group_to_all_props = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
 
 
 def create_make_citations_figure_function(group):
