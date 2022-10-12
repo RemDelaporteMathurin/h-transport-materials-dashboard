@@ -10,6 +10,8 @@ server = app.server
 
 app.layout = layout
 
+ACTIVE_GROUPS = ["diffusivity", "solubility", "recombination_coeff"]
+
 
 @app.callback(
     dash.Output("modal-infos", "is_open"),
@@ -22,7 +24,7 @@ def toggle_modal(n1, is_open):
     return is_open
 
 
-for group in ["diffusivity", "solubility"]:
+for group in ACTIVE_GROUPS:
 
     app.callback(
         dash.Output(f"graph_nb_citations_{group}", "figure"),
@@ -140,6 +142,15 @@ for group in ["diffusivity", "solubility"]:
         dash.State(f"new_{group}_range_high", "value"),
         prevent_initial_call=True,
     )(cb.make_add_property(group))
+
+    app.callback(
+        dash.Output(f"table_{group}", "data"),
+        dash.Input(f"graph_{group}", "figure"),
+        dash.State(f"material_filter_{group}", "value"),
+        dash.State(f"isotope_filter_{group}", "value"),
+        dash.State(f"author_filter_{group}", "value"),
+        dash.State(f"year_filter_{group}", "value"),
+    )(cb.create_update_table_data_function(group))
 
 if __name__ == "__main__":
     app.run_server(debug=True)

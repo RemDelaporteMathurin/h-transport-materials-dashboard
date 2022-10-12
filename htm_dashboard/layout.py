@@ -1,6 +1,5 @@
 from .infos import text_infos
-from .new_diffusivity_form import form_new_diffusivity
-from .new_solubility_form import form_new_solubility
+from .new_property_form import make_form
 
 from .tab import make_tab
 
@@ -10,14 +9,11 @@ from dash_bootstrap_templates import ThemeSwitchAIO
 
 
 def make_modal_add_property(property: str):
-    prop_to_form = {
-        "diffusivity": form_new_diffusivity,
-        "solubility": form_new_solubility,
-    }
+
     modal = dbc.Modal(
         [
             dbc.ModalHeader(dbc.ModalTitle(html.H2(f"Add a {property}"))),
-            dbc.ModalBody(prop_to_form[property]),
+            dbc.ModalBody(make_form(property)),
             dbc.ModalFooter(
                 [
                     html.Div("", id=f"error_message_new_{property}"),
@@ -120,10 +116,7 @@ layout = dbc.Container(
                     label="Permeability",
                     children=[html.Div([dbc.Label("Work in progress", id="wip_1")])],
                 ),
-                dbc.Tab(
-                    label="Recombination coeff.",
-                    children=[html.Div([dbc.Label("Work in progress", id="wip_2")])],
-                ),
+                make_tab("recombination_coeff"),
                 dbc.Tab(
                     label="Dissociation coeff.",
                     children=[html.Div([dbc.Label("Work in progress", id="wip_3")])],
@@ -132,6 +125,7 @@ layout = dbc.Container(
         ),
         make_modal_add_property("diffusivity"),
         make_modal_add_property("solubility"),
+        make_modal_add_property("recombination_coeff"),
     ],
     fluid=True,
 )

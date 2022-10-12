@@ -6,33 +6,34 @@ import dash_daq as daq
 import h_transport_materials as htm
 import numpy as np
 
-all_diffusivities = htm.diffusivities
-all_solubilities = htm.solubilities
-
-materials_options = np.unique(
-    [
-        prop.material
-        for prop in all_diffusivities.properties + all_solubilities.properties
-    ]
-).tolist()
+materials_options = np.unique([prop.material for prop in htm.database]).tolist()
 isotope_options = ["H", "D", "T"]
 
+pretty_label = {
+    "diffusivity": "Diffusivity",
+    "solubility": "Solubility",
+    "permeability": "Permeability",
+    "recombination_coeff": "Recombination coeff.",
+    "dissociation_coeff": "Dissociation coeff.",
+}
 
-def make_tab(property):
+
+def make_tab(property: str):
     """_summary_
 
     Args:
-        property (_type_): _description_
+        property (str): _description_
 
     Returns:
-        _type_: _description_
+        dbc.Tab: the tab
     """
 
-    assert property in ["diffusivity", "solubility"]
+    assert property in ["diffusivity", "solubility", "recombination_coeff"]
 
     property_to_group = {
         "diffusivity": htm.diffusivities,
         "solubility": htm.solubilities,
+        "recombination_coeff": htm.recombination_coeffs,
     }
 
     all_properties = property_to_group[property]
@@ -51,28 +52,33 @@ def make_tab(property):
     min_year = min(years_options)
     max_year = max(years_options)
 
-    piechart_materials = dcc.Graph(id=f"graph_materials_{property}")
-    piechart_isotopes = dcc.Graph(id=f"graph_isotopes_{property}")
-    piechart_authors = dcc.Graph(id=f"graph_authors_{property}")
-
-    table = make_data_table(property)
+    table = make_table(property)
 
     table_tab = dbc.Tab([table], label="Table")
 
     graph_tab = dbc.Tab(
         [
-            dbc.Col(
+            dbc.Row(
                 [
-                    html.Label("Colour by:"),
-                    dcc.Dropdown(
-                        ["property", "material", "author", "isotope"],
-                        "property",
-                        id=f"colour-by_{property}",
-                        style=dict(width="150px"),
+                    dbc.Col(
+                        [
+                            html.Label("Colour by:"),
+                            dcc.Dropdown(
+                                ["property", "material", "author", "isotope"],
+                                "property",
+                                id=f"colour-by_{property}",
+                                style=dict(width="150px"),
+                            ),
+                        ]
                     ),
-                    dcc.Graph(
-                        id=f"graph_{property}",
-                        style={"width": "120vh", "height": "70vh"},
+                    dbc.Col(
+                        [
+                            dcc.Graph(
+                                id=f"graph_{property}",
+                                style={"height": "600px"},
+                            )
+                        ],
+                        width=10,
                     ),
                 ],
                 className="pretty_container",
@@ -180,8 +186,85 @@ def make_tab(property):
         ),
     ]
 
+    graph_prop_per_year = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Number of properties per year", className="card-title"),
+                    dcc.Graph(id=f"graph_prop_per_year_{property}"),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+
+    graph_citations = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Number of citations", className="card-title"),
+                    html.H6("source: Crossref", className="card-subtitle"),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    daq.BooleanSwitch(
+                                        label="Per year",
+                                        on=False,
+                                        id=f"per_year_citations_{property}",
+                                    ),
+                                ],
+                                width=1,
+                            ),
+                            dbc.Col(
+                                [dcc.Graph(id=f"graph_nb_citations_{property}")],
+                                width=11,
+                            ),
+                        ],
+                        align="center",
+                    ),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+
+    piechart_materials = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Repartition by materials", className="card-title"),
+                    dcc.Graph(id=f"graph_materials_{property}"),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+    piechart_isotopes = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Repartition by isotopes", className="card-title"),
+                    dcc.Graph(id=f"graph_isotopes_{property}"),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+    piechart_authors = dbc.Card(
+        [
+            dbc.CardBody(
+                [
+                    html.H4("Repartition by authors", className="card-title"),
+                    dcc.Graph(id=f"graph_authors_{property}"),
+                ]
+            )
+        ],
+        style={"border-color": "white"},
+    )
+
     tab = dbc.Tab(
-        label=property.capitalize(),
+        label=pretty_label[property],
         children=[
             dbc.Row(
                 [
@@ -189,6 +272,7 @@ def make_tab(property):
                         controls,
                         className="pretty_container",
                         width=3,
+                        style={"overflow-y": "auto", "maxHeight": "600px"},
                     ),
                     dbc.Col([sub_tabs]),
                 ],
@@ -196,38 +280,12 @@ def make_tab(property):
             dbc.Row(
                 [
                     dbc.Col(
-                        [
-                            dcc.Graph(id=f"graph_prop_per_year_{property}"),
-                        ],
+                        [graph_prop_per_year],
                         className="pretty_container",
                         width=3,
                     ),
                     dbc.Col(
-                        [
-                            dbc.Row(
-                                [
-                                    dbc.Col(
-                                        [
-                                            daq.BooleanSwitch(
-                                                label="Per year",
-                                                on=False,
-                                                id=f"per_year_citations_{property}",
-                                            ),
-                                        ],
-                                        width=1,
-                                    ),
-                                    dbc.Col(
-                                        [
-                                            dcc.Graph(
-                                                id=f"graph_nb_citations_{property}"
-                                            )
-                                        ],
-                                        width=11,
-                                    ),
-                                ],
-                                align="center",
-                            )
-                        ],
+                        [graph_citations],
                         className="pretty_container",
                         width=4,
                     ),
@@ -251,61 +309,55 @@ def make_tab(property):
                         className="pretty_container",
                         width=4,
                     ),
-                ]
+                ],
+                justify="evenly",
             ),
         ],
     )
     return tab
 
 
-def make_data_table(property):
+TABLE_KEYS = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
 
-    prop_to_keys = {
-        "diffusivity": ["D_0 (m2/s)", "E_D (eV)"],
-        "solubility": ["S_0", "E_S (eV)"],
-    }
+prop_key_to_label = {
+    "diffusivity": {"pre_exp": "D_0 (m2/s)", "act_energy": "E_D (eV)"},
+    "solubility": {"pre_exp": "S_0", "act_energy": "E_S (eV)"},
+    "recombination_coeff": {"pre_exp": "Kr_0 (m4/s)", "act_energy": "E_Kr (eV)"},
+}
 
-    property_to_group = {
-        "diffusivity": htm.diffusivities,
-        "solubility": htm.solubilities,
-    }
+key_to_label = {
+    "material": "Material",
+    "range": "Range (K)",
+    "author": "Author",
+    "doi": "DOI",
+}
 
-    all_properties = property_to_group[property]
 
-    keys = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
-    labels = ["Material"] + prop_to_keys[property] + ["Range (K)", "Author", "DOI"]
+def make_table_labels(property):
+    labels = []
+    for key in TABLE_KEYS:
+        if key in key_to_label:
+            labels.append(key_to_label[key])
+        else:
+            labels.append(prop_key_to_label[property][key])
+    return labels
 
-    data = []
 
-    for prop in all_properties:
-        entry = {}
-        for key in keys:
-            if hasattr(prop, key):
-                val = getattr(prop, key)
-                if key == "range":
-                    if val is None:
-                        val = "none"
-                    else:
-                        val = f"{val[0]:.0f}-{val[1]:.0f}"
-                elif key == "pre_exp" and hasattr(prop, "units"):
-                    val = f"{val: .2e} {prop.units}"
-                elif key == "act_energy":
-                    val = f"{val:.2f}"
-                entry[key] = val
-            elif key == "doi":
-                entry[key] = prop.source
-                if prop.bibsource:
-                    if "doi" in prop.bibsource.fields:
-                        entry[key] = prop.bibsource.fields["doi"]
-        data.append(entry)
+def make_table(property):
 
     table = dash_table.DataTable(
         id=f"table_{property}",
         columns=[
-            {"name": label, "id": key, "deletable": False}
-            for key, label in zip(keys, labels)
+            {
+                "name": label,
+                "id": key,
+                "presentation": "markdown",
+            }  # markdown is needed to have clickable links
+            if key == "doi"
+            else {"name": label, "id": key}
+            for key, label in zip(TABLE_KEYS, make_table_labels(property))
         ],
-        data=data,
+        data=[],
         page_size=10,
         editable=False,
         cell_selectable=True,
