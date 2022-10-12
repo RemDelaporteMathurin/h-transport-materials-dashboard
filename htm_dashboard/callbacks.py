@@ -15,8 +15,7 @@ from .graph import (
     make_graph_diffusivities,
     make_piechart_materials,
     make_graph_solubilities,
-    add_mean_value_diffusivities,
-    add_mean_value_solubilities,
+    add_mean_value,
     MIN_YEAR_SOL,
     MAX_YEAR_SOL,
     MIN_YEAR_DIFF,
@@ -108,10 +107,8 @@ def create_update_graph_function(group):
     ):
         if group == "diffusivity":
             make_graph = make_graph_diffusivities
-            add_mean = add_mean_value_diffusivities
         elif group == "solubility":
             make_graph = make_graph_solubilities
-            add_mean = add_mean_value_solubilities
 
         properties_group = group_to_make[group](
             materials=material_filter,
@@ -123,7 +120,7 @@ def create_update_graph_function(group):
         figure = make_graph(properties_group, colour_by)
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"mean_button_{group}.n_clicks":
-            add_mean(properties_group, figure)
+            add_mean_value(properties_group, figure)
 
         return figure
 

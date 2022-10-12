@@ -21,36 +21,30 @@ MAX_YEAR_DIFF = max(all_years_diffusivities)
 colours = px.colors.qualitative.Plotly
 
 
-def add_mean_value_diffusivities(group: htm.PropertiesGroup, fig: go.Figure):
-    D_0, E_D = group.mean()
-    mean_prop = htm.ArrheniusProperty(D_0, E_D)
+def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
+    pre_exp, act_energy = group.mean()
+    mean_prop = htm.ArrheniusProperty(pre_exp, act_energy)
     label = "Mean value"
     T = np.linspace(300, 1200, num=500)
-    fig.add_trace(
-        go.Scatter(
-            x=1 / T,
-            y=mean_prop.value(T),
-            name=label,
-            mode="lines",
-            text=[label] * len(T),
-            line=dict(color="black", width=4),
-            customdata=T,
-            hovertemplate="<b>%{text}</b><br><br>"
-            + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
-            + "T: %{customdata:.0f} K<br>"
-            + "D: %{y:,.2e} m<sup>2</sup>/s <br>"
-            + "D_0: {:.2e} m<sup>2</sup>/s <br>".format(mean_prop.pre_exp)
-            + "E_D : {:.2f} eV".format(mean_prop.act_energy)
-            + "<extra></extra>",
-        )
+    hovertemplate = (
+        "<b>%{text}</b><br><br>"
+        + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
+        + "T: %{customdata:.0f} K<br>"
     )
-
-
-def add_mean_value_solubilities(group: htm.PropertiesGroup, fig: go.Figure):
-    S_0, E_S = group.mean()
-    mean_prop = htm.ArrheniusProperty(S_0, E_S)
-    label = "Mean value"
-    T = np.linspace(470, 1200, num=500)
+    if isinstance(group[0], htm.Solubility):
+        hovertemplate += (
+            "S: %{y:,.2e}"
+            + f"S_0: {mean_prop.pre_exp:.2e} <br>"
+            + f"E_S : {mean_prop.act_energy:.2f} eV"
+        )
+    else:
+        # TODO make this generic for recombination coeffs, permeability...
+        hovertemplate += (
+            "D: %{y:,.2e} m<sup>2</sup>/s <br>"
+            + f"D_0: {mean_prop.pre_exp:.2e} m<sup>2</sup>/s <br>"
+            + f"E_D : {mean_prop.act_energy:.2f} eV"
+        )
+    hovertemplate += "<extra></extra>"
     fig.add_trace(
         go.Scatter(
             x=1 / T,
@@ -60,13 +54,7 @@ def add_mean_value_solubilities(group: htm.PropertiesGroup, fig: go.Figure):
             text=[label] * len(T),
             line=dict(color="black", width=4),
             customdata=T,
-            hovertemplate="<b>%{text}</b><br><br>"
-            + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
-            + "T: %{customdata:.0f} K<br>"
-            + "S: %{y:,.2e}"
-            + "S_0: {:.2e} <br>".format(mean_prop.pre_exp)
-            + "E_S : {:.2f} eV".format(mean_prop.act_energy)
-            + "<extra></extra>",
+            hovertemplate=hovertemplate,
         )
     )
 
