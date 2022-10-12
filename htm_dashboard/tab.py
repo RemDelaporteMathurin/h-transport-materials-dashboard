@@ -9,15 +9,23 @@ import numpy as np
 materials_options = np.unique([prop.material for prop in htm.database]).tolist()
 isotope_options = ["H", "D", "T"]
 
+pretty_label = {
+    "diffusivity": "Diffusivity",
+    "solubility": "Solubility",
+    "permeability": "Permeability",
+    "recombination_coeff": "Recombination coeff.",
+    "dissociation_coeff": "Dissociation coeff.",
+}
 
-def make_tab(property):
+
+def make_tab(property: str):
     """_summary_
 
     Args:
-        property (_type_): _description_
+        property (str): _description_
 
     Returns:
-        _type_: _description_
+        dbc.Tab: the tab
     """
 
     assert property in ["diffusivity", "solubility", "recombination_coeff"]
@@ -256,7 +264,7 @@ def make_tab(property):
     )
 
     tab = dbc.Tab(
-        label=property.capitalize(),
+        label=pretty_label[property],
         children=[
             dbc.Row(
                 [
