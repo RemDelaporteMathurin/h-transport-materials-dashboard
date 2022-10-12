@@ -10,6 +10,8 @@ server = app.server
 
 app.layout = layout
 
+ACTIVE_GROUPS = ["diffusivity", "solubility"]
+
 
 @app.callback(
     dash.Output("modal-infos", "is_open"),
@@ -22,7 +24,7 @@ def toggle_modal(n1, is_open):
     return is_open
 
 
-for group in ["diffusivity", "solubility"]:
+for group in ACTIVE_GROUPS:
 
     app.callback(
         dash.Output(f"graph_nb_citations_{group}", "figure"),
