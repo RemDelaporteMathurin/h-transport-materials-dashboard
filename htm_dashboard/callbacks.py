@@ -6,21 +6,12 @@ from .export import create_data_as_dict, generate_python_code
 from .tab import materials_options, TABLE_KEYS
 
 from .graph import (
-    all_diffusivities,
-    all_solubilities,
-    make_diffusivities,
+    make_group_of_properties,
     make_piechart_author,
     make_piechart_isotopes,
-    make_solubilities,
-    make_graph_diffusivities,
+    make_graph,
     make_piechart_materials,
-    make_graph_solubilities,
-    add_mean_value_diffusivities,
-    add_mean_value_solubilities,
-    MIN_YEAR_SOL,
-    MAX_YEAR_SOL,
-    MIN_YEAR_DIFF,
-    MAX_YEAR_DIFF,
+    add_mean_value,
     make_figure_prop_per_year,
     make_citations_graph,
 )
@@ -28,8 +19,7 @@ from .graph import (
 import h_transport_materials as htm
 
 
-group_to_all_props = {"diffusivity": all_diffusivities, "solubility": all_solubilities}
-group_to_make = {"diffusivity": make_diffusivities, "solubility": make_solubilities}
+type_to_database = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
 
 
 def create_make_citations_figure_function(group):
@@ -41,7 +31,8 @@ def create_make_citations_figure_function(group):
         author_filter,
         year_filter,
     ):
-        properties_group = group_to_make[group](
+        properties_group = make_group_of_properties(
+            type_of_prop=group,
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
@@ -68,7 +59,7 @@ def create_add_all_authors_function(group):
 
         if n_clicks:
             return np.unique(
-                [prop.author.capitalize() for prop in group_to_all_props[group]]
+                [prop.author.capitalize() for prop in type_to_database[group]]
             ).tolist()
         else:
             return dash.no_update
@@ -80,15 +71,12 @@ def create_update_entries_per_year_graph_function(group):
     def update_entries_per_year_graph(
         figure, material_filter, isotope_filter, author_filter, year_filter
     ):
-        if group == "diffusivity":
-            min_year, max_year = MIN_YEAR_DIFF, MAX_YEAR_DIFF
-        elif group == "solubility":
-            min_year, max_year = MIN_YEAR_SOL, MAX_YEAR_SOL
-        all_time_properties = group_to_make[group](
+
+        all_time_properties = make_group_of_properties(
+            type_of_prop=group,
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
-            years=[min_year, max_year],
         )
         return make_figure_prop_per_year(
             all_time_properties, step=5, selected_years=year_filter
@@ -106,14 +94,9 @@ def create_update_graph_function(group):
         mean_button,
         colour_by,
     ):
-        if group == "diffusivity":
-            make_graph = make_graph_diffusivities
-            add_mean = add_mean_value_diffusivities
-        elif group == "solubility":
-            make_graph = make_graph_solubilities
-            add_mean = add_mean_value_solubilities
 
-        properties_group = group_to_make[group](
+        properties_group = make_group_of_properties(
+            type_of_prop=group,
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
@@ -123,7 +106,7 @@ def create_update_graph_function(group):
         figure = make_graph(properties_group, colour_by)
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"mean_button_{group}.n_clicks":
-            add_mean(properties_group, figure)
+            add_mean_value(properties_group, figure)
 
         return figure
 
@@ -141,7 +124,8 @@ def create_make_download_data_function(group):
 
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"extract_button_{group}.n_clicks":
-            properties_group = group_to_make[group](
+            properties_group = make_group_of_properties(
+                type_of_prop=group,
                 materials=material_filter,
                 authors=author_filter,
                 isotopes=isotope_filter,
@@ -235,6 +219,7 @@ def make_add_property(group):
                 return dash.no_update, dash.no_update, "Error!"
             if (new_range_low, new_range_high) == (None, None):
                 (new_range_low, new_range_high) = (300, 1200)
+            # TODO this should account for solubilities, diffusivities etc...
             new_property = htm.ArrheniusProperty(
                 pre_exp=new_pre_exp,
                 act_energy=new_act_energy,
@@ -244,17 +229,17 @@ def make_add_property(group):
                 material=new_material,
                 range=(new_range_low, new_range_high),
             )
-            group_to_all_props[group].properties.append(new_property)
+            type_to_database[group].properties.append(new_property)
 
         all_authors = np.unique(
             [
                 prop.author.capitalize()
-                for prop in group_to_all_props[group]
+                for prop in type_to_database[group]
                 if prop.material in material_filter
             ]
         ).tolist()
         all_materials = np.unique(
-            [prop.material.lower() for prop in group_to_all_props[group]]
+            [prop.material.lower() for prop in type_to_database[group]]
         ).tolist()
 
         return all_materials, all_authors, ""
@@ -270,7 +255,8 @@ def create_update_piechart_material_function(group):
         author_filter,
         year_filter,
     ):
-        properties_group = group_to_make[group](
+        properties_group = make_group_of_properties(
+            type_of_prop=group,
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
@@ -289,7 +275,8 @@ def create_update_piechart_isotopes_function(group):
         author_filter,
         year_filter,
     ):
-        properties_group = group_to_make[group](
+        properties_group = make_group_of_properties(
+            type_of_prop=group,
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
@@ -308,7 +295,8 @@ def create_update_piechart_authors_function(group):
         author_filter,
         year_filter,
     ):
-        properties_group = group_to_make[group](
+        properties_group = make_group_of_properties(
+            type_of_prop=group,
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
@@ -325,7 +313,8 @@ def create_update_table_data_function(group):
     ):
         data = []
 
-        properties_group = group_to_make[group](
+        properties_group = make_group_of_properties(
+            type_of_prop=group,
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
@@ -346,14 +335,18 @@ def create_update_table_data_function(group):
                         val = f"{val: .2e} {prop.units}"
                     elif key == "act_energy":
                         val = f"{val:.2f}"
-                    entry[key] = val
-                elif key == "doi":
+                elif (
+                    key == "doi"
+                ):  # NOTE: in next release of HTM properties will have a doi attr
                     entry[key] = prop.source
                     if prop.bibsource:
                         if "doi" in prop.bibsource.fields:
-                            entry[
-                                key
-                            ] = f"[{prop.bibsource.fields['doi']}](https://doi.org/{prop.bibsource.fields['doi']})"
+                            doi = prop.bibsource.fields["doi"]
+                            clickable_doi = f"[{doi}](https://doi.org/{doi})"
+                            val = clickable_doi
+
+                entry[key] = val
+
             data.append(entry)
 
         return data

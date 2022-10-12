@@ -6,82 +6,69 @@ import plotly.express as px
 
 pio.templates.default = "plotly_white"
 
-all_diffusivities = htm.diffusivities
-all_solubilities = htm.solubilities
-
-all_years_solubilities = [S.year for S in all_solubilities]
-MIN_YEAR_SOL = min(all_years_solubilities)
-MAX_YEAR_SOL = max(all_years_solubilities)
-
-all_years_diffusivities = [S.year for S in all_diffusivities]
-MIN_YEAR_DIFF = min(all_years_diffusivities)
-MAX_YEAR_DIFF = max(all_years_diffusivities)
-
 
 colours = px.colors.qualitative.Plotly
 
+type_to_database = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
 
-def add_mean_value_diffusivities(group: htm.PropertiesGroup, fig: go.Figure):
-    D_0, E_D = group.mean()
-    mean_prop = htm.ArrheniusProperty(D_0, E_D)
+
+def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
+    pre_exp, act_energy = group.mean()
+    mean_prop = htm.ArrheniusProperty(pre_exp, act_energy)
     label = "Mean value"
     T = np.linspace(300, 1200, num=500)
-    fig.add_trace(
-        go.Scatter(
-            x=1 / T,
-            y=mean_prop.value(T),
-            name=label,
-            mode="lines",
-            text=[label] * len(T),
-            line=dict(color="black", width=4),
-            customdata=T,
-            hovertemplate="<b>%{text}</b><br><br>"
-            + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
-            + "T: %{customdata:.0f} K<br>"
-            + "D: %{y:,.2e} m<sup>2</sup>/s <br>"
-            + "D_0: {:.2e} m<sup>2</sup>/s <br>".format(mean_prop.pre_exp)
-            + "E_D : {:.2f} eV".format(mean_prop.act_energy)
-            + "<extra></extra>",
-        )
+    hovertemplate = (
+        "<b>%{text}</b><br><br>"
+        + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
+        + "T: %{customdata:.0f} K<br>"
     )
-
-
-def add_mean_value_solubilities(group: htm.PropertiesGroup, fig: go.Figure):
-    S_0, E_S = group.mean()
-    mean_prop = htm.ArrheniusProperty(S_0, E_S)
-    label = "Mean value"
-    T = np.linspace(470, 1200, num=500)
-    fig.add_trace(
-        go.Scatter(
-            x=1 / T,
-            y=mean_prop.value(T),
-            name=label,
-            mode="lines",
-            text=[label] * len(T),
-            line=dict(color="black", width=4),
-            customdata=T,
-            hovertemplate="<b>%{text}</b><br><br>"
-            + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
-            + "T: %{customdata:.0f} K<br>"
-            + "S: %{y:,.2e}"
-            + "S_0: {:.2e} <br>".format(mean_prop.pre_exp)
-            + "E_S : {:.2f} eV".format(mean_prop.act_energy)
-            + "<extra></extra>",
+    if isinstance(group[0], htm.Solubility):
+        hovertemplate += (
+            "S: %{y:,.2e}"
+            + f"S_0: {mean_prop.pre_exp:.2e} <br>"
+            + f"E_S : {mean_prop.act_energy:.2f} eV"
         )
-    )
-
-
-def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
-    if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
-        diffusivities = []
     else:
-        diffusivities = (
-            all_diffusivities.filter(material=materials)
+        # TODO make this generic for recombination coeffs, permeability...
+        hovertemplate += (
+            "D: %{y:,.2e} m<sup>2</sup>/s <br>"
+            + f"D_0: {mean_prop.pre_exp:.2e} m<sup>2</sup>/s <br>"
+            + f"E_D : {mean_prop.act_energy:.2f} eV"
+        )
+    hovertemplate += "<extra></extra>"
+    fig.add_trace(
+        go.Scatter(
+            x=1 / T,
+            y=mean_prop.value(T),
+            name=label,
+            mode="lines",
+            text=[label] * len(T),
+            line=dict(color="black", width=4),
+            customdata=T,
+            hovertemplate=hovertemplate,
+        )
+    )
+
+
+def make_group_of_properties(
+    type_of_prop: str, materials=[], authors=[], isotopes=[], years=None
+):
+
+    if len(materials) * len(authors) * len(isotopes) == 0:
+        filtered_group = []
+    else:
+        database = type_to_database[type_of_prop]
+        filtered_group = (
+            database.filter(material=materials)
             .filter(author=[author.lower() for author in authors])
             .filter(isotope=[isotope.lower() for isotope in isotopes])
-            .filter(year=np.arange(years[0], years[1] + 1, step=1).tolist())
         )
-    return diffusivities
+        if years:
+            filtered_group = filtered_group.filter(
+                year=np.arange(years[0], years[1] + 1, step=1).tolist()
+            )
+
+    return filtered_group
 
 
 def list_of_colours(prop_group, colour_by):
@@ -113,140 +100,112 @@ def list_of_colours(prop_group, colour_by):
         return [colours[i % 10] for i in iso_idx]
 
 
-def make_graph_diffusivities(diffusivities, colour_by="property"):
-    """Creates a graph for visualising diffusivities.
+def make_graph(group_of_properties: htm.PropertiesGroup, colour_by="property"):
+    """Creates a graph for visualising properties.
 
     Args:
-        diffusivities (list): list of htm.ArrheniusProperty
+        diffusivities (list): htm.PropertiesGroup
         colour_by (str, optional): "property", "material", "isotope", "author". Defaults to "property".
 
     Returns:
-        go.Figure: the diffusivity graph
+        go.Figure: the graph
     """
     fig = go.Figure()
-    colour_list = list_of_colours(diffusivities, colour_by)
-    for i, D in enumerate(diffusivities):
-        label = "{} {} ({})".format(D.isotope, D.author.capitalize(), D.year)
-        range = D.range
-        if D.range is None:
-            if D.data_T is not None:
-                range = (D.data_T.min(), D.data_T.max())
+    colour_list = list_of_colours(group_of_properties, colour_by)
+    for i, prop in enumerate(group_of_properties):
+
+        label = f"{prop.isotope} {prop.author.capitalize()} ({prop.year})"
+        range = prop.range
+        if prop.range is None:
+            if prop.data_T is not None:
+                range = (prop.data_T.min(), prop.data_T.max())
             else:
                 range = (300, 1200)
         T = np.linspace(range[0], range[1], num=500)
         fig.add_trace(
             go.Scatter(
                 x=1 / T,
-                y=D.value(T),
+                y=prop.value(T),
                 name=label,
                 mode="lines",
                 line=dict(color=colour_list[i]),
                 text=[label] * len(T),
                 customdata=T,
-                hovertemplate="<b>%{text}</b><br><br>"
-                + D.material
-                + "<br>"
-                + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
-                + "T: %{customdata:.0f} K<br>"
-                + "D: %{y:,.2e} m<sup>2</sup>/s <br>"
-                + "D_0: {:.2e} m<sup>2</sup>/s <br>".format(D.pre_exp)
-                + "E_D : {:.2f} eV".format(D.act_energy)
-                + "<extra></extra>",
+                hovertemplate=make_hovertemplate(prop),
             )
         )
-        if D.data_T is not None:
+        if prop.data_T is not None:
             fig.add_trace(
                 go.Scatter(
-                    x=1 / D.data_T,
-                    y=D.data_y,
+                    x=1 / prop.data_T,
+                    y=prop.data_y,
                     name=label,
                     mode="markers",
                     marker=dict(color=fig.data[-1].line.color),
                 )
             )
 
-    fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=" m<sup>2</sup>/s")
-    fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
-    fig.update_yaxes(title_text="Diffusivity")
+    update_axes(fig, group_of_properties)
     # fig.write_html("out.html")
     return fig
 
 
-def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
-    if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
-        solubilities = []
-    else:
-        solubilities = (
-            all_solubilities.filter(material=materials)
-            .filter(author=[author.lower() for author in authors])
-            .filter(isotope=[isotope.lower() for isotope in isotopes])
-            .filter(year=np.arange(years[0], years[1] + 1, step=1).tolist())
+def update_axes(fig, group_of_properties):
+    if isinstance(group_of_properties, list):
+        if len(group_of_properties) == 0:
+            return
+
+    if isinstance(group_of_properties[0], htm.Solubility):
+        all_units = np.unique([S.units for S in group_of_properties]).tolist()
+        if len(all_units) == 1:
+            if all_units == ["m-3 Pa-1/2"]:
+                yticks_suffix = "m<sup>-3</sup> Pa<sup>-1/2</sup>"
+            elif all_units == ["m-3 Pa-1"]:
+                yticks_suffix = "m<sup>-3</sup> Pa<sup>-1</sup>"
+            title_units = f"({yticks_suffix})"
+        else:
+            # if the group contains mixed units, display nothing
+            title_units = "(mixed units)"
+            yticks_suffix = ""
+        ylabel = f"Solubility {title_units}"
+    else:  # TODO make it more generic
+        ylabel = "Diffusivity"
+        yticks_suffix = " m<sup>2</sup>/s"
+
+    xticks_suffix = " K<sup>-1</sup>"
+
+    fig.update_yaxes(
+        title_text=ylabel, type="log", tickformat=".0e", ticksuffix=yticks_suffix
+    )
+    fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=xticks_suffix)
+
+
+def make_hovertemplate(prop):
+    if isinstance(prop, htm.Solubility):
+        return (
+            "<b>%{text}</b><br><br>"
+            + prop.material
+            + "<br>"
+            + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
+            + "T: %{customdata:.0f} K<br>"
+            + "S: %{y:,.2e}"
+            + f" {prop.units}<br>"
+            + f"S_0: {prop.pre_exp:.2e} {prop.units} <br>"
+            + f"E_S : {prop.act_energy:.2f} eV"
+            + "<extra></extra>"
         )
-
-    return solubilities
-
-
-def make_graph_solubilities(solubilities, colour_by="property"):
-    fig = go.Figure()
-    colour_list = list_of_colours(solubilities, colour_by)
-    for i, S in enumerate(solubilities):
-        label = "{} {} ({})".format(S.isotope, S.author.capitalize(), S.year)
-        range = S.range
-        if S.range is None:
-            if S.data_T is not None:
-                range = (S.data_T.min(), S.data_T.max())
-            else:
-                range = (300, 1200)
-        T = np.linspace(range[0], range[1], num=500)
-        fig.add_trace(
-            go.Scatter(
-                x=1 / T,
-                y=S.value(T),
-                name=label,
-                mode="lines",
-                line=dict(color=colour_list[i]),
-                text=[label] * len(T),
-                customdata=T,
-                hovertemplate="<b>%{text}</b><br><br>"
-                + S.material
-                + "<br>"
-                + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
-                + "T: %{customdata:.0f} K<br>"
-                + "S: %{y:,.2e}"
-                + f" {S.units}<br>"
-                + f"S_0: {S.pre_exp:.2e} {S.units} <br>"
-                + f"E_S : {S.act_energy:.2f} eV"
-                + "<extra></extra>",
-            )
-        )
-        if S.data_T is not None:
-            fig.add_trace(
-                go.Scatter(
-                    x=1 / S.data_T,
-                    y=S.data_y,
-                    name=label,
-                    mode="markers",
-                    marker=dict(color=fig.data[-1].line.color),
-                )
-            )
-
-    all_units = np.unique([S.units for S in solubilities]).tolist()
-    if len(all_units) == 1:
-        if all_units == ["m-3 Pa-1/2"]:
-            y_suffix = "m<sup>-3</sup> Pa<sup>-1/2</sup>"
-        elif all_units == ["m-3 Pa-1"]:
-            y_suffix = "m<sup>-3</sup> Pa<sup>-1</sup>"
-        title_units = f"({y_suffix})"
     else:
-        # if the group contains mixed units, display nothing
-        title_units = "(mixed units)"
-        y_suffix = ""
-
-    fig.update_yaxes(type="log", tickformat=".0e", ticksuffix=y_suffix)
-    fig.update_xaxes(title_text="1/T", tickformat=".2e", ticksuffix=" K<sup>-1</sup>")
-    fig.update_yaxes(title_text=f"Solubility {title_units}")
-    # fig.write_html("out.html")
-    return fig
+        return (
+            "<b>%{text}</b><br><br>"
+            + prop.material
+            + "<br>"
+            + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
+            + "T: %{customdata:.0f} K<br>"
+            + "D: %{y:,.2e} m<sup>2</sup>/s <br>"
+            + f"D_0: {prop.pre_exp:.2e} m<sup>2</sup>/s <br>"
+            + f"E_D : {prop.act_energy:.2f} eV"
+            + "<extra></extra>"
+        )
 
 
 def make_figure_prop_per_year(group, step, selected_years=[1950, 2022]):
