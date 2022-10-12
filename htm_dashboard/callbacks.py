@@ -9,9 +9,8 @@ from .graph import (
     make_group_of_properties,
     make_piechart_author,
     make_piechart_isotopes,
-    make_graph_diffusivities,
+    make_graph,
     make_piechart_materials,
-    make_graph_solubilities,
     add_mean_value,
     MIN_YEAR_SOL,
     MAX_YEAR_SOL,
@@ -103,10 +102,6 @@ def create_update_graph_function(group):
         mean_button,
         colour_by,
     ):
-        if group == "diffusivity":
-            make_graph = make_graph_diffusivities
-        elif group == "solubility":
-            make_graph = make_graph_solubilities
 
         properties_group = make_group_of_properties(
             type_of_prop=group,
