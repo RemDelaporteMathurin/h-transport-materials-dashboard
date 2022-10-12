@@ -151,9 +151,8 @@ def make_graph(group_of_properties: htm.PropertiesGroup, colour_by="property"):
 
 
 def update_axes(fig, group_of_properties):
-    if isinstance(group_of_properties, list):
-        if len(group_of_properties) == 0:
-            return
+    if len(group_of_properties) == 0:
+        return
 
     if isinstance(group_of_properties[0], htm.Solubility):
         all_units = np.unique([S.units for S in group_of_properties]).tolist()
