@@ -42,8 +42,7 @@ filtered_{{group}} = (
     .filter(year=np.arange({{yearmin}}, {{yearmax}}, step=1).tolist())
 )
 
-for property in filtered_{{group}}:
-    htm.plotting.plot(property, auto_label=True)
+htm.plotting.plot(filtered_{{group}})
 
 plt.legend()
 plt.xlabel("1/T (K$^{-1}$)")
