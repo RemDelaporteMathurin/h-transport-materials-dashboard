@@ -9,6 +9,8 @@ pio.templates.default = "plotly_white"
 
 colours = px.colors.qualitative.Plotly
 
+type_to_database = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
+
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
     pre_exp, act_energy = group.mean()
@@ -51,14 +53,11 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
 def make_group_of_properties(
     type_of_prop: str, materials=[], authors=[], isotopes=[], years=None
 ):
-    if type_of_prop == "diffusivity":
-        database = htm.diffusivities
-    elif type_of_prop == "solubility":
-        database = htm.solubilities
 
     if len(materials) * len(authors) * len(isotopes) == 0:
         filtered_group = []
     else:
+        database = type_to_database[type_of_prop]
         filtered_group = (
             database.filter(material=materials)
             .filter(author=[author.lower() for author in authors])
@@ -109,7 +108,7 @@ def make_graph(group_of_properties: htm.PropertiesGroup, colour_by="property"):
         colour_by (str, optional): "property", "material", "isotope", "author". Defaults to "property".
 
     Returns:
-        go.Figure: the diffusivity graph
+        go.Figure: the graph
     """
     fig = go.Figure()
     colour_list = list_of_colours(group_of_properties, colour_by)

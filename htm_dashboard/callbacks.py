@@ -19,7 +19,7 @@ from .graph import (
 import h_transport_materials as htm
 
 
-group_to_all_props = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
+type_to_database = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
 
 
 def create_make_citations_figure_function(group):
@@ -59,7 +59,7 @@ def create_add_all_authors_function(group):
 
         if n_clicks:
             return np.unique(
-                [prop.author.capitalize() for prop in group_to_all_props[group]]
+                [prop.author.capitalize() for prop in type_to_database[group]]
             ).tolist()
         else:
             return dash.no_update
@@ -228,17 +228,17 @@ def make_add_property(group):
                 material=new_material,
                 range=(new_range_low, new_range_high),
             )
-            group_to_all_props[group].properties.append(new_property)
+            type_to_database[group].properties.append(new_property)
 
         all_authors = np.unique(
             [
                 prop.author.capitalize()
-                for prop in group_to_all_props[group]
+                for prop in type_to_database[group]
                 if prop.material in material_filter
             ]
         ).tolist()
         all_materials = np.unique(
-            [prop.material.lower() for prop in group_to_all_props[group]]
+            [prop.material.lower() for prop in type_to_database[group]]
         ).tolist()
 
         return all_materials, all_authors, ""
