@@ -3,8 +3,12 @@ import htm_dashboard.callbacks as cb
 
 import dash
 import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import ThemeSwitchAIO
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
+# stylesheet with the .dbc class
+dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY, dbc_css])
 
 server = app.server
 
@@ -54,6 +58,7 @@ for group in ACTIVE_GROUPS:
         dash.Input(f"year_filter_{group}", "value"),
         dash.Input(f"mean_button_{group}", "n_clicks"),
         dash.Input(f"colour-by_{group}", "value"),
+        dash.Input(ThemeSwitchAIO.ids.switch("theme"), "value"),
     )(cb.create_update_graph_function(group))
 
     app.callback(

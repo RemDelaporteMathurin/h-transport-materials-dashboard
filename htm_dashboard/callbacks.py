@@ -1,5 +1,6 @@
 import numpy as np
 import dash
+import plotly.io as pio
 
 from .export import create_data_as_dict, generate_python_code
 
@@ -14,6 +15,8 @@ from .graph import (
     add_mean_value,
     make_figure_prop_per_year,
     make_citations_graph,
+    TEMPLATE_DARK,
+    TEMPLATE_LIGHT,
 )
 
 import h_transport_materials as htm
@@ -97,6 +100,7 @@ def create_update_graph_function(group):
         year_filter,
         mean_button,
         colour_by,
+        toggle_light,
     ):
 
         properties_group = make_group_of_properties(
@@ -106,6 +110,11 @@ def create_update_graph_function(group):
             isotopes=isotope_filter,
             years=year_filter,
         )
+
+        if toggle_light:
+            pio.templates.default = TEMPLATE_LIGHT
+        else:
+            pio.templates.default = TEMPLATE_DARK
 
         figure = make_graph(properties_group, colour_by)
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]

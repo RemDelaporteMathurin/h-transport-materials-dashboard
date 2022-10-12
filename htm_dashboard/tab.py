@@ -58,133 +58,141 @@ def make_tab(property: str):
 
     graph_tab = dbc.Tab(
         [
-            dbc.Row(
+            dbc.Card(
                 [
-                    dbc.Col(
+                    dbc.Row(
                         [
-                            html.Label("Colour by:"),
-                            dcc.Dropdown(
-                                ["property", "material", "author", "isotope"],
-                                "property",
-                                id=f"colour-by_{property}",
-                                style=dict(width="150px"),
+                            dbc.Col(
+                                [
+                                    html.Label("Colour by:"),
+                                    dcc.Dropdown(
+                                        ["property", "material", "author", "isotope"],
+                                        "property",
+                                        id=f"colour-by_{property}",
+                                        style=dict(width="150px"),
+                                    ),
+                                ]
                             ),
-                        ]
-                    ),
-                    dbc.Col(
-                        [
-                            dcc.Graph(
-                                id=f"graph_{property}",
-                                style={"height": "600px"},
-                            )
+                            dbc.Col(
+                                [
+                                    dcc.Graph(
+                                        id=f"graph_{property}",
+                                        style={"height": "600px"},
+                                    )
+                                ],
+                                width=10,
+                            ),
                         ],
-                        width=10,
                     ),
                 ],
-                className="pretty_container",
-            ),
+                body=True,
+                className="mb-2",
+            )
         ],
         label="Graph",
     )
 
     sub_tabs = dbc.Tabs([graph_tab, table_tab], id=f"subtabs_{property}")
 
-    controls = [
-        html.Label("Filter by material:"),
-        dcc.Dropdown(
-            options=materials_options,
-            value=[initial_material],
-            multi=True,
-            id=f"material_filter_{property}",
-        ),
-        html.Div(
-            dbc.Button(
-                "All",
-                id=f"add_all_materials_{property}",
-                style={"font-size": "12px"},
-            )
-        ),
-        html.Br(),
-        dbc.Label("Filter by isotope:"),
-        dbc.Checklist(
-            value=isotope_options,
-            options=[{"label": i, "value": i} for i in isotope_options],
-            inline=True,
-            id=f"isotope_filter_{property}",
-        ),
-        html.Br(),
-        html.Label("Filter by author:"),
-        dcc.Dropdown(
-            value=authors_options,
-            options=authors_options,
-            multi=True,
-            id=f"author_filter_{property}",
-        ),
-        html.Div(
-            dbc.Button(
-                "All",
-                id=f"add_all_authors_{property}",
-                style={"font-size": "12px"},
-            )
-        ),
-        html.Br(),
-        html.Label("Filter by year:"),
-        dcc.RangeSlider(
-            id=f"year_filter_{property}",
-            min=min_year,
-            max=max_year,
-            step=1,
-            value=[min_year, max_year],
-            marks={
-                int(i): str(i)
-                for i in np.arange(min_year, max_year)
-                if int(i) % 10 == 0
-            },
-            tooltip={
-                "placement": "bottom",
-                "always_visible": True,
-            },
-        ),
-        html.Br(),
-        html.Div(
-            [
+    controls = dbc.Card(
+        [
+            html.Label("Filter by material:"),
+            dcc.Dropdown(
+                options=materials_options,
+                value=[initial_material],
+                multi=True,
+                id=f"material_filter_{property}",
+            ),
+            html.Div(
                 dbc.Button(
-                    "Compute mean curve",
-                    id=f"mean_button_{property}",
-                    color="primary",
-                    style={"margin": "5px"},
-                    n_clicks="0",
-                ),
+                    "All",
+                    id=f"add_all_materials_{property}",
+                    style={"font-size": "12px"},
+                )
+            ),
+            html.Br(),
+            dbc.Label("Filter by isotope:"),
+            dbc.Checklist(
+                value=isotope_options,
+                options=[{"label": i, "value": i} for i in isotope_options],
+                inline=True,
+                id=f"isotope_filter_{property}",
+            ),
+            html.Br(),
+            html.Label("Filter by author:"),
+            dcc.Dropdown(
+                value=authors_options,
+                options=authors_options,
+                multi=True,
+                id=f"author_filter_{property}",
+            ),
+            html.Div(
                 dbc.Button(
-                    "Add property",
-                    id=f"add_property_{property}",
-                    color="primary",
-                    style={"margin": "5px"},
-                    n_clicks="0",
-                ),
-                dbc.Button(
-                    [
-                        "Extract data",
-                        dcc.Download(id=f"download-text_{property}"),
-                    ],
-                    id=f"extract_button_{property}",
-                    color="primary",
-                    style={"margin": "5px"},
-                    n_clicks="0",
-                ),
-                dbc.Button(
-                    [
-                        "Python",
-                        dcc.Download(id=f"download-python_{property}"),
-                    ],
-                    id=f"python_button_{property}",
-                    color="primary",
-                    style={"margin": "5px"},
-                    n_clicks_timestamp="0",
-                ),
-            ]
-        ),
-    ]
+                    "All",
+                    id=f"add_all_authors_{property}",
+                    style={"font-size": "12px"},
+                )
+            ),
+            html.Br(),
+            html.Label("Filter by year:"),
+            dcc.RangeSlider(
+                id=f"year_filter_{property}",
+                min=min_year,
+                max=max_year,
+                step=1,
+                value=[min_year, max_year],
+                marks={
+                    int(i): str(i)
+                    for i in np.arange(min_year, max_year)
+                    if int(i) % 10 == 0
+                },
+                tooltip={
+                    "placement": "bottom",
+                    "always_visible": True,
+                },
+            ),
+            html.Br(),
+            html.Div(
+                [
+                    dbc.Button(
+                        "Compute mean curve",
+                        id=f"mean_button_{property}",
+                        color="primary",
+                        style={"margin": "5px"},
+                        n_clicks="0",
+                    ),
+                    dbc.Button(
+                        "Add property",
+                        id=f"add_property_{property}",
+                        color="primary",
+                        style={"margin": "5px"},
+                        n_clicks="0",
+                    ),
+                    dbc.Button(
+                        [
+                            "Extract data",
+                            dcc.Download(id=f"download-text_{property}"),
+                        ],
+                        id=f"extract_button_{property}",
+                        color="primary",
+                        style={"margin": "5px"},
+                        n_clicks="0",
+                    ),
+                    dbc.Button(
+                        [
+                            "Python",
+                            dcc.Download(id=f"download-python_{property}"),
+                        ],
+                        id=f"python_button_{property}",
+                        color="primary",
+                        style={"margin": "5px"},
+                        n_clicks_timestamp="0",
+                    ),
+                ]
+            ),
+        ],
+        body=True,
+    )
 
     graph_prop_per_year = dbc.Card(
         [
@@ -195,7 +203,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
 
     graph_citations = dbc.Card(
@@ -226,7 +234,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
 
     piechart_materials = dbc.Card(
@@ -238,7 +246,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
     piechart_isotopes = dbc.Card(
         [
@@ -249,7 +257,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
     piechart_authors = dbc.Card(
         [
@@ -260,7 +268,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
 
     tab = dbc.Tab(
@@ -269,8 +277,7 @@ def make_tab(property: str):
             dbc.Row(
                 [
                     dbc.Col(
-                        controls,
-                        className="pretty_container",
+                        [controls],
                         width=3,
                         style={"overflow-y": "auto", "maxHeight": "600px"},
                     ),
@@ -279,36 +286,16 @@ def make_tab(property: str):
             ),
             dbc.Row(
                 [
-                    dbc.Col(
-                        [graph_prop_per_year],
-                        className="pretty_container",
-                        width=3,
-                    ),
-                    dbc.Col(
-                        [graph_citations],
-                        className="pretty_container",
-                        width=4,
-                    ),
-                    dbc.Col(
-                        [piechart_materials],
-                        className="pretty_container",
-                        width=4,
-                    ),
+                    dbc.Col([graph_prop_per_year], width=3),
+                    dbc.Col([graph_citations], width=4),
+                    dbc.Col([piechart_materials], width=4),
                 ],
                 justify="evenly",
             ),
             dbc.Row(
                 [
-                    dbc.Col(
-                        [piechart_isotopes],
-                        className="pretty_container",
-                        width=4,
-                    ),
-                    dbc.Col(
-                        [piechart_authors],
-                        className="pretty_container",
-                        width=4,
-                    ),
+                    dbc.Col([piechart_isotopes], width=4),
+                    dbc.Col([piechart_authors], width=4),
                 ],
                 justify="evenly",
             ),
