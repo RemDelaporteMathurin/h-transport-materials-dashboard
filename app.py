@@ -10,7 +10,7 @@ server = app.server
 
 app.layout = layout
 
-ACTIVE_GROUPS = ["diffusivity", "solubility"]
+ACTIVE_GROUPS = ["diffusivity", "solubility", "recombination_coeff"]
 
 
 @app.callback(

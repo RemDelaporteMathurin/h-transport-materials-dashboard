@@ -19,7 +19,11 @@ from .graph import (
 import h_transport_materials as htm
 
 
-type_to_database = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
+type_to_database = {
+    "diffusivity": htm.diffusivities,
+    "solubility": htm.solubilities,
+    "recombination_coeff": htm.recombination_coeffs,
+}
 
 
 def create_make_citations_figure_function(group):
@@ -219,17 +223,31 @@ def make_add_property(group):
                 return dash.no_update, dash.no_update, "Error!"
             if (new_range_low, new_range_high) == (None, None):
                 (new_range_low, new_range_high) = (300, 1200)
-            # TODO this should account for solubilities, diffusivities etc...
-            new_property = htm.ArrheniusProperty(
-                pre_exp=new_pre_exp,
-                act_energy=new_act_energy,
-                author=new_author.lower(),
-                year=new_year,
-                isotope=new_isotope,
-                material=new_material,
-                range=(new_range_low, new_range_high),
-            )
-            type_to_database[group].properties.append(new_property)
+
+            if group == "diffusivity":
+                new_property = htm.Diffusivity(
+                    D_0=new_pre_exp,
+                    E_D=new_act_energy,
+                )
+            elif group == "solubility":
+                new_property = htm.Solubility(
+                    units="m-3 Pa-1/2",  # TODO expose this (see #68)
+                    S_0=new_pre_exp,
+                    E_S=new_act_energy,
+                )
+            elif group == "recombination_coeff":
+                new_property = htm.RecombinationCoeff(
+                    pre_exp=new_pre_exp,
+                    act_energy=new_act_energy,
+                )
+
+            new_property.author = new_author.lower()
+            new_property.year = new_year
+            new_property.isotope = new_isotope
+            new_property.material = new_material
+            new_property.range = (new_range_low, new_range_high)
+
+            type_to_database[group].append(new_property)
 
         all_authors = np.unique(
             [
@@ -335,15 +353,14 @@ def create_update_table_data_function(group):
                         val = f"{val: .2e} {prop.units}"
                     elif key == "act_energy":
                         val = f"{val:.2f}"
-                elif (
-                    key == "doi"
-                ):  # NOTE: in next release of HTM properties will have a doi attr
-                    entry[key] = prop.source
-                    if prop.bibsource:
-                        if "doi" in prop.bibsource.fields:
-                            doi = prop.bibsource.fields["doi"]
-                            clickable_doi = f"[{doi}](https://doi.org/{doi})"
-                            val = clickable_doi
+                    elif key == "doi":
+                        entry[key] = prop.source
+                        if prop.bibsource:
+                            if prop.doi:
+                                clickable_doi = (
+                                    f"[{prop.doi}](https://doi.org/{prop.doi})"
+                                )
+                                val = clickable_doi
 
                 entry[key] = val
 

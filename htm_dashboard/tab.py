@@ -6,33 +6,34 @@ import dash_daq as daq
 import h_transport_materials as htm
 import numpy as np
 
-all_diffusivities = htm.diffusivities
-all_solubilities = htm.solubilities
-
-materials_options = np.unique(
-    [
-        prop.material
-        for prop in all_diffusivities.properties + all_solubilities.properties
-    ]
-).tolist()
+materials_options = np.unique([prop.material for prop in htm.database]).tolist()
 isotope_options = ["H", "D", "T"]
 
+pretty_label = {
+    "diffusivity": "Diffusivity",
+    "solubility": "Solubility",
+    "permeability": "Permeability",
+    "recombination_coeff": "Recombination coeff.",
+    "dissociation_coeff": "Dissociation coeff.",
+}
 
-def make_tab(property):
+
+def make_tab(property: str):
     """_summary_
 
     Args:
-        property (_type_): _description_
+        property (str): _description_
 
     Returns:
-        _type_: _description_
+        dbc.Tab: the tab
     """
 
-    assert property in ["diffusivity", "solubility"]
+    assert property in ["diffusivity", "solubility", "recombination_coeff"]
 
     property_to_group = {
         "diffusivity": htm.diffusivities,
         "solubility": htm.solubilities,
+        "recombination_coeff": htm.recombination_coeffs,
     }
 
     all_properties = property_to_group[property]
@@ -263,7 +264,7 @@ def make_tab(property):
     )
 
     tab = dbc.Tab(
-        label=property.capitalize(),
+        label=pretty_label[property],
         children=[
             dbc.Row(
                 [
@@ -321,6 +322,7 @@ TABLE_KEYS = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
 prop_key_to_label = {
     "diffusivity": {"pre_exp": "D_0 (m2/s)", "act_energy": "E_D (eV)"},
     "solubility": {"pre_exp": "S_0", "act_energy": "E_S (eV)"},
+    "recombination_coeff": {"pre_exp": "Kr_0 (m4/s)", "act_energy": "E_Kr (eV)"},
 }
 
 key_to_label = {

@@ -9,7 +9,11 @@ pio.templates.default = "plotly_white"
 
 colours = px.colors.qualitative.Plotly
 
-type_to_database = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
+type_to_database = {
+    "diffusivity": htm.diffusivities,
+    "solubility": htm.solubilities,
+    "recombination_coeff": htm.recombination_coeffs,
+}
 
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
@@ -28,12 +32,17 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
             + f"S_0: {mean_prop.pre_exp:.2e} <br>"
             + f"E_S : {mean_prop.act_energy:.2f} eV"
         )
-    else:
-        # TODO make this generic for recombination coeffs, permeability...
+    elif isinstance(group[0], htm.Diffusivity):
         hovertemplate += (
             "D: %{y:,.2e} m<sup>2</sup>/s <br>"
             + f"D_0: {mean_prop.pre_exp:.2e} m<sup>2</sup>/s <br>"
             + f"E_D : {mean_prop.act_energy:.2f} eV"
+        )
+    elif isinstance(group[0], htm.RecombinationCoeff):
+        hovertemplate += (
+            "Kr: %{y:,.2e} m<sup>4</sup>/s <br>"
+            + f"Kr_0: {mean_prop.pre_exp:.2e} m<sup>4</sup>/s <br>"
+            + f"E_Kr : {mean_prop.act_energy:.2f} eV"
         )
     hovertemplate += "<extra></extra>"
     fig.add_trace(
@@ -151,9 +160,8 @@ def make_graph(group_of_properties: htm.PropertiesGroup, colour_by="property"):
 
 
 def update_axes(fig, group_of_properties):
-    if isinstance(group_of_properties, list):
-        if len(group_of_properties) == 0:
-            return
+    if len(group_of_properties) == 0:
+        return
 
     if isinstance(group_of_properties[0], htm.Solubility):
         all_units = np.unique([S.units for S in group_of_properties]).tolist()
@@ -168,9 +176,12 @@ def update_axes(fig, group_of_properties):
             title_units = "(mixed units)"
             yticks_suffix = ""
         ylabel = f"Solubility {title_units}"
-    else:  # TODO make it more generic
+    elif isinstance(group_of_properties[0], htm.Diffusivity):
         ylabel = "Diffusivity"
         yticks_suffix = " m<sup>2</sup>/s"
+    elif isinstance(group_of_properties[0], htm.RecombinationCoeff):
+        ylabel = "Recombination coefficient"
+        yticks_suffix = " m<sup>4</sup>/s"
 
     xticks_suffix = " K<sup>-1</sup>"
 
@@ -256,13 +267,11 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
             else:
                 nb_citations.append(prop.nb_citations)
 
-            if prop.bibsource:
-                if "doi" in prop.bibsource.fields:
-                    dois.append(prop.bibsource.fields["doi"])
-                else:
-                    dois.append("none")
-            else:
+            if prop.doi is None:
                 dois.append("none")
+            else:
+                dois.append(prop.doi)
+
     # sort values
     references = [val_y for _, val_y in sorted(zip(nb_citations, references))]
     dois = [val_y for _, val_y in sorted(zip(nb_citations, dois))]
