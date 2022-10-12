@@ -7,15 +7,6 @@ import plotly.express as px
 pio.templates.default = "plotly_white"
 
 
-all_years_solubilities = [S.year for S in htm.solubilities]
-MIN_YEAR_SOL = min(all_years_solubilities)
-MAX_YEAR_SOL = max(all_years_solubilities)
-
-all_years_diffusivities = [S.year for S in htm.diffusivities]
-MIN_YEAR_DIFF = min(all_years_diffusivities)
-MAX_YEAR_DIFF = max(all_years_diffusivities)
-
-
 colours = px.colors.qualitative.Plotly
 
 
@@ -58,22 +49,26 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
 
 
 def make_group_of_properties(
-    type_of_prop: str, materials=[], authors=[], isotopes=[], years=[]
+    type_of_prop: str, materials=[], authors=[], isotopes=[], years=None
 ):
     if type_of_prop == "diffusivity":
         database = htm.diffusivities
     elif type_of_prop == "solubility":
         database = htm.solubilities
 
-    if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
+    if len(materials) * len(authors) * len(isotopes) == 0:
         filtered_group = []
     else:
         filtered_group = (
             database.filter(material=materials)
             .filter(author=[author.lower() for author in authors])
             .filter(isotope=[isotope.lower() for isotope in isotopes])
-            .filter(year=np.arange(years[0], years[1] + 1, step=1).tolist())
         )
+        if years:
+            filtered_group = filtered_group.filter(
+                year=np.arange(years[0], years[1] + 1, step=1).tolist()
+            )
+
     return filtered_group
 
 

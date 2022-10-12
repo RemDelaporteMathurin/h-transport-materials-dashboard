@@ -12,10 +12,6 @@ from .graph import (
     make_graph,
     make_piechart_materials,
     add_mean_value,
-    MIN_YEAR_SOL,
-    MAX_YEAR_SOL,
-    MIN_YEAR_DIFF,
-    MAX_YEAR_DIFF,
     make_figure_prop_per_year,
     make_citations_graph,
 )
@@ -75,16 +71,12 @@ def create_update_entries_per_year_graph_function(group):
     def update_entries_per_year_graph(
         figure, material_filter, isotope_filter, author_filter, year_filter
     ):
-        if group == "diffusivity":
-            min_year, max_year = MIN_YEAR_DIFF, MAX_YEAR_DIFF
-        elif group == "solubility":
-            min_year, max_year = MIN_YEAR_SOL, MAX_YEAR_SOL
+
         all_time_properties = make_group_of_properties(
             type_of_prop=group,
             materials=material_filter,
             authors=author_filter,
             isotopes=isotope_filter,
-            years=[min_year, max_year],
         )
         return make_figure_prop_per_year(
             all_time_properties, step=5, selected_years=year_filter
