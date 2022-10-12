@@ -255,13 +255,11 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
             else:
                 nb_citations.append(prop.nb_citations)
 
-            if prop.bibsource:
-                if "doi" in prop.bibsource.fields:
-                    dois.append(prop.bibsource.fields["doi"])
-                else:
-                    dois.append("none")
-            else:
+            if prop.doi is None:
                 dois.append("none")
+            else:
+                dois.append(prop.doi)
+
     # sort values
     references = [val_y for _, val_y in sorted(zip(nb_citations, references))]
     dois = [val_y for _, val_y in sorted(zip(nb_citations, dois))]
