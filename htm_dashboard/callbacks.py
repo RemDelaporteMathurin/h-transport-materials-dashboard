@@ -334,14 +334,18 @@ def create_update_table_data_function(group):
                         val = f"{val: .2e} {prop.units}"
                     elif key == "act_energy":
                         val = f"{val:.2f}"
-                    entry[key] = val
-                elif key == "doi":
+                elif (
+                    key == "doi"
+                ):  # NOTE: in next release of HTM properties will have a doi attr
                     entry[key] = prop.source
                     if prop.bibsource:
                         if "doi" in prop.bibsource.fields:
-                            entry[
-                                key
-                            ] = f"[{prop.bibsource.fields['doi']}](https://doi.org/{prop.bibsource.fields['doi']})"
+                            doi = prop.bibsource.fields["doi"]
+                            clickable_doi = f"[{doi}](https://doi.org/{doi})"
+                            val = clickable_doi
+
+                entry[key] = val
+
             data.append(entry)
 
         return data
