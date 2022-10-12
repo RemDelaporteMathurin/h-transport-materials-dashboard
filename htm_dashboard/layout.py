@@ -36,7 +36,7 @@ def make_modal_add_property(property: str):
 template_theme1 = "plotly_white"
 template_theme2 = "plotly_dark"
 url_theme1 = dbc.themes.MINTY
-url_theme2 = dbc.themes.DARKLY
+url_theme2 = dbc.themes.CYBORG
 theme_switch = ThemeSwitchAIO(aio_id="theme", themes=[url_theme1, url_theme2])
 
 header = dbc.Row(

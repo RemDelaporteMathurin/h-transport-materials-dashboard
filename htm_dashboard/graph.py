@@ -4,7 +4,11 @@ import h_transport_materials as htm
 import numpy as np
 import plotly.express as px
 
-pio.templates.default = "plotly_white"
+
+TEMPLATE_LIGHT = "plotly_white"
+TEMPLATE_DARK = "cyborg"
+
+pio.templates.default = TEMPLATE_LIGHT
 
 
 colours = px.colors.qualitative.Plotly
