@@ -108,10 +108,7 @@ layout = dbc.Container(
                     label="Permeability",
                     children=[html.Div([dbc.Label("Work in progress", id="wip_1")])],
                 ),
-                dbc.Tab(
-                    label="Recombination coeff.",
-                    children=[html.Div([dbc.Label("Work in progress", id="wip_2")])],
-                ),
+                make_tab("recombination_coeff"),
                 dbc.Tab(
                     label="Dissociation coeff.",
                     children=[html.Div([dbc.Label("Work in progress", id="wip_3")])],
@@ -120,6 +117,7 @@ layout = dbc.Container(
         ),
         make_modal_add_property("diffusivity"),
         make_modal_add_property("solubility"),
+        make_modal_add_property("recombination_coeff"),
     ],
     fluid=True,
 )

@@ -19,7 +19,11 @@ from .graph import (
 import h_transport_materials as htm
 
 
-type_to_database = {"diffusivity": htm.diffusivities, "solubility": htm.solubilities}
+type_to_database = {
+    "diffusivity": htm.diffusivities,
+    "solubility": htm.solubilities,
+    "recombination_coeff": htm.recombination_coeffs,
+}
 
 
 def create_make_citations_figure_function(group):

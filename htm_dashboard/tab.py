@@ -20,11 +20,12 @@ def make_tab(property):
         _type_: _description_
     """
 
-    assert property in ["diffusivity", "solubility"]
+    assert property in ["diffusivity", "solubility", "recombination_coeff"]
 
     property_to_group = {
         "diffusivity": htm.diffusivities,
         "solubility": htm.solubilities,
+        "recombination_coeff": htm.recombination_coeffs,
     }
 
     all_properties = property_to_group[property]
@@ -313,6 +314,7 @@ TABLE_KEYS = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
 prop_key_to_label = {
     "diffusivity": {"pre_exp": "D_0 (m2/s)", "act_energy": "E_D (eV)"},
     "solubility": {"pre_exp": "S_0", "act_energy": "E_S (eV)"},
+    "recombination_coeff": {"pre_exp": "Kr_0 (m4/s)", "act_energy": "E_Kr (eV)"},
 }
 
 key_to_label = {
