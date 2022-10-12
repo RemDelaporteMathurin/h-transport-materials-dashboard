@@ -219,6 +219,7 @@ def make_add_property(group):
                 return dash.no_update, dash.no_update, "Error!"
             if (new_range_low, new_range_high) == (None, None):
                 (new_range_low, new_range_high) = (300, 1200)
+            # TODO this should account for solubilities, diffusivities etc...
             new_property = htm.ArrheniusProperty(
                 pre_exp=new_pre_exp,
                 act_energy=new_act_energy,
