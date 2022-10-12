@@ -59,17 +59,24 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
     )
 
 
-def make_diffusivities(materials=[], authors=[], isotopes=[], years=[]):
+def make_group_of_properties(
+    type_of_prop: str, materials=[], authors=[], isotopes=[], years=[]
+):
+    if type_of_prop == "diffusivity":
+        database = all_diffusivities
+    elif type_of_prop == "solubility":
+        database = all_solubilities
+
     if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
-        diffusivities = []
+        filtered_group = []
     else:
-        diffusivities = (
-            all_diffusivities.filter(material=materials)
+        filtered_group = (
+            database.filter(material=materials)
             .filter(author=[author.lower() for author in authors])
             .filter(isotope=[isotope.lower() for isotope in isotopes])
             .filter(year=np.arange(years[0], years[1] + 1, step=1).tolist())
         )
-    return diffusivities
+    return filtered_group
 
 
 def list_of_colours(prop_group, colour_by):
@@ -158,20 +165,6 @@ def make_graph_diffusivities(diffusivities, colour_by="property"):
     fig.update_yaxes(title_text="Diffusivity")
     # fig.write_html("out.html")
     return fig
-
-
-def make_solubilities(materials=[], authors=[], isotopes=[], years=[]):
-    if len(materials) * len(authors) * len(isotopes) * len(years) == 0:
-        solubilities = []
-    else:
-        solubilities = (
-            all_solubilities.filter(material=materials)
-            .filter(author=[author.lower() for author in authors])
-            .filter(isotope=[isotope.lower() for isotope in isotopes])
-            .filter(year=np.arange(years[0], years[1] + 1, step=1).tolist())
-        )
-
-    return solubilities
 
 
 def make_graph_solubilities(solubilities, colour_by="property"):
