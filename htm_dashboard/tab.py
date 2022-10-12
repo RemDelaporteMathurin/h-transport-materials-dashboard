@@ -6,15 +6,7 @@ import dash_daq as daq
 import h_transport_materials as htm
 import numpy as np
 
-all_diffusivities = htm.diffusivities
-all_solubilities = htm.solubilities
-
-materials_options = np.unique(
-    [
-        prop.material
-        for prop in all_diffusivities.properties + all_solubilities.properties
-    ]
-).tolist()
+materials_options = np.unique([prop.material for prop in htm.database]).tolist()
 isotope_options = ["H", "D", "T"]
 
 

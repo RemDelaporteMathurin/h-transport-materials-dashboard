@@ -229,7 +229,7 @@ def make_add_property(group):
                 material=new_material,
                 range=(new_range_low, new_range_high),
             )
-            type_to_database[group].properties.append(new_property)
+            type_to_database[group].append(new_property)
 
         all_authors = np.unique(
             [
