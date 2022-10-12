@@ -86,6 +86,7 @@ def make_tab(property: str):
                     ),
                 ],
                 body=True,
+                className="mb-2",
             )
         ],
         label="Graph",
@@ -202,7 +203,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
 
     graph_citations = dbc.Card(
@@ -233,7 +234,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
 
     piechart_materials = dbc.Card(
@@ -245,7 +246,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
     piechart_isotopes = dbc.Card(
         [
@@ -256,7 +257,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
     piechart_authors = dbc.Card(
         [
@@ -267,7 +268,7 @@ def make_tab(property: str):
                 ]
             )
         ],
-        style={"border-color": "white"},
+        className="mb-2",
     )
 
     tab = dbc.Tab(
