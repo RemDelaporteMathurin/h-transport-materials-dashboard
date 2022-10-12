@@ -223,16 +223,30 @@ def make_add_property(group):
                 return dash.no_update, dash.no_update, "Error!"
             if (new_range_low, new_range_high) == (None, None):
                 (new_range_low, new_range_high) = (300, 1200)
-            # TODO this should account for solubilities, diffusivities etc...
-            new_property = htm.ArrheniusProperty(
-                pre_exp=new_pre_exp,
-                act_energy=new_act_energy,
-                author=new_author.lower(),
-                year=new_year,
-                isotope=new_isotope,
-                material=new_material,
-                range=(new_range_low, new_range_high),
-            )
+
+            if group == "diffusivity":
+                new_property = htm.Diffusivity(
+                    D_0=new_pre_exp,
+                    E_D=new_act_energy,
+                )
+            elif group == "solubility":
+                new_property = htm.Solubility(
+                    units="m-3 Pa-1/2",  # TODO expose this (see #68)
+                    S_0=new_pre_exp,
+                    E_S=new_act_energy,
+                )
+            elif group == "recombination_coeff":
+                new_property = htm.RecombinationCoeff(
+                    pre_exp=new_pre_exp,
+                    act_energy=new_act_energy,
+                )
+
+            new_property.author = new_author.lower()
+            new_property.year = new_year
+            new_property.isotope = new_isotope
+            new_property.material = new_material
+            new_property.range = (new_range_low, new_range_high)
+
             type_to_database[group].append(new_property)
 
         all_authors = np.unique(
