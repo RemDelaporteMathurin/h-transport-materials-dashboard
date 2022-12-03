@@ -168,12 +168,9 @@ def update_axes(fig, group_of_properties):
         return
 
     if isinstance(group_of_properties[0], htm.Solubility):
-        all_units = np.unique([f"{S.units}" for S in group_of_properties]).tolist()
+        all_units = np.unique([f"{S.units:~H}" for S in group_of_properties]).tolist()
         if len(all_units) == 1:
-            if all_units == ["particle / meter ** 3 / pascal ** 0.5"]:
-                yticks_suffix = "m<sup>-3</sup> Pa<sup>-1/2</sup>"  # TODO could use pint to produce html
-            elif all_units == ["particle / meter ** 3 / pascal"]:
-                yticks_suffix = "m<sup>-3</sup> Pa<sup>-1</sup>"
+            yticks_suffix = all_units[0].replace("particle", " H")
             title_units = f"({yticks_suffix})"
         else:
             # if the group contains mixed units, display nothing
