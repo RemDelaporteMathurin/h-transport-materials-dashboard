@@ -168,11 +168,11 @@ def update_axes(fig, group_of_properties):
         return
 
     if isinstance(group_of_properties[0], htm.Solubility):
-        all_units = np.unique([S.units for S in group_of_properties]).tolist()
+        all_units = np.unique([f"{S.units}" for S in group_of_properties]).tolist()
         if len(all_units) == 1:
-            if all_units == ["m-3 Pa-1/2"]:
-                yticks_suffix = "m<sup>-3</sup> Pa<sup>-1/2</sup>"
-            elif all_units == ["m-3 Pa-1"]:
+            if all_units == ["particle / meter ** 3 / pascal ** 0.5"]:
+                yticks_suffix = "m<sup>-3</sup> Pa<sup>-1/2</sup>"  # TODO could use pint to produce html
+            elif all_units == ["particle / meter ** 3 / pascal"]:
                 yticks_suffix = "m<sup>-3</sup> Pa<sup>-1</sup>"
             title_units = f"({yticks_suffix})"
         else:
