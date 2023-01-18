@@ -359,11 +359,11 @@ def create_update_table_data_function(group):
                         if val is None:
                             val = "none"
                         else:
-                            val = f"{val[0]:.0f}-{val[1]:.0f}"
-                    elif key == "pre_exp" and hasattr(prop, "units"):
-                        val = f"{val: .2e} {prop.units}"
+                            val = f"{val[0]:.0f~P}-{val[1]:.0f~P}"
+                    elif key == "pre_exp":
+                        val = f"{val: .2e~P}"
                     elif key == "act_energy":
-                        val = f"{val:.2f}"
+                        val = f"{val:.2f~P}"
                     elif key == "doi":
                         entry[key] = prop.source
                         if prop.bibsource:

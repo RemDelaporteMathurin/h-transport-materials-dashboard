@@ -315,16 +315,16 @@ def make_tab(property: str):
 TABLE_KEYS = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
 
 prop_key_to_label = {
-    "diffusivity": {"pre_exp": "D_0 (m2/s)", "act_energy": "E_D (eV)"},
-    "solubility": {"pre_exp": "S_0", "act_energy": "E_S (eV)"},
-    "permeability": {"pre_exp": "P_0", "act_energy": "E_P (eV)"},
-    "recombination_coeff": {"pre_exp": "Kr_0 (m4/s)", "act_energy": "E_Kr (eV)"},
-    "dissociation_coeff": {"pre_exp": "Kd_0", "act_energy": "E_Kd (eV)"},
+    "diffusivity": {"pre_exp": "D_0", "act_energy": "E_D"},
+    "solubility": {"pre_exp": "S_0", "act_energy": "E_S"},
+    "permeability": {"pre_exp": "P_0", "act_energy": "E_P"},
+    "recombination_coeff": {"pre_exp": "Kr_0", "act_energy": "E_Kr"},
+    "dissociation_coeff": {"pre_exp": "Kd_0", "act_energy": "E_Kd"},
 }
 
 key_to_label = {
     "material": "Material",
-    "range": "Range (K)",
+    "range": "Range",
     "author": "Author",
     "doi": "DOI",
 }
