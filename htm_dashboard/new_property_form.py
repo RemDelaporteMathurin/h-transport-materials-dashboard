@@ -1,20 +1,26 @@
 import dash_bootstrap_components as dbc
 from dash import html
+import h_transport_materials as htm
 
 
 def make_form(property_type: str):
 
     if property_type == "diffusivity":
-        pre_exp_label = "D_0 (m2/s)"
+        pre_exp_label = f"D_0 ({htm.Diffusivity().units:~P})"
+        act_energy_label = "E_D (eV)"
     elif property_type == "solubility":
-        pre_exp_label = "S_0"
+        sample_prop = htm.Solubility(units="m-3 Pa-1/2")
+        pre_exp_label = f"S_0 ({sample_prop.units:~P})"
+        act_energy_label = "E_S (eV)"
     elif property_type == "permeability":
-        pre_exp_label = "P_0"
+        pre_exp_label = f"P_0 ({htm.Permeability().units:~P})"
+        act_energy_label = "E_P (eV)"
     elif property_type == "recombination_coeff":
-        pre_exp_label = "Kr_0 (m4/s)"
+        pre_exp_label = f"Kr_0 ({htm.RecombinationCoeff().units:~P})"
+        act_energy_label = "E_Kr (eV)"
     elif property_type == "dissociation_coeff":
-        pre_exp_label = "Kd_0"
-
+        pre_exp_label = f"Kd_0 ({htm.DissociationCoeff().units:~P})"
+        act_energy_label = "E_Kd (eV)"
     preexponential_input = html.Div(
         [
             dbc.Label(pre_exp_label, width=2),
@@ -32,7 +38,7 @@ def make_form(property_type: str):
 
     activation_energy_input = html.Div(
         [
-            dbc.Label("E_D (eV)", width=2),
+            dbc.Label(act_energy_label, width=2),
             dbc.Col(
                 dbc.Input(
                     type="number",
