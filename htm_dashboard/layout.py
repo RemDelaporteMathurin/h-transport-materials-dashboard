@@ -1,6 +1,6 @@
 from .infos import text_infos
 from .new_property_form import make_form
-
+from htm_dashboard import ACTIVE_GROUPS
 from .tab import make_tab
 
 from dash import html
@@ -109,24 +109,10 @@ layout = dbc.Container(
         html.Hr(),
         dbc.Tabs(
             id="tabs-example-graph",
-            children=[
-                make_tab("diffusivity"),
-                make_tab("solubility"),
-                dbc.Tab(
-                    label="Permeability",
-                    children=[html.Div([dbc.Label("Work in progress", id="wip_1")])],
-                ),
-                make_tab("recombination_coeff"),
-                dbc.Tab(
-                    label="Dissociation coeff.",
-                    children=[html.Div([dbc.Label("Work in progress", id="wip_3")])],
-                ),
-            ],
+            children=[make_tab(group) for group in ACTIVE_GROUPS],
         ),
-        make_modal_add_property("diffusivity"),
-        make_modal_add_property("solubility"),
-        make_modal_add_property("recombination_coeff"),
-    ],
+    ]
+    + [make_modal_add_property(group) for group in ACTIVE_GROUPS],
     fluid=True,
     className="dbc bg-opacity-10 bg-black mb-2",
 )

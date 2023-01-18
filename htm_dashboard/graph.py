@@ -16,15 +16,16 @@ colours = px.colors.qualitative.Plotly
 type_to_database = {
     "diffusivity": htm.diffusivities,
     "solubility": htm.solubilities,
+    "permeability": htm.permeabilities,
     "recombination_coeff": htm.recombination_coeffs,
+    "dissociation_coeff": htm.dissociation_coeffs,
 }
 
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
-    pre_exp, act_energy = group.mean()
-    mean_prop = htm.ArrheniusProperty(pre_exp, act_energy)
+    mean_prop = group.mean()
     label = "Mean value"
-    T = np.linspace(300, 1200, num=500)
+    T = np.linspace(300, 1200, num=500) * htm.ureg.K
     hovertemplate = (
         "<b>%{text}</b><br><br>"
         + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
@@ -33,26 +34,29 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
     if isinstance(group[0], htm.Solubility):
         hovertemplate += (
             "S: %{y:,.2e}"
-            + f"S_0: {mean_prop.pre_exp:.2e} <br>"
-            + f"E_S : {mean_prop.act_energy:.2f} eV"
+            + f"{mean_prop.units:~H} <br>"
+            + f"S_0: {mean_prop.pre_exp:.2e~H} <br>"
+            + f"E_S : {mean_prop.act_energy:.2f~H}"
         )
     elif isinstance(group[0], htm.Diffusivity):
         hovertemplate += (
-            "D: %{y:,.2e} m<sup>2</sup>/s <br>"
-            + f"D_0: {mean_prop.pre_exp:.2e} m<sup>2</sup>/s <br>"
-            + f"E_D : {mean_prop.act_energy:.2f} eV"
+            "D: %{y:,.2e} "
+            + f"{mean_prop.units:~H} <br>"
+            + f"D_0: {mean_prop.pre_exp:.2e~H} <br>"
+            + f"E_D : {mean_prop.act_energy:.2f~H}"
         )
     elif isinstance(group[0], htm.RecombinationCoeff):
         hovertemplate += (
-            "Kr: %{y:,.2e} m<sup>4</sup>/s <br>"
-            + f"Kr_0: {mean_prop.pre_exp:.2e} m<sup>4</sup>/s <br>"
-            + f"E_Kr : {mean_prop.act_energy:.2f} eV"
+            "Kr: %{y:,.2e}"
+            + f"{mean_prop.units:~H} <br>"
+            + f"Kr_0: {mean_prop.pre_exp:.2e~H} <br>"
+            + f"E_Kr : {mean_prop.act_energy:.2f~H}"
         )
     hovertemplate += "<extra></extra>"
     fig.add_trace(
         go.Scatter(
-            x=1 / T,
-            y=mean_prop.value(T),
+            x=1 / T.magnitude,
+            y=mean_prop.value(T).magnitude,
             name=label,
             mode="lines",
             text=[label] * len(T),
@@ -133,25 +137,25 @@ def make_graph(group_of_properties: htm.PropertiesGroup, colour_by="property"):
             if prop.data_T is not None:
                 range = (prop.data_T.min(), prop.data_T.max())
             else:
-                range = (300, 1200)
+                range = (300 * htm.ureg.K, 1200 * htm.ureg.K)
         T = np.linspace(range[0], range[1], num=500)
         fig.add_trace(
             go.Scatter(
-                x=1 / T,
-                y=prop.value(T),
+                x=1 / T.magnitude,
+                y=prop.value(T).magnitude,
                 name=label,
                 mode="lines",
                 line=dict(color=colour_list[i]),
                 text=[label] * len(T),
-                customdata=T,
+                customdata=T.magnitude,
                 hovertemplate=make_hovertemplate(prop),
             )
         )
         if prop.data_T is not None:
             fig.add_trace(
                 go.Scatter(
-                    x=1 / prop.data_T,
-                    y=prop.data_y,
+                    x=1 / prop.data_T.magnitude,
+                    y=prop.data_y.magnitude,
                     name=label,
                     mode="markers",
                     marker=dict(color=fig.data[-1].line.color),
@@ -179,10 +183,16 @@ def update_axes(fig, group_of_properties):
         ylabel = f"Solubility {title_units}"
     elif isinstance(group_of_properties[0], htm.Diffusivity):
         ylabel = "Diffusivity"
-        yticks_suffix = " m<sup>2</sup>/s"
+        yticks_suffix = f" {group_of_properties[0].units:~H}"
+    elif isinstance(group_of_properties[0], htm.Permeability):
+        ylabel = f"Permeability {group_of_properties[0].units:~H}"
+        yticks_suffix = ""
     elif isinstance(group_of_properties[0], htm.RecombinationCoeff):
         ylabel = "Recombination coefficient"
         yticks_suffix = " m<sup>4</sup>/s"
+    elif isinstance(group_of_properties[0], htm.DissociationCoeff):
+        ylabel = f"Dissociation coefficient {group_of_properties[0].units:~H}"
+        yticks_suffix = ""
 
     xticks_suffix = " K<sup>-1</sup>"
 
@@ -200,10 +210,23 @@ def make_hovertemplate(prop):
             + "<br>"
             + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
             + "T: %{customdata:.0f} K<br>"
-            + "S: %{y:,.2e}"
-            + f" {prop.units}<br>"
-            + f"S_0: {prop.pre_exp:.2e} {prop.units} <br>"
-            + f"E_S : {prop.act_energy:.2f} eV"
+            + "S: %{y:,.2e} "
+            + f"{prop.units:~H}<br>"
+            + f"S_0: {prop.pre_exp:.2e~H} <br>"
+            + f"E_S : {prop.act_energy:.2f~H}"
+            + "<extra></extra>"
+        )
+    elif isinstance(prop, htm.Diffusivity):
+        return (
+            "<b>%{text}</b><br><br>"
+            + prop.material
+            + "<br>"
+            + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
+            + "T: %{customdata:.0f} K<br>"
+            + "D: %{y:,.2e} "
+            + f"{prop.units:~H} <br>"
+            + f"D_0: {prop.pre_exp:.2e~H}<br>"
+            + f"E_D : {prop.act_energy:.2f~H}"
             + "<extra></extra>"
         )
     else:
@@ -213,9 +236,10 @@ def make_hovertemplate(prop):
             + "<br>"
             + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
             + "T: %{customdata:.0f} K<br>"
-            + "D: %{y:,.2e} m<sup>2</sup>/s <br>"
-            + f"D_0: {prop.pre_exp:.2e} m<sup>2</sup>/s <br>"
-            + f"E_D : {prop.act_energy:.2f} eV"
+            + "value: %{y:,.2e} "
+            + f"{prop.units:~H} <br>"
+            + f"pre-exp: {prop.pre_exp:.2e~H}<br>"
+            + f"act. energy : {prop.act_energy:.2f~H}"
             + "<extra></extra>"
         )
 
