@@ -21,8 +21,8 @@ type_to_database = {
 
 
 def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
-    pre_exp, act_energy = group.mean()
-    mean_prop = htm.ArrheniusProperty(pre_exp, act_energy)
+    print(group.mean())
+    mean_prop = group.mean()
     label = "Mean value"
     T = np.linspace(300, 1200, num=500)
     hovertemplate = (
