@@ -147,7 +147,7 @@ def make_graph(group_of_properties: htm.PropertiesGroup, colour_by="property"):
                 mode="lines",
                 line=dict(color=colour_list[i]),
                 text=[label] * len(T),
-                customdata=T,
+                customdata=T.magnitude,
                 hovertemplate=make_hovertemplate(prop),
             )
         )
@@ -216,7 +216,7 @@ def make_hovertemplate(prop):
             + f"E_S : {prop.act_energy:.2f~H}"
             + "<extra></extra>"
         )
-    else:
+    elif isinstance(prop, htm.Diffusivity):
         return (
             "<b>%{text}</b><br><br>"
             + prop.material
@@ -227,6 +227,19 @@ def make_hovertemplate(prop):
             + f"{prop.units:~H} <br>"
             + f"D_0: {prop.pre_exp:.2e~H}<br>"
             + f"E_D : {prop.act_energy:.2f~H}"
+            + "<extra></extra>"
+        )
+    else:
+        return (
+            "<b>%{text}</b><br><br>"
+            + prop.material
+            + "<br>"
+            + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
+            + "T: %{customdata:.0f} K<br>"
+            + "value: %{y:,.2e} "
+            + f"{prop.units:~H} <br>"
+            + f"pre-exp: {prop.pre_exp:.2e~H}<br>"
+            + f"act. energy : {prop.act_energy:.2f~H}"
             + "<extra></extra>"
         )
 
