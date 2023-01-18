@@ -28,12 +28,20 @@ def make_tab(property: str):
         dbc.Tab: the tab
     """
 
-    assert property in ["diffusivity", "solubility", "recombination_coeff"]
+    assert property in [
+        "diffusivity",
+        "solubility",
+        "permeability",
+        "recombination_coeff",
+        "dissociation_coeff",
+    ]
 
     property_to_group = {
         "diffusivity": htm.diffusivities,
         "solubility": htm.solubilities,
+        "permeability": htm.permeabilities,
         "recombination_coeff": htm.recombination_coeffs,
+        "dissociation_coeff": htm.dissociation_coeffs,
     }
 
     all_properties = property_to_group[property]
@@ -309,7 +317,9 @@ TABLE_KEYS = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
 prop_key_to_label = {
     "diffusivity": {"pre_exp": "D_0 (m2/s)", "act_energy": "E_D (eV)"},
     "solubility": {"pre_exp": "S_0", "act_energy": "E_S (eV)"},
+    "permeability": {"pre_exp": "P_0", "act_energy": "E_P (eV)"},
     "recombination_coeff": {"pre_exp": "Kr_0 (m4/s)", "act_energy": "E_Kr (eV)"},
+    "dissociation_coeff": {"pre_exp": "Kd_0", "act_energy": "E_Kd (eV)"},
 }
 
 key_to_label = {

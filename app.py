@@ -14,7 +14,13 @@ server = app.server
 
 app.layout = layout
 
-ACTIVE_GROUPS = ["diffusivity", "solubility", "recombination_coeff"]
+ACTIVE_GROUPS = [
+    "diffusivity",
+    "solubility",
+    "permeability",
+    "recombination_coeff",
+    "dissociation_coeff",
+]
 
 
 @app.callback(
@@ -158,4 +164,5 @@ for group in ACTIVE_GROUPS:
     )(cb.create_update_table_data_function(group))
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="0.0.0.0", port=8080)
+    # app.run_server(debug=True, host="0.0.0.0", port=8080)
+    app.run_server(debug=True)

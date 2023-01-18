@@ -16,7 +16,9 @@ colours = px.colors.qualitative.Plotly
 type_to_database = {
     "diffusivity": htm.diffusivities,
     "solubility": htm.solubilities,
+    "permeability": htm.permeabilities,
     "recombination_coeff": htm.recombination_coeffs,
+    "dissociation_coeff": htm.dissociation_coeffs,
 }
 
 
@@ -181,10 +183,16 @@ def update_axes(fig, group_of_properties):
         ylabel = f"Solubility {title_units}"
     elif isinstance(group_of_properties[0], htm.Diffusivity):
         ylabel = "Diffusivity"
-        yticks_suffix = " m<sup>2</sup>/s"
+        yticks_suffix = f" {group_of_properties[0].units:~H}"
+    elif isinstance(group_of_properties[0], htm.Permeability):
+        ylabel = f"Permeability {group_of_properties[0].units:~H}"
+        yticks_suffix = ""
     elif isinstance(group_of_properties[0], htm.RecombinationCoeff):
         ylabel = "Recombination coefficient"
         yticks_suffix = " m<sup>4</sup>/s"
+    elif isinstance(group_of_properties[0], htm.DissociationCoeff):
+        ylabel = f"Dissociation coefficient {group_of_properties[0].units:~H}"
+        yticks_suffix = ""
 
     xticks_suffix = " K<sup>-1</sup>"
 

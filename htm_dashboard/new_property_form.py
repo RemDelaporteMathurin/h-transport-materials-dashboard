@@ -8,8 +8,12 @@ def make_form(property_type: str):
         pre_exp_label = "D_0 (m2/s)"
     elif property_type == "solubility":
         pre_exp_label = "S_0"
+    elif property_type == "permeability":
+        pre_exp_label = "P_0"
     elif property_type == "recombination_coeff":
         pre_exp_label = "Kr_0 (m4/s)"
+    elif property_type == "dissociation_coeff":
+        pre_exp_label = "Kd_0"
 
     preexponential_input = html.Div(
         [

@@ -26,7 +26,9 @@ def create_data_as_dict(group: htm.PropertiesGroup):
 type_to_database = {
     "diffusivity": "htm.diffusivities",
     "solubility": "htm.solubilities",
+    "permeability": "htm.permeabilities",
     "recombination_coeff": "htm.recombination_coeffs",
+    "dissociation_coeff": "htm.dissociation_coeffs",
 }
 
 

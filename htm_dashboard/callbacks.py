@@ -25,7 +25,9 @@ import h_transport_materials as htm
 type_to_database = {
     "diffusivity": htm.diffusivities,
     "solubility": htm.solubilities,
+    "permeability": htm.permeabilities,
     "recombination_coeff": htm.recombination_coeffs,
+    "dissociation_coeff": htm.dissociation_coeffs,
 }
 
 
