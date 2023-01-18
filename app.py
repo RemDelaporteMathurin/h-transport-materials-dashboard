@@ -1,4 +1,5 @@
 from htm_dashboard.layout import layout
+from htm_dashboard import ACTIVE_GROUPS
 import htm_dashboard.callbacks as cb
 
 import dash
@@ -13,14 +14,6 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY, dbc_css])
 server = app.server
 
 app.layout = layout
-
-ACTIVE_GROUPS = [
-    "diffusivity",
-    "solubility",
-    "permeability",
-    "recombination_coeff",
-    "dissociation_coeff",
-]
 
 
 @app.callback(
