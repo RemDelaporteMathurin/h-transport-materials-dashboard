@@ -5,7 +5,7 @@ The goal of this tool is to help scientists visualise material properties and co
 
 This web app relies on the hydrogen transport materials database [HTM](https://github.com/RemDelaporteMathurin/h-transport-materials).
 
-:point_right: [The app!](https://htm-dashboard.herokuapp.com/)
+:point_right: [The app!](https://htm-dashboard-uan5l4xr6a-od.a.run.app/)
 
 :warning: Disclaimer: 
 This web app is built for visualising properties.
