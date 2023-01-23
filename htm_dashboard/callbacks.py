@@ -255,7 +255,8 @@ def make_add_property(group):
             new_property.author = new_author.lower()
             new_property.year = new_year
             new_property.isotope = new_isotope
-            new_property.material = new_material
+            # TODO find a way to find potentially already existing material (like tungsten)
+            new_property.material = htm.Material(name=new_material)
             new_property.range = (new_range_low, new_range_high)
 
             type_to_database[group].append(new_property)
@@ -267,9 +268,11 @@ def make_add_property(group):
                 if prop.material in material_filter
             ]
         ).tolist()
-        all_materials = np.unique(
-            [prop.material.lower() for prop in type_to_database[group]]
-        ).tolist()
+        all_materials = [prop.material.name.lower() for prop in type_to_database[group]]
+        all_families = [
+            p.family for prop in type_to_database[group] for p in prop.material.parents
+        ]
+        all_materials = np.unique(all_materials + all_families).tolist()
 
         return all_materials, all_authors, ""
 
@@ -360,6 +363,8 @@ def create_update_table_data_function(group):
                             val = "none"
                         else:
                             val = f"{val[0]:.0f~P}-{val[1]:.0f~P}"
+                    elif key == "material":
+                        val = f"{val.name}"
                     elif key == "pre_exp":
                         val = f"{val: .2e~P}"
                     elif key == "act_energy":
