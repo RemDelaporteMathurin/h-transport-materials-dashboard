@@ -6,7 +6,9 @@ import dash_daq as daq
 import h_transport_materials as htm
 import numpy as np
 
-materials_options = np.unique([prop.material for prop in htm.database]).tolist()
+# materials_options = np.unique([prop.material for prop in htm.database]).tolist()
+materials_options = list(set([prop.material.name for prop in htm.database]))
+materials_options += list(set([prop.material.family for prop in htm.database]))
 isotope_options = ["H", "D", "T"]
 
 pretty_label = {

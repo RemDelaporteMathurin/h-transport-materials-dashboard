@@ -268,7 +268,7 @@ def make_add_property(group):
             ]
         ).tolist()
         all_materials = np.unique(
-            [prop.material.lower() for prop in type_to_database[group]]
+            [prop.material.name.lower() for prop in type_to_database[group]]
         ).tolist()
 
         return all_materials, all_authors, ""
@@ -360,6 +360,8 @@ def create_update_table_data_function(group):
                             val = "none"
                         else:
                             val = f"{val[0]:.0f~P}-{val[1]:.0f~P}"
+                    elif key == "material":
+                        val = f"{val.name}"
                     elif key == "pre_exp":
                         val = f"{val: .2e~P}"
                     elif key == "act_energy":

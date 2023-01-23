@@ -101,9 +101,9 @@ def list_of_colours(prop_group, colour_by):
     if colour_by == "property":
         return [colours[i % 10] for i, _ in enumerate(prop_group)]
     elif colour_by == "material":
-        list_of_mats = [prop.material for prop in prop_group]
+        list_of_mats = [prop.material.name for prop in prop_group]
         unique_mats = np.unique(list_of_mats).tolist()
-        mats_idx = [unique_mats.index(prop.material) for prop in prop_group]
+        mats_idx = [unique_mats.index(prop.material.name) for prop in prop_group]
         return [colours[i % 10] for i in mats_idx]
     elif colour_by == "author":
         list_of_auths = [prop.author for prop in prop_group]
@@ -203,10 +203,11 @@ def update_axes(fig, group_of_properties):
 
 
 def make_hovertemplate(prop):
+    # TODO refactor this
     if isinstance(prop, htm.Solubility):
         return (
             "<b>%{text}</b><br><br>"
-            + prop.material
+            + prop.material.name
             + "<br>"
             + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
             + "T: %{customdata:.0f} K<br>"
@@ -219,7 +220,7 @@ def make_hovertemplate(prop):
     elif isinstance(prop, htm.Diffusivity):
         return (
             "<b>%{text}</b><br><br>"
-            + prop.material
+            + prop.material.name
             + "<br>"
             + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
             + "T: %{customdata:.0f} K<br>"
@@ -232,7 +233,7 @@ def make_hovertemplate(prop):
     else:
         return (
             "<b>%{text}</b><br><br>"
-            + prop.material
+            + prop.material.name
             + "<br>"
             + "1/T: %{x:,.2e} K<sup>-1</sup><br>"
             + "T: %{customdata:.0f} K<br>"
@@ -319,7 +320,7 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
 
 
 def make_piechart_materials(prop_group):
-    list_of_mats = [prop.material for prop in prop_group]
+    list_of_mats = [prop.material.name for prop in prop_group]
     labels = np.unique(list_of_mats).tolist()
 
     values = [list_of_mats.count(mat) for mat in labels]
