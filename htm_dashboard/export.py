@@ -24,6 +24,7 @@ def create_data_as_dict(group: htm.PropertiesGroup):
             prop_dict["units"] = f"{prop_dict['units']:~}"
         prop_dict["pre_exp"] = prop_dict["pre_exp"].magnitude
         prop_dict["act_energy"] = prop_dict["act_energy"].magnitude
+        prop_dict["material"] = prop_dict["material"].name
         if prop_dict["range"]:
             prop_dict["range"] = (
                 prop_dict["range"][0].magnitude,
