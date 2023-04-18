@@ -242,9 +242,9 @@ def make_add_property(group):
                 )
             elif group == "solubility":
                 new_property = htm.Solubility(
-                    units="m-3 Pa-1/2",  # TODO expose this (see #68)
                     S_0=new_pre_exp,
                     E_S=new_act_energy,
+                    law="sievert",  # TODO expose this (see #68)
                 )
             elif group == "recombination_coeff":
                 new_property = htm.RecombinationCoeff(

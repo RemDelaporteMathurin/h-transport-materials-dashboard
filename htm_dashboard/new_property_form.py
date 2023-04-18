@@ -9,11 +9,11 @@ def make_form(property_type: str):
         pre_exp_label = f"D_0 ({htm.Diffusivity().units:~P})"
         act_energy_label = "E_D (eV)"
     elif property_type == "solubility":
-        sample_prop = htm.Solubility(units="m-3 Pa-1/2")
+        sample_prop = htm.Solubility(law="sievert")
         pre_exp_label = f"S_0 ({sample_prop.units:~P})"
         act_energy_label = "E_S (eV)"
     elif property_type == "permeability":
-        pre_exp_label = f"P_0 ({htm.Permeability().units:~P})"
+        pre_exp_label = f"P_0 ({htm.Permeability(law='sievert').units:~P})"
         act_energy_label = "E_P (eV)"
     elif property_type == "recombination_coeff":
         pre_exp_label = f"Kr_0 ({htm.RecombinationCoeff().units:~P})"
