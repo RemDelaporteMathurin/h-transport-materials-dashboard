@@ -4,6 +4,7 @@ from jinja2 import Template
 
 
 # TODO this is duplicated code from HTM. We could make use of the export_to_json function
+# see https://github.com/RemDelaporteMathurin/h-transport-materials/issues/147
 def create_data_as_dict(group: htm.PropertiesGroup):
     keys = [
         "material",
