@@ -245,13 +245,13 @@ def make_hovertemplate(prop):
         )
 
 
-def make_figure_prop_per_year(group, step, selected_years=[1950, 2022]):
+def make_figure_prop_per_year(group, step, selected_years=[1950, 2023]):
     years = [prop.year for prop in group]
-    year_min, year_max = 1950, 2022
+    year_min, year_max = 1950, 2023
 
     years = np.arange(year_min, year_max, step=step)
-    if years[-1] != 2022:
-        years = np.append(years, [2022])
+    if years[-1] != 2023:
+        years = np.append(years, [2023])
 
     nb_props_per_year = []
     for year1, year2 in zip(years[:-1], years[1:]):
@@ -289,7 +289,7 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
 
             references.append(label)
             if per_year:
-                nb_citations.append(prop.nb_citations / (2022 - year))
+                nb_citations.append(prop.nb_citations / (2023 - year))
             else:
                 nb_citations.append(prop.nb_citations)
 
