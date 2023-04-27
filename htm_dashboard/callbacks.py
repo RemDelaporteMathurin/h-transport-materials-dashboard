@@ -2,7 +2,7 @@ import numpy as np
 import dash
 import plotly.io as pio
 
-from .export import create_data_as_dict, generate_python_code
+from .export import generate_python_code
 
 from .tab import materials_options, TABLE_KEYS
 
@@ -65,7 +65,6 @@ def create_add_all_materials_function(group):
 
 def create_add_all_authors_function(group):
     def add_all_authors(n_clicks):
-
         if n_clicks:
             return np.unique(
                 [prop.author.capitalize() for prop in type_to_database[group]]
@@ -80,7 +79,6 @@ def create_update_entries_per_year_graph_function(group):
     def update_entries_per_year_graph(
         figure, material_filter, isotope_filter, author_filter, year_filter
     ):
-
         all_time_properties = make_group_of_properties(
             type_of_prop=group,
             materials=material_filter,
@@ -104,7 +102,6 @@ def create_update_graph_function(group):
         colour_by,
         toggle_light,
     ):
-
         properties_group = make_group_of_properties(
             type_of_prop=group,
             materials=material_filter,
@@ -136,7 +133,6 @@ def create_make_download_data_function(group):
         author_filter,
         year_filter,
     ):
-
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"extract_button_{group}.n_clicks":
             properties_group = make_group_of_properties(
@@ -146,8 +142,9 @@ def create_make_download_data_function(group):
                 isotopes=isotope_filter,
                 years=year_filter,
             )
+            data = [prop.to_json() for prop in group]
             return dict(
-                content=create_data_as_dict(properties_group),
+                content=json.dumps(data, indent=2),
                 filename="data.json",
             )
 
@@ -164,7 +161,6 @@ def make_download_python_callback(group):
     ):
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"python_button_{group}.n_clicks":
-
             return dict(
                 content=generate_python_code(
                     materials=material_filter,

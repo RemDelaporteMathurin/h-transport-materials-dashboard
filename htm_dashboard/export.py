@@ -3,11 +3,6 @@ import json
 from jinja2 import Template
 
 
-def create_data_as_dict(group: htm.PropertiesGroup):
-    data = [prop.to_json() for prop in group]
-    return json.dumps(data, indent=2)
-
-
 type_to_database = {
     "diffusivity": "htm.diffusivities",
     "solubility": "htm.solubilities",
