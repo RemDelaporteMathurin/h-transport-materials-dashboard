@@ -1,4 +1,5 @@
 import numpy as np
+import json
 import dash
 import plotly.io as pio
 
@@ -142,7 +143,7 @@ def create_make_download_data_function(group):
                 isotopes=isotope_filter,
                 years=year_filter,
             )
-            data = [prop.to_json() for prop in group]
+            data = [prop.to_json() for prop in properties_group]
             return dict(
                 content=json.dumps(data, indent=2),
                 filename="data.json",
