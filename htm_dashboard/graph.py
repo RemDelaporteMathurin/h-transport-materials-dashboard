@@ -70,7 +70,7 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
 def make_group_of_properties(
     type_of_prop: str, materials=[], authors=[], isotopes=[], years=None
 ):
-    a = b
+
     if len(materials) * len(authors) * len(isotopes) == 0:
         filtered_group = []
     else:
