@@ -143,9 +143,13 @@ def create_make_download_data_function(group):
                 isotopes=isotope_filter,
                 years=year_filter,
             )
-            data = [prop.to_json() for prop in properties_group]
+            data = {"data": []}
+            for prop in properties_group:
+                data["data"].append(prop.to_json())
+
+            data["htm_version"] = htm.__version__
             return dict(
-                content=json.dumps(data, indent=2),
+                content=data,
                 filename="data.json",
             )
 
