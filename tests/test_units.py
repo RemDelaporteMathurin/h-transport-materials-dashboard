@@ -32,3 +32,4 @@ def test_export_groups():
 
     ctx = copy_context()
     output = ctx.run(run_callback)
+    assert type(output["content"]) == str
