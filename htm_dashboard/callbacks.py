@@ -149,7 +149,7 @@ def create_make_download_data_function(group):
 
             data["htm_version"] = htm.__version__
             return dict(
-                content=data,
+                content=json.dumps(data, indent=2),
                 filename="data.json",
             )
 
