@@ -11,7 +11,6 @@ from .graph import (
     make_group_of_properties,
     make_piechart_author,
     make_piechart_isotopes,
-    make_graph,
     make_piechart_materials,
     add_mean_value,
     make_figure_prop_per_year,
@@ -116,7 +115,7 @@ def create_update_graph_function(group):
         else:
             pio.templates.default = TEMPLATE_DARK
 
-        figure = make_graph(properties_group, colour_by)
+        figure = htm.plotting.plot_plotly(properties_group, colour_by=colour_by)
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"mean_button_{group}.n_clicks":
             add_mean_value(properties_group, figure)

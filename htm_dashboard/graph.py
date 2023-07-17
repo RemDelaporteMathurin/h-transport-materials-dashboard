@@ -117,56 +117,6 @@ def list_of_colours(prop_group, colour_by):
         return [colours[i % 10] for i in iso_idx]
 
 
-def make_graph(group_of_properties: htm.PropertiesGroup, colour_by="property"):
-    """Creates a graph for visualising properties.
-
-    Args:
-        diffusivities (list): htm.PropertiesGroup
-        colour_by (str, optional): "property", "material", "isotope", "author". Defaults to "property".
-
-    Returns:
-        go.Figure: the graph
-    """
-    fig = go.Figure()
-    colour_list = list_of_colours(group_of_properties, colour_by)
-    for i, prop in enumerate(group_of_properties):
-
-        label = f"{prop.isotope} {prop.author.capitalize()} ({prop.year})"
-        range = prop.range
-        if prop.range is None:
-            if prop.data_T is not None:
-                range = (prop.data_T.min(), prop.data_T.max())
-            else:
-                range = (300 * htm.ureg.K, 1200 * htm.ureg.K)
-        T = np.linspace(range[0], range[1], num=500)
-        fig.add_trace(
-            go.Scatter(
-                x=1 / T.magnitude,
-                y=prop.value(T).magnitude,
-                name=label,
-                mode="lines",
-                line=dict(color=colour_list[i]),
-                text=[label] * len(T),
-                customdata=T.magnitude,
-                hovertemplate=make_hovertemplate(prop),
-            )
-        )
-        if prop.data_T is not None:
-            fig.add_trace(
-                go.Scatter(
-                    x=1 / prop.data_T.magnitude,
-                    y=prop.data_y.magnitude,
-                    name=label,
-                    mode="markers",
-                    marker=dict(color=fig.data[-1].line.color),
-                )
-            )
-
-    update_axes(fig, group_of_properties)
-    # fig.write_html("out.html")
-    return fig
-
-
 def update_axes(fig, group_of_properties):
     if len(group_of_properties) == 0:
         return
