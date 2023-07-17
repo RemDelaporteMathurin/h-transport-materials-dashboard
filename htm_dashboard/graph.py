@@ -11,7 +11,7 @@ TEMPLATE_DARK = "cyborg"
 pio.templates.default = TEMPLATE_LIGHT
 
 
-colours = px.colors.qualitative.Plotly
+colour_cycle = px.colors.qualitative.Plotly
 
 type_to_database = {
     "diffusivity": htm.diffusivities,
@@ -86,35 +86,6 @@ def make_group_of_properties(
             )
 
     return filtered_group
-
-
-def list_of_colours(prop_group, colour_by):
-    """Returns a list of colours for the properties
-
-    Args:
-        prop_group (list): _description_
-        colour_by (str): "property", "material", "isotope", "author"
-
-    Returns:
-        list: list of colours the same size as prop_group
-    """
-    if colour_by == "property":
-        return [colours[i % 10] for i, _ in enumerate(prop_group)]
-    elif colour_by == "material":
-        list_of_mats = [prop.material.name for prop in prop_group]
-        unique_mats = np.unique(list_of_mats).tolist()
-        mats_idx = [unique_mats.index(prop.material.name) for prop in prop_group]
-        return [colours[i % 10] for i in mats_idx]
-    elif colour_by == "author":
-        list_of_auths = [prop.author for prop in prop_group]
-        unique_auths = np.unique(list_of_auths).tolist()
-        auths_idx = [unique_auths.index(prop.author) for prop in prop_group]
-        return [colours[i % 10] for i in auths_idx]
-    elif colour_by == "isotope":
-        list_of_iso = [prop.isotope for prop in prop_group]
-        unique_iso = np.unique(list_of_iso).tolist()
-        iso_idx = [unique_iso.index(prop.isotope) for prop in prop_group]
-        return [colours[i % 10] for i in iso_idx]
 
 
 def update_axes(fig, group_of_properties):
@@ -276,11 +247,13 @@ def make_piechart_materials(prop_group):
     values = [list_of_mats.count(mat) for mat in labels]
 
     colours = []
-    list_of_prop_colours = list_of_colours(prop_group, colour_by="material")
+    prop_to_color = htm.plotting.get_prop_to_color(
+        prop_group, colour_by="material", colour_cycle=colour_cycle
+    )
     for mat in labels:
-        for i, prop in enumerate(prop_group):
+        for prop in prop_group:
             if prop.material == mat:
-                colours.append(list_of_prop_colours[i])
+                colours.append(prop_to_color[prop])
                 break
     assert len(colours) == len(labels)
 
@@ -311,11 +284,13 @@ def make_piechart_author(prop_group):
     labels = np.unique(list_of_authors).tolist()
 
     colours = []
-    list_of_prop_colours = list_of_colours(prop_group, colour_by="author")
+    prop_to_color = htm.plotting.get_prop_to_color(
+        prop_group, colour_by="author", colour_cycle=colour_cycle
+    )
     for author in labels:
-        for i, prop in enumerate(prop_group):
+        for prop in prop_group:
             if prop.author == author:
-                colours.append(list_of_prop_colours[i])
+                colours.append(prop_to_color[prop])
                 break
     assert len(colours) == len(labels)
 
