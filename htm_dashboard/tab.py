@@ -204,7 +204,7 @@ def make_tab(property: str):
         ],
         body=True,
     )
-    with open("citations.json") as f:
+    with open("htm_dashboard/citations.json") as f:
         citation_data = json.load(f)
     date_citations = citation_data["date"]
     graph_prop_per_year = dbc.Card(

@@ -202,7 +202,7 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
     references = []
     nb_citations = []
     dois = []
-    with open("citations.json") as f:
+    with open("htm_dashboard/citations.json") as f:
         citation_data = json.load(f)
     for prop in group:
         if prop.doi in citation_data["dois"]:
