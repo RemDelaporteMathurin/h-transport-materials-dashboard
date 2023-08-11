@@ -3,6 +3,8 @@ import plotly.io as pio
 import h_transport_materials as htm
 import numpy as np
 import plotly.express as px
+import json
+from datetime import datetime
 
 
 TEMPLATE_LIGHT = "plotly_white"
@@ -200,7 +202,13 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
     references = []
     nb_citations = []
     dois = []
+    with open("citations.json") as f:
+        citation_data = json.load(f)
     for prop in group:
+        if prop.doi in citation_data["dois"]:
+            nb_citations_prop = citation_data["dois"][prop.doi]
+        else:
+            nb_citations_prop = prop.nb_citations
         author = prop.author
         year = prop.year
 
@@ -210,9 +218,10 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
 
             references.append(label)
             if per_year:
-                nb_citations.append(prop.nb_citations / (2023 - year))
+                current_year = datetime.now().year
+                nb_citations.append(nb_citations_prop / (current_year - year))
             else:
-                nb_citations.append(prop.nb_citations)
+                nb_citations.append(nb_citations_prop)
 
             if prop.doi is None:
                 dois.append("none")

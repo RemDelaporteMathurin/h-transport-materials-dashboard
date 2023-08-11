@@ -5,6 +5,7 @@ import dash_daq as daq
 
 import h_transport_materials as htm
 import numpy as np
+import json
 
 materials_options = list(set([prop.material.name for prop in htm.database]))
 materials_options += list(set([prop.material.family for prop in htm.database]))
@@ -203,7 +204,9 @@ def make_tab(property: str):
         ],
         body=True,
     )
-
+    with open("citations.json") as f:
+        citation_data = json.load(f)
+    date_citations = citation_data["date"]
     graph_prop_per_year = dbc.Card(
         [
             dbc.CardBody(
@@ -221,7 +224,9 @@ def make_tab(property: str):
             dbc.CardBody(
                 [
                     html.H4("Number of citations", className="card-title"),
-                    html.H6("source: Crossref", className="card-subtitle"),
+                    html.H6(
+                        f"source: Crossref {date_citations}", className="card-subtitle"
+                    ),
                     dbc.Row(
                         [
                             dbc.Col(
