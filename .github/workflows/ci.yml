@@ -23,6 +23,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest dash[testing]
         pip install -r requirements.txt
+        pip install -U selenium
 
     - name: Test with pytest
       run: |
