@@ -168,31 +168,40 @@ def make_hovertemplate(prop):
         )
 
 
-def make_figure_prop_per_year(group, step, selected_years=[1950, 2023]):
-    years = [prop.year for prop in group]
-    year_min, year_max = 1950, 2023
+def make_figure_prop_per_year(
+    group, step, selected_years=[1950, int(datetime.today().year)]
+):
 
-    years = np.arange(year_min, year_max, step=step)
-    if years[-1] != 2023:
-        years = np.append(years, [2023])
+    counts, bins = np.histogram([prop.year for prop in group])
 
-    nb_props_per_year = []
-    for year1, year2 in zip(years[:-1], years[1:]):
-        count = 0
-        for prop in group:
-            if year1 <= prop.year < year2:
-                count += 1
-
-        nb_props_per_year.append(count)
-
-    average_years = years[:-1] - (years[:-1] - years[1:]) / 2
+    bins_center = 0.5 * (bins[:-1] + bins[1:])
     selected = [
         i
-        for i, year in enumerate(average_years)
+        for i, year in enumerate(bins_center)
         if selected_years[0] <= year <= selected_years[1]
     ]
+
     fig = go.Figure(
-        [go.Bar(x=average_years, y=nb_props_per_year, selectedpoints=selected)]
+        [
+            go.Bar(
+                x=bins_center,
+                y=counts,
+                selectedpoints=selected,
+            )
+        ]
+    )
+    template = []
+    for i, year in enumerate(bins[:-1]):
+        year_1 = year
+        year_2 = bins[i + 1]
+        template.append(
+            f"<br>{year_1:.0f} - {year_2:.0f}</br>" + "<extra></extra>" + "%{y}"
+        )
+
+    fig.update_layout(bargap=0)
+    fig.update_traces(
+        hovertemplate=template,
+        selector=dict(type="bar"),
     )
     fig.update_yaxes(title_text="Nb of properties")
     return fig
