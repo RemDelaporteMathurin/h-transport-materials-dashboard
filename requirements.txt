@@ -1,6 +1,6 @@
 h-transport-materials==0.13.1
 numpy>=1.9
-dash==2.11.1
+dash==2.9.3
 dash-bootstrap-components==1.1.0
 dash-bootstrap-templates==1.0.7
 dash_daq==0.5.0
