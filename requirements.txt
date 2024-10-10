@@ -1,4 +1,4 @@
-h-transport-materials~=0.16
+h-transport-materials~=0.17
 numpy<2
 dash==2.9.3
 dash-bootstrap-components==1.1.0
