@@ -319,7 +319,16 @@ def make_tab(property: str):
     return tab
 
 
-TABLE_KEYS = ["material", "pre_exp", "act_energy", "range", "author", "doi"]
+TABLE_KEYS = [
+    "material",
+    "isotope",
+    "pre_exp",
+    "act_energy",
+    "range",
+    "author",
+    "note",
+    "doi",
+]
 
 prop_key_to_label = {
     "diffusivity": {"pre_exp": "D_0", "act_energy": "E_D"},
@@ -334,6 +343,8 @@ key_to_label = {
     "range": "Range",
     "author": "Author",
     "doi": "DOI",
+    "note": "Notes",
+    "isotope": "Isotope",
 }
 
 
@@ -352,13 +363,15 @@ def make_table(property):
     table = dash_table.DataTable(
         id=f"table_{property}",
         columns=[
-            {
-                "name": label,
-                "id": key,
-                "presentation": "markdown",
-            }  # markdown is needed to have clickable links
-            if key == "doi"
-            else {"name": label, "id": key}
+            (
+                {
+                    "name": label,
+                    "id": key,
+                    "presentation": "markdown",
+                }  # markdown is needed to have clickable links
+                if key == "doi"
+                else {"name": label, "id": key}
+            )
             for key, label in zip(TABLE_KEYS, make_table_labels(property))
         ],
         data=[],
@@ -368,6 +381,10 @@ def make_table(property):
         # filter_action="native",
         sort_action="native",
         style_table={"overflowX": "auto"},
+        style_cell_conditional=[
+            # Here, "whiteSpace": 'normal' is needed to have line breaks in the notes
+            {"if": {"column_id": "note"}, "width": "200px", "whiteSpace": "normal"},
+        ],
     )
 
     return table
