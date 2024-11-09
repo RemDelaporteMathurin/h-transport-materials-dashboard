@@ -9,11 +9,10 @@ def make_form(property_type: str):
         pre_exp_label = f"D_0 ({htm.Diffusivity().units:~P})"
         act_energy_label = "E_D (eV)"
     elif property_type == "solubility":
-        sample_prop = htm.Solubility(law="sievert")
-        pre_exp_label = f"S_0 ({sample_prop.units:~P})"
+        pre_exp_label = f"S_0 (Sievert: {htm.Solubility(law="sievert").units:~P}, Henry: {htm.Solubility(law='henry').units:~P})"
         act_energy_label = "E_S (eV)"
     elif property_type == "permeability":
-        pre_exp_label = f"P_0 ({htm.Permeability(law='sievert').units:~P})"
+        pre_exp_label = f"P_0 (Sievert: {htm.Permeability(law='sievert').units:~P}, Henry: {htm.Permeability(law='henry').units:~P})"
         act_energy_label = "E_P (eV)"
     elif property_type == "recombination_coeff":
         pre_exp_label = f"Kr_0 ({htm.RecombinationCoeff().units:~P})"
@@ -21,9 +20,10 @@ def make_form(property_type: str):
     elif property_type == "dissociation_coeff":
         pre_exp_label = f"Kd_0 ({htm.DissociationCoeff().units:~P})"
         act_energy_label = "E_Kd (eV)"
+
     preexponential_input = html.Div(
         [
-            dbc.Label(pre_exp_label, width=2),
+            dbc.Label(pre_exp_label, width=10),
             dbc.Col(
                 dbc.Input(
                     type="number",
@@ -139,15 +139,33 @@ def make_form(property_type: str):
             ),
         ],
     )
-    form = dbc.Form(
-        [
-            preexponential_input,
-            activation_energy_input,
-            author_input,
-            year_input,
-            isotope_input,
-            material_input,
-            temperature_input,
-        ]
-    )
+
+    inputs = [
+        preexponential_input,
+        activation_energy_input,
+        author_input,
+        year_input,
+        isotope_input,
+        material_input,
+        temperature_input,
+    ]
+    if property_type in ["solubility", "permeability"]:
+        solubility_law_input = html.Div(
+            [
+                dbc.Label("Law", width=2),
+                dbc.Col(
+                    dbc.RadioItems(
+                        id=f"new_{property_type}_law",
+                        value="sievert",
+                        options=[
+                            {"label": "Sievert", "value": "sievert"},
+                            {"label": "Henry", "value": "henry"},
+                        ],
+                    ),
+                    width=10,
+                ),
+            ],
+        )
+        inputs.insert(0, solubility_law_input)
+    form = dbc.Form(inputs)
     return form
