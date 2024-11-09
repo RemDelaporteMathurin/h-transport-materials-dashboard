@@ -1,55 +1,44 @@
 name: CI
 
-on: 
+on:
   - push
   - pull_request
- 
+
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    # Pinned Chrome version because chromedriver v120 recognized as chrome-headless-shell instead of chrome
-    # https://github.com/plotly/dash/issues/2712
-    # https://bugs.chromium.org/p/chromedriver/issues/detail?id=4665
-    # https://github.com/mckinsey/vizro/pull/215/
-    # If these are fixed then this whole step can be removed.
-    - name: Install Chrome and chromedriver
-      run: |
-        export chrome_version=119.0.6045.105
-        sudo apt-get update
-        sudo apt-get install libu2f-udev -y
-        wget "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_$chrome_version-1_amd64.deb"
-        sudo apt-get install -y --allow-downgrades ./google-chrome-stable_$chrome_version-1_amd64.deb
-        rm google-chrome-stable_$chrome_version-1_amd64.deb
+      # Pinned Chrome version because chromedriver v120 recognized as chrome-headless-shell instead of chrome
+      # https://github.com/plotly/dash/issues/2712
+      # https://bugs.chromium.org/p/chromedriver/issues/detail?id=4665
+      # https://github.com/mckinsey/vizro/pull/215/
+      # If these are fixed then this whole step can be removed.
+      - name: Install Chrome and chromedriver
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: "119.0.6045.105"
+          chromedriver-version: "119.0.6045.105"
 
-        wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$chrome_version/linux64/chromedriver-linux64.zip
-        unzip chromedriver-linux64.zip
-        cd chromedriver-linux64
-        sudo mv chromedriver /usr/bin/chromedriver
-        sudo chown root:root /usr/bin/chromedriver
-        sudo chmod +x /usr/bin/chromedriver
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest dash[testing]
+          pip install -r requirements.txt
 
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pytest dash[testing]
-        pip install -r requirements.txt
+      - name: Test with pytest
+        run: |
+          pytest tests
 
-    - name: Test with pytest
-      run: |
-        pytest tests
-        
     #--cov htm_dashboard --cov-report xml --cov-report term
 
     # - name: Upload to codecov
