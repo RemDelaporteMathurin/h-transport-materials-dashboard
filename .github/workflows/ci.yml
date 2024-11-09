@@ -23,7 +23,7 @@ jobs:
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: "119.0.6045.105"
-          install-chromedriver: true
+          # install-chromedriver: true
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
