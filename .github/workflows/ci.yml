@@ -14,16 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Pinned Chrome version because chromedriver v120 recognized as chrome-headless-shell instead of chrome
-      # https://github.com/plotly/dash/issues/2712
-      # https://bugs.chromium.org/p/chromedriver/issues/detail?id=4665
-      # https://github.com/mckinsey/vizro/pull/215/
-      # If these are fixed then this whole step can be removed.
       - name: Install Chrome and chromedriver
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: "119.0.6045.105"
-          # install-chromedriver: true
+          chrome-version: "132.0.6821.2"
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
