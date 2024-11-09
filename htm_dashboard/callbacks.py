@@ -220,6 +220,7 @@ def make_add_property(group):
         new_material,
         new_range_low,
         new_range_high,
+        new_sol_law=None,
     ):
         changed_id = [p["prop_id"] for p in dash.callback_context.triggered][0]
         if changed_id == f"submit_new_{group}.n_clicks":
@@ -244,7 +245,7 @@ def make_add_property(group):
                 new_property = htm.Solubility(
                     S_0=new_pre_exp,
                     E_S=new_act_energy,
-                    law="sievert",  # TODO expose this (see #68)
+                    law=new_sol_law,
                 )
             elif group == "recombination_coeff":
                 new_property = htm.RecombinationCoeff(

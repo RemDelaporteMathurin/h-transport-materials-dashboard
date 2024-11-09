@@ -130,22 +130,44 @@ for group in ACTIVE_GROUPS:
         prevent_initial_call=True,
     )(cb.make_toggle_modal_function(group))
 
-    app.callback(
-        dash.Output(f"material_filter_{group}", "options"),
-        dash.Output(f"author_filter_{group}", "options"),
-        dash.Output(f"error_message_new_{group}", "children"),
-        dash.Input(f"submit_new_{group}", "n_clicks"),
-        dash.Input(f"material_filter_{group}", "value"),
-        dash.State(f"new_{group}_pre_exp", "value"),
-        dash.State(f"new_{group}_act_energy", "value"),
-        dash.State(f"new_{group}_author", "value"),
-        dash.State(f"new_{group}_year", "value"),
-        dash.State(f"new_{group}_isotope", "value"),
-        dash.State(f"new_{group}_material", "value"),
-        dash.State(f"new_{group}_range_low", "value"),
-        dash.State(f"new_{group}_range_high", "value"),
-        prevent_initial_call=True,
-    )(cb.make_add_property(group))
+    # add property form
+    # since an additional parameter is needed for solubility and permeability
+    # we need to check the group
+    if group in ["solubility", "permeability"]:
+        app.callback(
+            dash.Output(f"material_filter_{group}", "options"),
+            dash.Output(f"author_filter_{group}", "options"),
+            dash.Output(f"error_message_new_{group}", "children"),
+            dash.Input(f"submit_new_{group}", "n_clicks"),
+            dash.Input(f"material_filter_{group}", "value"),
+            dash.State(f"new_{group}_pre_exp", "value"),
+            dash.State(f"new_{group}_act_energy", "value"),
+            dash.State(f"new_{group}_author", "value"),
+            dash.State(f"new_{group}_year", "value"),
+            dash.State(f"new_{group}_isotope", "value"),
+            dash.State(f"new_{group}_material", "value"),
+            dash.State(f"new_{group}_range_low", "value"),
+            dash.State(f"new_{group}_range_high", "value"),
+            dash.State(f"new_{group}_law", "value"),
+            prevent_initial_call=True,
+        )(cb.make_add_property(group))
+    else:
+        app.callback(
+            dash.Output(f"material_filter_{group}", "options"),
+            dash.Output(f"author_filter_{group}", "options"),
+            dash.Output(f"error_message_new_{group}", "children"),
+            dash.Input(f"submit_new_{group}", "n_clicks"),
+            dash.Input(f"material_filter_{group}", "value"),
+            dash.State(f"new_{group}_pre_exp", "value"),
+            dash.State(f"new_{group}_act_energy", "value"),
+            dash.State(f"new_{group}_author", "value"),
+            dash.State(f"new_{group}_year", "value"),
+            dash.State(f"new_{group}_isotope", "value"),
+            dash.State(f"new_{group}_material", "value"),
+            dash.State(f"new_{group}_range_low", "value"),
+            dash.State(f"new_{group}_range_high", "value"),
+            prevent_initial_call=True,
+        )(cb.make_add_property(group))
 
     app.callback(
         dash.Output(f"table_{group}", "data"),
