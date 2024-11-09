@@ -9,7 +9,7 @@ def make_form(property_type: str):
         pre_exp_label = f"D_0 ({htm.Diffusivity().units:~P})"
         act_energy_label = "E_D (eV)"
     elif property_type == "solubility":
-        pre_exp_label = f"S_0 (Sievert: {htm.Solubility(law="sievert").units:~P}, Henry: {htm.Solubility(law='henry').units:~P})"
+        pre_exp_label = f"S_0 (Sievert: {htm.Solubility(law='sievert').units:~P}, Henry: {htm.Solubility(law='henry').units:~P})"
         act_energy_label = "E_S (eV)"
     elif property_type == "permeability":
         pre_exp_label = f"P_0 (Sievert: {htm.Permeability(law='sievert').units:~P}, Henry: {htm.Permeability(law='henry').units:~P})"
