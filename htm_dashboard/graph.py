@@ -228,7 +228,7 @@ def make_citations_graph(group: htm.PropertiesGroup, per_year: bool = True):
             references.append(label)
             if per_year:
                 current_year = datetime.now().year
-                nb_citations.append(nb_citations_prop / (current_year - year))
+                nb_citations.append(nb_citations_prop / (current_year - year + 1))
             else:
                 nb_citations.append(nb_citations_prop)
 
