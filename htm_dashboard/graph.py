@@ -54,6 +54,13 @@ def add_mean_value(group: htm.PropertiesGroup, fig: go.Figure):
             + f"Kr_0: {mean_prop.pre_exp:.2e~H} <br>"
             + f"E_Kr : {mean_prop.act_energy:.2f~H}"
         )
+    elif isinstance(group[0], htm.DissociationCoeff):
+        hovertemplate += (
+            "Kd: %{y:,.2e}"
+            + f"{mean_prop.units:~H} <br>"
+            + f"Kd_0: {mean_prop.pre_exp:.2e~H} <br>"
+            + f"E_Kd : {mean_prop.act_energy:.2f~H}"
+        )
     hovertemplate += "<extra></extra>"
     fig.add_trace(
         go.Scatter(
