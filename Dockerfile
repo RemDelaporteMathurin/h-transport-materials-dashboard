@@ -1,7 +1,5 @@
 FROM continuumio/miniconda3:4.9.2
 
-# the base image nuclear_data_base_docker is based on continuumio/miniconda3:4.9.2
-
 COPY app.py .
 ADD htm_dashboard ./htm_dashboard
 COPY requirements.txt .
